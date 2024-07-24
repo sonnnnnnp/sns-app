@@ -1,0 +1,21 @@
+services:
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./packages/frontend:/frontend
+      - /frontend/node_modules
+    ports:
+      - 80:3000
+    command: ["npm", "run", "dev"]
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./packages/backend:/backend
+      - /backend/node_modules
+    ports:
+      - 3000:3000
+    command: ["npm", "run", "start:dev"]
