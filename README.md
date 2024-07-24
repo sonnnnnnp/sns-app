@@ -12,6 +12,11 @@
 		</tr>
 </table>
 
+### Requirements
+
+- [Docker](https://www.docker.com)
+- [Volta](https://volta.sh)
+
 ### Getting Started
 
 セットアップ
