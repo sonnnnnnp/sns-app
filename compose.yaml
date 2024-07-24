@@ -1,21 +1,11 @@
 services:
-  frontend:
-    build:
-      context: ./packages/frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ./packages/frontend:/frontend
-      - /frontend/node_modules
+  db:
+    container_name: db
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - TZ="Asia/Tokyo"
     ports:
-      - 80:3000
-    command: ["npm", "run", "dev"]
-  backend:
-    build:
-      context: ./packages/backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./packages/backend:/backend
-      - /backend/node_modules
-    ports:
-      - 3000:3000
-    command: ["npm", "run", "start:dev"]
+      - 5432:5432
