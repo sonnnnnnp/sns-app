@@ -4,8 +4,8 @@ GO_TO_FRONTEND = cd packages/frontend
 .PHONY:
 setup:
 	docker compose build --no-cache
-	$(GO_TO_BACKEND) && npm ci
-	$(GO_TO_FRONTEND) && npm ci
+	$(GO_TO_BACKEND) && [ -f .env ] || cp .env.example .env && npm ci
+	$(GO_TO_FRONTEND) && [ -f .env ] || cp .env.example .env && npm ci
 
 .PHONY:
 up:
