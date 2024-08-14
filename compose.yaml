@@ -1,4 +1,15 @@
 services:
+  api:
+    container_name: api
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    ports:
+      - 1323:1323
+    volumes:
+      - ./packages/backend:/api
+    depends_on:
+      - db
   db:
     container_name: db
     image: postgres:15
