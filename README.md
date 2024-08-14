@@ -8,7 +8,7 @@
 		</tr>
 		<tr>
 			<td>BACKEND</td>
-			<td><a href="http://localhost:3001">http://localhost:3001</a></td>
+			<td><a href="http://localhost:1323">http://localhost:1323</a></td>
 		</tr>
 </table>
 
@@ -31,28 +31,8 @@ make setup
 make up
 ```
 
-初期データの投入
-
-```shell
-make seed
-```
-
 アプリケーションの停止
 
 ```shell
 make down
-```
-
-### Database
-
-データベース内部を GUI から確認
-
-```shell
-make view-db
-```
-
-データベースのスキーマ更新
-
-```shell
-make migrate name={更新名}
 ```
