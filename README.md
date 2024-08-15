@@ -3,12 +3,16 @@
 <table>
 	<tbody>
 		<tr>
-			<td>FRONEND</td>
+			<td>Frontend</td>
 			<td><a href="http://localhost:3000">http://localhost:3000</a></td>
 		</tr>
 		<tr>
-			<td>BACKEND</td>
+			<td>Backend</td>
 			<td><a href="http://localhost:1323">http://localhost:1323</a></td>
+		</tr>
+		<tr>
+			<td>DB GUI</td>
+			<td><a href="http://localhost:8080">http://localhost:8080</a></td>
 		</tr>
 </table>
 
