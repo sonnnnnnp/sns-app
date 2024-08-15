@@ -3,6 +3,7 @@ module github.com/sonnnnnnp/sns-app
 go 1.22.5
 
 require (
+	github.com/caarlos0/env/v11 v11.2.2
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/labstack/echo/v4 v4.12.0
 )
