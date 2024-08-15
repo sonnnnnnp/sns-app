@@ -11,3 +11,8 @@ up:
 .PHONY:
 down:
 	docker compose down
+
+.PHONY:
+oapi:
+	docker compose run --rm api bash -c "cd internal/pkg && oapi-codegen -package oapi ../../api/api.yaml > ./oapi/server.go"
+	go mod tidy
