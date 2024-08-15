@@ -6,10 +6,11 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
+	"github.com/sonnnnnnp/sns-app/internal/pkg/db"
 	"github.com/sonnnnnnp/sns-app/internal/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/pkg/config"
 )
 
 type User struct {
@@ -28,9 +29,14 @@ func (u UserController) GetUsers(ctx echo.Context) error {
 	})
 }
 
-func Init() {
-	dsn := "host=db user=user password=password dbname=db port=5432"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+func Init(cfg *config.Config) {
+	db, err := db.Open(db.Options{
+		Host:     cfg.DBHost,
+		User:     cfg.DBUser,
+		Password: cfg.DBPassword,
+		Name:     cfg.DBName,
+		Port:     cfg.DBPort,
+	})
 	if err != nil {
 		panic("failed to connect database")
 	}
