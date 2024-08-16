@@ -1,4 +1,15 @@
 services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 1323:1323
+    volumes:
+      - .:/api
+    depends_on:
+      - db
   db:
     container_name: db
     image: postgres:15
@@ -9,3 +20,17 @@ services:
       - TZ="Asia/Tokyo"
     ports:
       - 5432:5432
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:8.4
+    ports:
+      - 8080:80
+    volumes:
+      - ./config/pgadmin.json:/pgadmin4/servers.json
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@example.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    depends_on:
+      - db
