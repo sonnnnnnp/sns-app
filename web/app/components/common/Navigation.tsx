@@ -13,9 +13,7 @@ export default function Navigation() {
             <ul>
             {navItems.map( item => (
                 <li>
-                    <Link href={item.href}>
-                        <a>{item.label}</a>
-                    </Link>
+                    <Link href={item.href}>{item.label}</Link>
                 </li>
             ))}                
             </ul>
