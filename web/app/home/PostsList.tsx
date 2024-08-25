@@ -6,18 +6,20 @@ interface Post {
     user_id: number;
     context: string;
     created_at: number;
-    likes_count: number;
     comments_count: number;
+    repost_count: number;
+    likes_count: number;
 }
 
 // 改行コードを<br>タグに変換する関数
 function convertNewlinesToBr(text: string) {
-    return text.split('\n').map((line, index) => (
-        <React.Fragment key={index}>
-            {line}
-            {index !== text.split('\n').length - 1 && <br />}
-        </React.Fragment>
-    ));
+    const lines = text.split('\n');
+    return lines.map((line, index) => (
+                <React.Fragment key={index}>
+                    {line}
+                    {index < lines.length - 1 && <br />}
+                </React.Fragment>
+            ))
 }
 
 export default async function PostList() {
@@ -46,7 +48,21 @@ export default async function PostList() {
                             <span className="text-sm">@{post.user_id}</span>
                             <span className="material-symbols-outlined ml-auto">more_horiz</span>
                         </div>
-                        <p className="">{convertNewlinesToBr(post.context)}</p>
+                        <p className="mr-4">{convertNewlinesToBr(post.context)}</p>
+                        <div className="flex justify-between max-w-44">
+                            <div className="flex">
+                                <span className="material-symbols-outlined mr-1">notes</span>
+                                <span>{post.comments_count}</span>
+                            </div>
+                            <div className="flex">
+                                <span className="material-symbols-outlined mr-1">refresh</span>
+                                <span>{post.repost_count}</span>
+                            </div>
+                            <div className="flex">
+                                <span className="material-symbols-outlined mr-1">favorite</span>
+                                <span>{post.likes_count}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             ))}
