@@ -1,11 +1,13 @@
-import Navigation from "../components/common/Navigation";
-import PostList from "../components/posts/PostsList";
+import Navigation from '../components/common/Navigation';
+import PostList from './PostsList';
 
 export default async function Page() {
     return (
-        <main>
+        <div className="flex justify-center">
             <Navigation />
-            <PostList />
-        </main>
+            <main>
+                <PostList />
+            </main>
+        </div>
     )
 }
