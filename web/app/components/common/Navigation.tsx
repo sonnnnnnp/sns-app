@@ -9,16 +9,18 @@ export default function Navigation() {
         { href: '/action', label: 'Action'},
     ];
     return (
-        <div className="">
-            <nav>
-                <ul>
-                {navItems.map( item => (
-                    <li className="w-52 p-3">
-                        <Link href={item.href}>{item.label}</Link>
-                    </li>
-                ))}                
-                </ul>
-            </nav>
+        <div className="w-52">
+            <div className="fixed">
+                <nav>
+                    <ul>
+                    {navItems.map( item => (
+                        <li className="w-52 p-3">
+                            <Link href={item.href}>{item.label}</Link>
+                        </li>
+                    ))}                
+                    </ul>
+                </nav>
+            </div>
         </div>
     )
 }

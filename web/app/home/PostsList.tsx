@@ -49,6 +49,8 @@ export default async function PostList() {
                             <span className="material-symbols-outlined ml-auto">more_horiz</span>
                         </div>
                         <p className="mr-4">{convertNewlinesToBr(post.context)}</p>
+                        
+                        {/* comments repost likes */}
                         <div className="flex justify-between max-w-44">
                             <div className="flex">
                                 <span className="material-symbols-outlined mr-1">notes</span>
