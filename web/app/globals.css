@@ -7,13 +7,6 @@
   --font-color: #000;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --back-color: #000;
-    --font-color: #fff;
-  }
-}
-
 body {
   color: var(--font-color);
   background: var(--back-color);

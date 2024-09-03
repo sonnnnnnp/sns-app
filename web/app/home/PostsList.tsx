@@ -31,7 +31,7 @@ export default async function PostList() {
     return (
         <div className="max-w-2xl">
             {posts.map( post => (
-                <div key={post.id} className="flex p-3 bg-zinc-900 rounded-lg mb-2">
+                <div key={post.id} className="flex p-3 bg-stone-50 dark:bg-zinc-900 rounded-lg mb-2">
                     <div className="mr-2">
                         <a href={`user/${post.user_id}`} className="block w-12 h-12 relative">
                             <Image
@@ -54,15 +54,15 @@ export default async function PostList() {
                         <div className="flex justify-between max-w-44">
                             <div className="flex">
                                 <span className="material-symbols-outlined mr-1">notes</span>
-                                <span>{post.comments_count}</span>
+                                <span className="w-8">{post.comments_count}</span>
                             </div>
                             <div className="flex">
                                 <span className="material-symbols-outlined mr-1">refresh</span>
-                                <span>{post.repost_count}</span>
+                                <span className="w-8">{post.repost_count}</span>
                             </div>
                             <div className="flex">
                                 <span className="material-symbols-outlined mr-1">favorite</span>
-                                <span>{post.likes_count}</span>
+                                <span className="w-8">{post.likes_count}</span>
                             </div>
                         </div>
                     </div>
