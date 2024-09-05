@@ -11,7 +11,7 @@ export default function Navigation() {
     return (
         <div className="w-52">
             <div className="fixed">
-                <nav>
+                <nav className="text-lg">
                     <ul>
                     {navItems.map( item => (
                         <li className="w-52 p-3">
