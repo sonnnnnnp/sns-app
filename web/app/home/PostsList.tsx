@@ -32,21 +32,21 @@ const PostList: React.FC = () => {
 
     useEffect(() => {
         const fetchPosts = async () => {
-          try {
-            const response = await fetch(`/api/posts/${activeTab}`);
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
+            try {
+                const response = await fetch(`/api/posts/${activeTab}`);
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                const data: Post[] = await response.json();
+                setPosts(data);
+            } catch (error) {
+                setError((error as Error).message);
+            } finally {
+                setLoading(false);
             }
-            const data: Post[] = await response.json();
-            setPosts(data);
-          } catch (error) {
-            setError((error as Error).message);
-          } finally {
-            setLoading(false);
-          }
         };
         fetchPosts();
-      }, [activeTab]);
+    }, [activeTab]);
 
     const handleLike = useCallback(async (postId: number, isLiked: boolean) => {
         const method = isLiked ? 'DELETE' : 'POST';
