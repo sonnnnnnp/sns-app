@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { CommentButton, RepostButton, LikeButton } from '../components/post-buttons/index';
 import FeedToggle from './FeedToggle';
 
@@ -28,10 +28,12 @@ const PostList: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<'recommendations'|'following'>('recommendations');
+
     useEffect(() => {
         const fetchPosts = async () => {
           try {
-            const response = await fetch('/api/posts');
+            const response = await fetch(`/api/posts/${activeTab}`);
             if (!response.ok) {
               throw new Error('Network response was not ok');
             }
@@ -44,12 +46,29 @@ const PostList: React.FC = () => {
           }
         };
         fetchPosts();
-      }, []);
-    const [activeTab, setActiveTab] = useState<'recommendations'|'following'>('recommendations');
+      }, [activeTab]);
+
+    const handleLike = useCallback(async (postId: number, isLiked: boolean) => {
+        const method = isLiked ? 'DELETE' : 'POST';
+        try {
+            const response = await fetch(`/api/${postId}/like`, { method });
+            if (!response.ok) throw new Error('Failed to update like');
+            setPosts(prevPosts => 
+                prevPosts.map(post => 
+                    post.id === postId 
+                        ? { ...post, likes_count: post.likes_count + (isLiked ? -1 : 1) }
+                        : post
+                )
+            );
+        } catch (error) {
+            console.error('Error updating like:', error);
+        }
+    }, []);
+
     return (
         <div className="max-w-2xl">
             <FeedToggle activeTab={activeTab} setActiveTab={setActiveTab} />
-            {posts.map( post => (
+            {posts.map(post => (
                 <div key={post.id} className="flex p-3 bg-stone-50 dark:bg-zinc-900 rounded-lg mb-2">
                     <div className="mr-2">
                         <a href={`user/${post.user_id}`} className="block w-12 h-12 relative">
@@ -73,7 +92,11 @@ const PostList: React.FC = () => {
                         <div className="flex justify-between max-w-44">
                             <CommentButton commentsCount={post.comments_count} />
                             <RepostButton repostCount={post.repost_count} />
-                            <LikeButton likesCount={post.likes_count} />
+                            <LikeButton 
+                                likesCount={post.likes_count} 
+                                postId={post.id} 
+                                onLike={handleLike} 
+                            />
                         </div>
                     </div>
                 </div>
