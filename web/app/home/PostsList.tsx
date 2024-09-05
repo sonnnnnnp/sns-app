@@ -1,5 +1,6 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
+import { CommentButton, RepostButton, LikeButton } from '../components/post-buttons/index';
 
 interface Post {
     id: number;
@@ -23,13 +24,16 @@ function convertNewlinesToBr(text: string) {
 }
 
 export default async function PostList() {
-    const res = await fetch('http://localhost:3000/api/posts', {
+    const res = await fetch(`${process.env.API_URL}/posts`, {
         cache: 'no-store',
     });
     const posts: Post[] = await res.json();
-
+    const [activeTab, setActiveTab] = useState<'recommendations'|'following'>('recommendations');
     return (
         <div className="max-w-2xl">
+            <nav>
+                <button></button>
+            </nav>
             {posts.map( post => (
                 <div key={post.id} className="flex p-3 bg-stone-50 dark:bg-zinc-900 rounded-lg mb-2">
                     <div className="mr-2">
@@ -48,22 +52,13 @@ export default async function PostList() {
                             <span className="text-sm">@{post.user_id}</span>
                             <span className="material-symbols-outlined ml-auto">more_horiz</span>
                         </div>
+                        
                         <p className="mr-4">{convertNewlinesToBr(post.context)}</p>
                         
-                        {/* comments repost likes */}
                         <div className="flex justify-between max-w-44">
-                            <div className="flex">
-                                <span className="material-symbols-outlined mr-1">notes</span>
-                                <span className="w-8">{post.comments_count}</span>
-                            </div>
-                            <div className="flex">
-                                <span className="material-symbols-outlined mr-1">refresh</span>
-                                <span className="w-8">{post.repost_count}</span>
-                            </div>
-                            <div className="flex">
-                                <span className="material-symbols-outlined mr-1">favorite</span>
-                                <span className="w-8">{post.likes_count}</span>
-                            </div>
+                            <CommentButton commentsCount={post.comments_count} />
+                            <RepostButton repostCount={post.repost_count} />
+                            <LikeButton likesCount={post.likes_count} />
                         </div>
                     </div>
                 </div>
