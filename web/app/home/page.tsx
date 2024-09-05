@@ -1,3 +1,4 @@
+'use client';
 import Navigation from '../components/common/Navigation';
 import PostList from './PostsList';
 
