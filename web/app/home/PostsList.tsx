@@ -48,9 +48,7 @@ const PostList: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'recommendations'|'following'>('recommendations');
     return (
         <div className="max-w-2xl">
-            <nav>
-                <button></button>
-            </nav>
+            <FeedToggle activeTab={activeTab} setActiveTab={setActiveTab} />
             {posts.map( post => (
                 <div key={post.id} className="flex p-3 bg-stone-50 dark:bg-zinc-900 rounded-lg mb-2">
                     <div className="mr-2">
