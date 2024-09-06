@@ -35,7 +35,7 @@ const PostList: React.FC = () => {
             try {
                 const response = await fetch(`/api/posts/${activeTab}`);
                 if (!response.ok) {
-                throw new Error('Network response was not ok');
+                    throw new Error('Network response was not ok');
                 }
                 const data: Post[] = await response.json();
                 setPosts(data);
