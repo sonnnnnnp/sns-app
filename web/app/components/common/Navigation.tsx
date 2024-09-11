@@ -16,7 +16,7 @@ export default function Navigation() {
                 <nav className="text-lg">
                     <ul>
                     {navItems.map( item => (
-                        <li className="w-52 p-3">
+                        <li key={item.label} className="w-52 p-3">
                             <Link href={item.href}>{item.label}</Link>
                         </li>
                     ))}                
