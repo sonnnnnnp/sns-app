@@ -68,6 +68,7 @@ const PostList: React.FC = () => {
     return (
         <div className="max-w-2xl">
             <FeedToggle activeTab={activeTab} setActiveTab={setActiveTab} />
+            <div className="h-20"></div>
             {posts.map(post => (
                 <div key={post.id} className="flex p-3 bg-stone-50 dark:bg-zinc-900 rounded-lg mb-2">
                     <div className="mr-2">
