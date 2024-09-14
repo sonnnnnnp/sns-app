@@ -24,10 +24,10 @@ export function Post(props: {
               </Avatar>
             </Link>
           </div>
-          <div>
+          <div className="flex-1">
             <div className="flex items-center">
               <div className="flex items-center gap-1">
-                <span className="text-sm font-semibold leading-none">
+                <span className="text-sm font-semibold">
                   {props.display_name}
                 </span>
                 <span className="text-sm text-muted-foreground">
@@ -40,7 +40,7 @@ export function Post(props: {
               </div>
             </div>
             <div className="mt-1 mb-2">
-              <p className="text-xs text-muted-foreground">{props.content}</p>
+              <p className="text-sm text-muted-foreground">{props.content}</p>
             </div>
             <div className="flex items-center justify-between opacity-60">
               <Button variant={"ghost"} size={"sm"}>

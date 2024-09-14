@@ -7,7 +7,7 @@ import {
   RepostButton,
   LikeButton,
 } from "@/components/post-buttons/index";
-import FeedToggle from "@/app/home/FeedToggle";
+// import FeedToggle from "@/app/home/FeedToggle";
 
 interface Post {
   id: number;
