@@ -1,7 +1,7 @@
 import Navigation from "@/components/common/Navigation";
 import PostList from "@/app/home/PostsList";
 
-export default function Page() {
+const Page = () => {
   return (
     <div className="flex justify-center">
       <Navigation />
@@ -10,4 +10,5 @@ export default function Page() {
       </main>
     </div>
   );
-}
+};
+export default Page;
