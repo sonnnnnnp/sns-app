@@ -5,6 +5,22 @@ info:
   version: 1.0.0
 tags: []
 paths:
+  /authorize/line:
+    post:
+      summary: LINE でログイン
+      deprecated: false
+      description: ""
+      tags: []
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+          headers: {}
+      security: []
   /users/{user_id}:
     get:
       summary: ユーザーを取得する
@@ -66,5 +82,18 @@ components:
         - birthdate
         - updated_at
         - created_at
+    LoginResponse:
+      type: object
+      properties:
+        username:
+          type: string
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+      required:
+        - username
+        - access_token
+        - refresh_token
   securitySchemes: {}
 servers: []

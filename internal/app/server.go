@@ -15,6 +15,14 @@ func NewServer() Server {
 	return Server{}
 }
 
+func (Server) PostAuthorizeLine(ctx echo.Context) error {
+	return ctx.JSON(http.StatusCreated, &oapi.LoginResponse{
+		AccessToken:  "1234567890",
+		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
+		Username:     "or4p90.fo0qg4",
+	})
+}
+
 func (Server) GetUsersUserId(ctx echo.Context, userId string) error {
 	return ctx.JSON(http.StatusOK, &oapi.User{
 		Id:          userId,

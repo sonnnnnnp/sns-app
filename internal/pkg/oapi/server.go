@@ -21,6 +21,13 @@ import (
 	"github.com/oapi-codegen/runtime"
 )
 
+// LoginResponse defines model for LoginResponse.
+type LoginResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	Username     string `json:"username"`
+}
+
 // User defines model for User.
 type User struct {
 	AvatarUrl   *string `json:"avatar_url"`
@@ -111,8 +118,23 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// PostAuthorizeLine request
+	PostAuthorizeLine(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetUsersUserId request
 	GetUsersUserId(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) PostAuthorizeLine(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAuthorizeLineRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) GetUsersUserId(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -125,6 +147,33 @@ func (c *Client) GetUsersUserId(ctx context.Context, userId string, reqEditors .
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// NewPostAuthorizeLineRequest generates requests for PostAuthorizeLine
+func NewPostAuthorizeLineRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/authorize/line")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // NewGetUsersUserIdRequest generates requests for GetUsersUserId
@@ -204,8 +253,33 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// PostAuthorizeLineWithResponse request
+	PostAuthorizeLineWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthorizeLineResponse, error)
+
 	// GetUsersUserIdWithResponse request
 	GetUsersUserIdWithResponse(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*GetUsersUserIdResponse, error)
+}
+
+type PostAuthorizeLineResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *LoginResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r PostAuthorizeLineResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostAuthorizeLineResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type GetUsersUserIdResponse struct {
@@ -230,6 +304,15 @@ func (r GetUsersUserIdResponse) StatusCode() int {
 	return 0
 }
 
+// PostAuthorizeLineWithResponse request returning *PostAuthorizeLineResponse
+func (c *ClientWithResponses) PostAuthorizeLineWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PostAuthorizeLineResponse, error) {
+	rsp, err := c.PostAuthorizeLine(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostAuthorizeLineResponse(rsp)
+}
+
 // GetUsersUserIdWithResponse request returning *GetUsersUserIdResponse
 func (c *ClientWithResponses) GetUsersUserIdWithResponse(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*GetUsersUserIdResponse, error) {
 	rsp, err := c.GetUsersUserId(ctx, userId, reqEditors...)
@@ -237,6 +320,32 @@ func (c *ClientWithResponses) GetUsersUserIdWithResponse(ctx context.Context, us
 		return nil, err
 	}
 	return ParseGetUsersUserIdResponse(rsp)
+}
+
+// ParsePostAuthorizeLineResponse parses an HTTP response from a PostAuthorizeLineWithResponse call
+func ParsePostAuthorizeLineResponse(rsp *http.Response) (*PostAuthorizeLineResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostAuthorizeLineResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest LoginResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseGetUsersUserIdResponse parses an HTTP response from a GetUsersUserIdWithResponse call
@@ -267,6 +376,9 @@ func ParseGetUsersUserIdResponse(rsp *http.Response) (*GetUsersUserIdResponse, e
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// LINE でログイン
+	// (POST /authorize/line)
+	PostAuthorizeLine(ctx echo.Context) error
 	// ユーザーを取得する
 	// (GET /users/{user_id})
 	GetUsersUserId(ctx echo.Context, userId string) error
@@ -275,6 +387,15 @@ type ServerInterface interface {
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
+}
+
+// PostAuthorizeLine converts echo context to params.
+func (w *ServerInterfaceWrapper) PostAuthorizeLine(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.PostAuthorizeLine(ctx)
+	return err
 }
 
 // GetUsersUserId converts echo context to params.
@@ -321,6 +442,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.POST(baseURL+"/authorize/line", wrapper.PostAuthorizeLine)
 	router.GET(baseURL+"/users/:user_id", wrapper.GetUsersUserId)
 
 }
@@ -328,14 +450,16 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/4xTQY7TShC9S/2/NLEHdr1GQjkAqyiKOu6apEd2d1NdjmRZXjCzQmg0CAkQF2DBAWCD",
-	"uIxlcQ1U7QEcJkLZdCft0qv3Xr3qoPR18A4dR1AdxHKPtU4/n0ckuQP5gMQW06s+aNa0aaiSf66pKr2t",
-	"EBRTgxlwGxAURCbrdtBnsLV+Rzrs2zOrifdGM55VXfoDns+kJNSMZqNZyh98NjaGSrcbp2s8WWCNPBuM",
-	"JdnA1jtQsHz6493n8e4rnOjXBPOvfk1E+tXrGHR8czu+un0I2WdA+KKxhAbUSvjMUP4SkM3nNHdqPpG5",
-	"30d8j8xa/ybit1dYMvTCxLpLn3RZrhJJFx/pECCDA1KchFwsikUhWn1Ap4MFBU8WxeICMgia9ylOuSiI",
-	"eSfXxppe3naYLJPUafFkaUDBM2QJZJRjaRIE6RoZKYJadWClo8BCBpOvcI8Jc9+mcEwpPzGXfi3FMXgX",
-	"p7g/Lgq5Su8YXaKlQ6hsmYjlV1GEdjO8/wkvQcF/+Z+1yu93Kk8Lldw7HngabcSyIcstqNU6g9jUtaYW",
-	"FAw3n4abb8P1l3S+He/ej98/DC8/DtevBav/GQAA///iTzAewQMAAA==",
+	"H4sIAAAAAAAC/7RUT4sTTxD9Kj/q53HMZPU2N0GRwCIieFpC6HRXMr3OdLdVPYEYctjkJLKsCCreRUEQ",
+	"BEEv4pcZgl9DurNLZpK4xIOX+Vvz6tV79WYG0pbOGjSeIZsByxxLES+P7VibR8jOGsbwwJF1SF5jfC2k",
+	"ROaBt0/QhHs/dQgZsCdtxjBPgHBEyPk1FRUjGVHinpfx+6eVJlSQnWwqk3bf7S795ArIDk9R+tDlMSPt",
+	"oT8RXtCgoiLcmaooxLBAyDxVmOxSHWo7JuHy6YHV5HMlPB5ULe0ED2ciCYVHNRB+r6ZKsyvEdPAHXRPQ",
+	"KjxWyJK089oayKB399frT6uL77CnX+XUdf2aHrZBVy/PV8/PdyG3rNUKkqa/rQGSpk9NpZqONPVu8W2J",
+	"tbsagYk2Ixvn0r6IJA3fFM5BAhMkXg9y1Ol2umFW69AIpyGD251u5wgScMLncZ1SUfnckn6GaaHNOi6W",
+	"o2Rh60TQpKcgg4eW/Z2r2uNQGuRYhywi3ep2w0la49FEAOFcoWWESE/Zmk1Ow9UNwhFk8H+6CXJ6meK0",
+	"HeE4cNuj6AajrEj7KWQn/QS4KktBU8jguPfg3n/12cd6+blefKkX7+vl1/hBGuzidBZOA63mgcYY9wx7",
+	"H31IH4dDT0W9SJTokRiykxnowCFoCAmslwguMaG5JOskbEbeXqj+P5Qw/j3+Vrl6+aFe/qgX3+Lx1eri",
+	"zern2/rsXb14EbDmvwMAAP//4VI1AHYFAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
