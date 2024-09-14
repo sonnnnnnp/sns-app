@@ -1,12 +1,13 @@
 "use client";
+
 import Image from "next/image";
 import React, { useEffect, useState, useCallback } from "react";
 import {
   CommentButton,
   RepostButton,
   LikeButton,
-} from "../components/post-buttons/index";
-import FeedToggle from "./FeedToggle";
+} from "@/components/post-buttons/index";
+import FeedToggle from "@/app/home/FeedToggle";
 
 interface Post {
   id: number;
