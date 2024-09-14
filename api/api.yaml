@@ -1,30 +1,70 @@
-openapi: "3.0.3"
+openapi: 3.0.1
 info:
-  version: 0.1.0
   title: sns-app
+  description: ""
+  version: 1.0.0
+tags: []
 paths:
-  /users:
+  /users/{user_id}:
     get:
+      summary: ユーザーを取得する
+      deprecated: false
+      description: ""
+      tags: []
+      parameters:
+        - name: user_id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
       responses:
         "200":
-          description: OK
+          description: ""
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-
+          headers: {}
+      security: []
 components:
   schemas:
     User:
       type: object
       properties:
         id:
-          type: integer
-        name:
           type: string
-        email:
+          description: ID番号
+        username:
+          type: string
+          description: 名前
+        display_name:
+          type: string
+        avatar_url:
+          type: string
+          nullable: true
+        cover_url:
+          type: string
+          nullable: true
+        biography:
+          type: string
+          nullable: true
+        birthdate:
+          type: string
+          nullable: true
+        updated_at:
+          type: string
+        created_at:
           type: string
       required:
         - id
-        - name
-        - email
+        - username
+        - display_name
+        - avatar_url
+        - cover_url
+        - biography
+        - birthdate
+        - updated_at
+        - created_at
+  securitySchemes: {}
+servers: []

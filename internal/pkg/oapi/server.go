@@ -18,13 +18,24 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
+	"github.com/oapi-codegen/runtime"
 )
 
 // User defines model for User.
 type User struct {
-	Email string `json:"email"`
-	Id    int    `json:"id"`
-	Name  string `json:"name"`
+	AvatarUrl   *string `json:"avatar_url"`
+	Biography   *string `json:"biography"`
+	Birthdate   *string `json:"birthdate"`
+	CoverUrl    *string `json:"cover_url"`
+	CreatedAt   string  `json:"created_at"`
+	DisplayName string  `json:"display_name"`
+
+	// Id ID番号
+	Id        string `json:"id"`
+	UpdatedAt string `json:"updated_at"`
+
+	// Username 名前
+	Username string `json:"username"`
 }
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
@@ -100,12 +111,12 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetUsers request
-	GetUsers(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetUsersUserId request
+	GetUsersUserId(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetUsers(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUsersRequest(c.Server)
+func (c *Client) GetUsersUserId(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUsersUserIdRequest(c.Server, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -116,16 +127,23 @@ func (c *Client) GetUsers(ctx context.Context, reqEditors ...RequestEditorFn) (*
 	return c.Client.Do(req)
 }
 
-// NewGetUsersRequest generates requests for GetUsers
-func NewGetUsersRequest(server string) (*http.Request, error) {
+// NewGetUsersUserIdRequest generates requests for GetUsersUserId
+func NewGetUsersUserIdRequest(server string, userId string) (*http.Request, error) {
 	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/users")
+	operationPath := fmt.Sprintf("/users/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -186,18 +204,18 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetUsersWithResponse request
-	GetUsersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetUsersResponse, error)
+	// GetUsersUserIdWithResponse request
+	GetUsersUserIdWithResponse(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*GetUsersUserIdResponse, error)
 }
 
-type GetUsersResponse struct {
+type GetUsersUserIdResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *User
 }
 
 // Status returns HTTPResponse.Status
-func (r GetUsersResponse) Status() string {
+func (r GetUsersUserIdResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -205,31 +223,31 @@ func (r GetUsersResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetUsersResponse) StatusCode() int {
+func (r GetUsersUserIdResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-// GetUsersWithResponse request returning *GetUsersResponse
-func (c *ClientWithResponses) GetUsersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetUsersResponse, error) {
-	rsp, err := c.GetUsers(ctx, reqEditors...)
+// GetUsersUserIdWithResponse request returning *GetUsersUserIdResponse
+func (c *ClientWithResponses) GetUsersUserIdWithResponse(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*GetUsersUserIdResponse, error) {
+	rsp, err := c.GetUsersUserId(ctx, userId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetUsersResponse(rsp)
+	return ParseGetUsersUserIdResponse(rsp)
 }
 
-// ParseGetUsersResponse parses an HTTP response from a GetUsersWithResponse call
-func ParseGetUsersResponse(rsp *http.Response) (*GetUsersResponse, error) {
+// ParseGetUsersUserIdResponse parses an HTTP response from a GetUsersUserIdWithResponse call
+func ParseGetUsersUserIdResponse(rsp *http.Response) (*GetUsersUserIdResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetUsersResponse{
+	response := &GetUsersUserIdResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -249,9 +267,9 @@ func ParseGetUsersResponse(rsp *http.Response) (*GetUsersResponse, error) {
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-
-	// (GET /users)
-	GetUsers(ctx echo.Context) error
+	// ユーザーを取得する
+	// (GET /users/{user_id})
+	GetUsersUserId(ctx echo.Context, userId string) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -259,12 +277,19 @@ type ServerInterfaceWrapper struct {
 	Handler ServerInterface
 }
 
-// GetUsers converts echo context to params.
-func (w *ServerInterfaceWrapper) GetUsers(ctx echo.Context) error {
+// GetUsersUserId converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUsersUserId(ctx echo.Context) error {
 	var err error
+	// ------------- Path parameter "user_id" -------------
+	var userId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetUsers(ctx)
+	err = w.Handler.GetUsersUserId(ctx, userId)
 	return err
 }
 
@@ -296,18 +321,21 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.GET(baseURL+"/users", wrapper.GetUsers)
+	router.GET(baseURL+"/users/:user_id", wrapper.GetUsersUserId)
 
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/2xQsU4rQQz8F79XLncH6fYHEKKgSoUolj0ncZTzml0HCUX778jORVBQeTTyeDxzgVwW",
-	"KYysDeIFWj7gkhxuG1abUotgVUJncUl0MqBfghChaSXeQw9A8y+aWHGP1XhOC/4h6AEqfpyp4gzx1dTr",
-	"alg93sJNUt6PmBW6aYh3xa+Rnvwct7skAgE+sTYqDBGm4X6YzLoIchKCCJthGjYQQJIePMd4blgd7VFt",
-	"WMikVPhphgiPqFtfsC+bFG7X+A/TZCMXVmTXJZETZVeOx2b+txYN/a+4gwj/xp+ax7Xj0Qv2UDO2XEn0",
-	"+v7Ls7G99+8AAAD//y0YPAOdAQAA",
+	"H4sIAAAAAAAC/4xTQY7TShC9S/2/NLEHdr1GQjkAqyiKOu6apEd2d1NdjmRZXjCzQmg0CAkQF2DBAWCD",
+	"uIxlcQ1U7QEcJkLZdCft0qv3Xr3qoPR18A4dR1AdxHKPtU4/n0ckuQP5gMQW06s+aNa0aaiSf66pKr2t",
+	"EBRTgxlwGxAURCbrdtBnsLV+Rzrs2zOrifdGM55VXfoDns+kJNSMZqNZyh98NjaGSrcbp2s8WWCNPBuM",
+	"JdnA1jtQsHz6493n8e4rnOjXBPOvfk1E+tXrGHR8czu+un0I2WdA+KKxhAbUSvjMUP4SkM3nNHdqPpG5",
+	"30d8j8xa/ybit1dYMvTCxLpLn3RZrhJJFx/pECCDA1KchFwsikUhWn1Ap4MFBU8WxeICMgia9ylOuSiI",
+	"eSfXxppe3naYLJPUafFkaUDBM2QJZJRjaRIE6RoZKYJadWClo8BCBpOvcI8Jc9+mcEwpPzGXfi3FMXgX",
+	"p7g/Lgq5Su8YXaKlQ6hsmYjlV1GEdjO8/wkvQcF/+Z+1yu93Kk8Lldw7HngabcSyIcstqNU6g9jUtaYW",
+	"FAw3n4abb8P1l3S+He/ej98/DC8/DtevBav/GQAA///iTzAewQMAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
