@@ -1,12 +1,12 @@
 import Navigation from "@/components/common/Navigation";
-import PostList from "@/app/home/PostsList";
+import { Timeline } from "./components/timeline";
 
 const Page = () => {
   return (
-    <div className="flex justify-center">
+    <div className="flex h-dvh justify-center">
       <Navigation />
       <main>
-        <PostList />
+        <Timeline />
       </main>
     </div>
   );
