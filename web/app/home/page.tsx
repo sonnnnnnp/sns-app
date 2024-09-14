@@ -1,5 +1,5 @@
-import Navigation from "../components/common/Navigation";
-import PostList from "./PostsList";
+import Navigation from "@/components/common/Navigation";
+import PostList from "@/app/home/PostsList";
 
 export default function Page() {
   return (
