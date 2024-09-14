@@ -1,7 +1,7 @@
 import Navigation from "@/components/common/Navigation";
 import { Timeline } from "./components/timeline";
 
-export default function Page() {
+const Page = () => {
   return (
     <div className="flex h-dvh justify-center">
       <Navigation />
@@ -10,4 +10,5 @@ export default function Page() {
       </main>
     </div>
   );
-}
+};
+export default Page;
