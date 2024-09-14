@@ -5,14 +5,15 @@ import { usePathname } from "next/navigation";
 export default function Navigation() {
   const pathname = usePathname();
   const navItems = [
-    { href: "/home", label: "Home" },
-    { href: "/notifications", label: "Notifications" },
-    { href: "/settings", label: "Settings" },
-    { href: "/live", label: "Live" },
-    { href: "/messages", label: "Messages" },
-    { href: "/calls", label: "Calls" },
+    { href: "/home", label: "ホーム" },
+    { href: "/search", label: "検索" },
+    { href: "/calls", label: "通話" },
+    { href: "/live", label: "ライブ" },
+    { href: "/messages", label: "メッセージ" },
+    { href: "/notifications", label: "通知" },
+    { href: "/settings", label: "設定" },
   ];
-
+  
   return (
     <div className="w-52 hidden md:block">
       <div className="fixed">

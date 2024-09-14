@@ -15,9 +15,9 @@ export function Post(props: {
 }) {
   return (
     <Card className="flex flex-col items-start gap-2 text-left text-sm md:w-[580px]">
-      <CardContent className="w-full grid gap-6 pt-5 pb-2">
-        <div className="space-x-3 flex">
-          <div>
+      <CardContent className="w-full grid gap-6 p-3 py-1">
+        <div className="flex">
+          <div className="mt-2 mr-2">
             <Link href={`/users/${props.username}`}>
               <Avatar>
                 <AvatarImage src={props.avatar_image_url} />
@@ -39,28 +39,44 @@ export function Post(props: {
                 <PostHandler />
               </div>
             </div>
-            <div className="mt-1 mb-2">
+            <div className="mb-1.5">
               <p className="text-sm text-muted-foreground">{props.content}</p>
             </div>
             <div className="flex items-center justify-between opacity-60">
-              <Button variant={"ghost"} size={"sm"}>
+              <Button
+                className="p-2.5 rounded-full"
+                variant={"ghost"}
+                size={"sm"}
+              >
                 <MessageCircle
                   className="cursor-pointer"
                   size={16}
                   strokeWidth={1.6}
                 />
               </Button>
-              <Button variant={"ghost"} size={"sm"}>
+              <Button
+                className="p-2.5 rounded-full"
+                variant={"ghost"}
+                size={"sm"}
+              >
                 <Repeat2
                   className="cursor-pointer"
                   size={16}
                   strokeWidth={1.6}
                 />
               </Button>
-              <Button variant={"ghost"} size={"sm"}>
+              <Button
+                className="p-2.5 rounded-full"
+                variant={"ghost"}
+                size={"sm"}
+              >
                 <Heart className="cursor-pointer" size={16} strokeWidth={1.6} />
               </Button>
-              <Button variant={"ghost"} size={"sm"}>
+              <Button
+                className="p-2.5 rounded-full"
+                variant={"ghost"}
+                size={"sm"}
+              >
                 <Share className="cursor-pointer" size={16} strokeWidth={1.6} />
               </Button>
             </div>

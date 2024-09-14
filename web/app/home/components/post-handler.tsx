@@ -24,7 +24,7 @@ export function PostHandler() {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant={"ghost"} size={"sm"}>
+        <Button className="p-2.5 rounded-full" variant={"ghost"} size={"sm"}>
           <EllipsisVertical size={16} strokeWidth={1.6} />
         </Button>
       </DropdownMenuTrigger>
