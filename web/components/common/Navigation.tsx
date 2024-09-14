@@ -14,7 +14,7 @@ export default function Navigation() {
   ];
 
   return (
-    <div className="w-52">
+    <div className="w-52 hidden md:block">
       <div className="fixed">
         <nav className="text-xl">
           <ul>
