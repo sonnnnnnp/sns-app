@@ -15,10 +15,10 @@ export function Post() {
               <AvatarImage src="/kaworu_icon.jpg" />
             </Avatar>
           </div>
-          <div>
+          <div className="flex-1">
             <div className="flex items-center">
               <div className="flex items-center gap-1">
-                <p className="text-sm font-semibold leading-none">カヲル</p>
+                <p className="text-sm font-semibold">カヲル</p>
                 <p className="text-sm text-muted-foreground">@kaworu</p>
               </div>
               <div className="ml-auto">
@@ -26,7 +26,7 @@ export function Post() {
               </div>
             </div>
             <div className="mt-1 mb-2">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {
                   "朝目覚まし止めめたつの罠にしまった朝目覚まし止めめたつの罠にしまった朝目覚まし止めめたつの罠にしまった朝目覚まし止めめたつの罠にしまった"
                 }
