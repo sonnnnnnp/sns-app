@@ -1,4 +1,4 @@
-.PHONY: help setup up down openapi
+.PHONY: help setup up down tidy
 
 #? help: ヘルプコマンド
 help: Makefile
@@ -23,15 +23,21 @@ up:
 down:
 	docker compose down
 
-#? openapi: OpenAPI からコードを生成
-openapi:
-	docker compose run --rm api bash -c "cd pkg && oapi-codegen -package oapi ../api/openapi.yaml > ./oapi/server.go"
-
-ent-new:
-	docker compose run --rm api bash -c "cd pkg && go run -mod=mod entgo.io/ent/cmd/ent new User"
-
-ent-gen:
-	docker compose run --rm api bash -c "go generate ./pkg/ent"
-
+#? tidy: Go モジュールの依存関係を整理
 tidy:
 	docker compose run --rm api bash -c "go mod tidy"
+
+.PHONY: openapi ent-new ent-gen
+
+#? oapi: OpenAPI からコードを生成
+oapi:
+	docker compose run --rm api bash -c "cd pkg && oapi-codegen -package oapi ../api/openapi.yaml > ./oapi/server.go"
+	npx openapi-typescript ./api/openapi.yaml -o ./web/lib/api/client.ts
+
+#? ent-new: ent エンティティを生成
+ent-new:
+	docker compose run --rm api bash -c "cd pkg && go run -mod=mod entgo.io/ent/cmd/ent new $(name)"
+
+#? ent-gen: ent エンティティからコードを生成
+ent-gen:
+	docker compose run --rm api bash -c "go generate ./pkg/ent"
