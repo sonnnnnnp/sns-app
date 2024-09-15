@@ -25,4 +25,13 @@ down:
 
 #? openapi: OpenAPI からコードを生成
 openapi:
-	docker compose run --rm api bash -c "cd internal/pkg && oapi-codegen -package oapi ../../api/openapi.yaml > ./oapi/server.go"
+	docker compose run --rm api bash -c "cd pkg && oapi-codegen -package oapi ../api/openapi.yaml > ./oapi/server.go"
+
+ent-new:
+	docker compose run --rm api bash -c "cd pkg && go run -mod=mod entgo.io/ent/cmd/ent new User"
+
+ent-gen:
+	docker compose run --rm api bash -c "go generate ./pkg/ent"
+
+tidy:
+	docker compose run --rm api bash -c "go mod tidy"

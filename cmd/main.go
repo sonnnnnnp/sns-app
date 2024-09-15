@@ -1,15 +1,16 @@
 package main
 
 import (
-	"github.com/sonnnnnnp/sns-app/internal/app"
+	server "github.com/sonnnnnnp/sns-app/internal"
+
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 )
 
 func main() {
 	cfg, err := config.New()
-	if err!= nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 
-	app.Init(cfg)
+	server.Init(cfg)
 }

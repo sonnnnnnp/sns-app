@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: sns-app
-  description: ""
+  description: ''
   version: 1.0.0
 tags: []
 paths:
@@ -9,13 +9,13 @@ paths:
     post:
       summary: 認証トークンを更新
       deprecated: false
-      description: ""
+      description: ''
       operationId: RefreshAuthorization
       tags: []
       parameters: []
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
@@ -29,7 +29,7 @@ paths:
                     description: レスポンスコード
                   data: &ref_0
                     description: データ
-                    $ref: "#/components/schemas/Authorization"
+                    $ref: '#/components/schemas/Authorization'
                 required:
                   - ok
                   - code
@@ -40,13 +40,13 @@ paths:
     post:
       summary: LINE でログイン
       deprecated: false
-      description: ""
+      description: ''
       operationId: AuthorizeWithLINE
       tags: []
       parameters: []
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
@@ -69,19 +69,19 @@ paths:
     get:
       summary: ユーザーを取得する
       deprecated: false
-      description: ""
+      description: ''
       operationId: GetUser
       tags: []
       parameters:
         - name: user_id
           in: path
-          description: ""
+          description: ''
           required: true
           schema:
             type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
@@ -95,7 +95,7 @@ paths:
                     description: レスポンスコード
                   data:
                     description: データ
-                    $ref: "#/components/schemas/User"
+                    $ref: '#/components/schemas/User'
                 required:
                   - ok
                   - code
@@ -110,6 +110,7 @@ components:
         id:
           type: string
           description: ID番号
+          format: uuid
         username:
           type: string
           description: 名前
@@ -117,20 +118,19 @@ components:
           type: string
         avatar_url:
           type: string
-          nullable: true
         cover_url:
           type: string
-          nullable: true
         biography:
           type: string
-          nullable: true
         birthdate:
           type: string
-          nullable: true
+          format: date-time
         updated_at:
           type: string
+          format: date-time
         created_at:
           type: string
+          format: date-time
       required:
         - id
         - username
@@ -155,7 +155,7 @@ components:
         - access_token
         - refresh_token
     Response:
-      title: ""
+      title: ''
       type: object
       properties:
         ok:

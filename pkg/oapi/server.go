@@ -15,10 +15,12 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/labstack/echo/v4"
 	"github.com/oapi-codegen/runtime"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // Authorization defines model for Authorization.
@@ -30,16 +32,16 @@ type Authorization struct {
 
 // User defines model for User.
 type User struct {
-	AvatarUrl   *string `json:"avatar_url"`
-	Biography   *string `json:"biography"`
-	Birthdate   *string `json:"birthdate"`
-	CoverUrl    *string `json:"cover_url"`
-	CreatedAt   string  `json:"created_at"`
-	DisplayName string  `json:"display_name"`
+	AvatarUrl   string    `json:"avatar_url"`
+	Biography   string    `json:"biography"`
+	Birthdate   time.Time `json:"birthdate"`
+	CoverUrl    string    `json:"cover_url"`
+	CreatedAt   time.Time `json:"created_at"`
+	DisplayName string    `json:"display_name"`
 
 	// Id ID番号
-	Id        string `json:"id"`
-	UpdatedAt string `json:"updated_at"`
+	Id        openapi_types.UUID `json:"id"`
+	UpdatedAt time.Time          `json:"updated_at"`
 
 	// Username 名前
 	Username string `json:"username"`
@@ -607,18 +609,19 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"AA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
