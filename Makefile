@@ -1,18 +1,29 @@
-.PHONY:
+.PHONY: help setup up down openapi
+
+#? help: ヘルプコマンド
+help: Makefile
+	@echo ""
+	@echo "Usage:"
+	@echo "  make [target]"
+	@echo ""
+	@echo "Targets:"
+	@sed -n "s/^#?//p" $< | column -t -s ":" |  sort | sed -e "s/^/ /"
+
+#? setup: アプリケーションのセットアップ
 setup:
 	docker compose build --no-cache
 	cd web && [ -f .env ] || cp .env.example .env && npm ci
 
-.PHONY:
+#? up: アプリケーションの起動
 up:
 	docker compose up -d
 	cd web && npm run dev
 
-.PHONY:
+#? down: アプリケーションの停止
 down:
 	docker compose down
 
-.PHONY:
-oapi:
+#? openapi: OpenAPI からコードを生成
+openapi:
 	docker compose run --rm api bash -c "cd internal/pkg && oapi-codegen -package oapi ../../api/api.yaml > ./oapi/server.go"
 	go mod tidy
