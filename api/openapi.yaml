@@ -1,0 +1,176 @@
+openapi: 3.0.1
+info:
+  title: sns-app
+  description: ""
+  version: 1.0.0
+tags: []
+paths:
+  /authorize/refresh:
+    post:
+      summary: 認証トークンを更新
+      deprecated: false
+      description: ""
+      operationId: RefreshAuthorization
+      tags: []
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: &ref_0
+                    description: データ
+                    $ref: "#/components/schemas/Authorization"
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security: []
+  /authorize/line:
+    post:
+      summary: LINE でログイン
+      deprecated: false
+      description: ""
+      operationId: AuthorizeWithLINE
+      tags: []
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: *ref_0
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security: []
+  /users/{user_id}:
+    get:
+      summary: ユーザーを取得する
+      deprecated: false
+      description: ""
+      operationId: GetUser
+      tags: []
+      parameters:
+        - name: user_id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data:
+                    description: データ
+                    $ref: "#/components/schemas/User"
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security: []
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID番号
+        username:
+          type: string
+          description: 名前
+        display_name:
+          type: string
+        avatar_url:
+          type: string
+          nullable: true
+        cover_url:
+          type: string
+          nullable: true
+        biography:
+          type: string
+          nullable: true
+        birthdate:
+          type: string
+          nullable: true
+        updated_at:
+          type: string
+        created_at:
+          type: string
+      required:
+        - id
+        - username
+        - display_name
+        - avatar_url
+        - cover_url
+        - biography
+        - birthdate
+        - updated_at
+        - created_at
+    Authorization:
+      type: object
+      properties:
+        user_id:
+          type: string
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+      required:
+        - user_id
+        - access_token
+        - refresh_token
+    Response:
+      title: ""
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: 正常に処理を終了したかどうか
+        code:
+          type: integer
+          description: レスポンスコード
+        data:
+          type: object
+          properties: {}
+          description: データ
+      required:
+        - ok
+        - code
+        - data
+  securitySchemes: {}
+servers: []

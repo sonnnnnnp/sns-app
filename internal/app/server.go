@@ -9,22 +9,44 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 )
 
+type Response struct {
+	Ok   bool        `json:"ok"`
+	Code int         `json:"code"`
+	Data interface{} `json:"data"`
+}
+
 type Server struct{}
 
 func NewServer() Server {
 	return Server{}
 }
 
-func (Server) PostAuthorizeLine(ctx echo.Context) error {
-	return ctx.JSON(http.StatusCreated, &oapi.LoginResponse{
-		AccessToken:  "1234567890",
-		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
-		Username:     "or4p90.fo0qg4",
+func (s Server) json(ctx echo.Context, data interface{}) error {
+	return ctx.JSON(http.StatusOK, &Response{
+		Code: http.StatusOK,
+		Data: data,
+		Ok:   true,
 	})
 }
 
-func (Server) GetUsersUserId(ctx echo.Context, userId string) error {
-	return ctx.JSON(http.StatusOK, &oapi.User{
+func (s Server) AuthorizeWithLINE(ctx echo.Context) error {
+	return s.json(ctx, &oapi.Authorization{
+		AccessToken:  "1234567890",
+		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
+		UserId:       "or4p90.fo0qg4",
+	})
+}
+
+func (s Server) RefreshAuthorization(ctx echo.Context) error {
+	return s.json(ctx, &oapi.Authorization{
+		AccessToken:  "1234567890",
+		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
+		UserId:       "or4p90.fo0qg4",
+	})
+}
+
+func (s Server) GetUser(ctx echo.Context, userId string) error {
+	return s.json(ctx, &oapi.User{
 		Id:          userId,
 		Username:    "or4p90.fo0qg4",
 		DisplayName: "辰男_伊藤31",

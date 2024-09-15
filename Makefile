@@ -7,7 +7,7 @@ help: Makefile
 	@echo "  make [target]"
 	@echo ""
 	@echo "Targets:"
-	@sed -n "s/^#?//p" $< | column -t -s ":" |  sort | sed -e "s/^/ /"
+	@sed -n "s/^#?//p" $< | column -t -s ":"
 
 #? setup: アプリケーションのセットアップ
 setup:
@@ -25,5 +25,4 @@ down:
 
 #? openapi: OpenAPI からコードを生成
 openapi:
-	docker compose run --rm api bash -c "cd internal/pkg && oapi-codegen -package oapi ../../api/api.yaml > ./oapi/server.go"
-	go mod tidy
+	docker compose run --rm api bash -c "cd internal/pkg && oapi-codegen -package oapi ../../api/openapi.yaml > ./oapi/server.go"
