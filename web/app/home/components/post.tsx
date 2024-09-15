@@ -14,7 +14,7 @@ export function Post(props: {
   created_at: number;
 }) {
   return (
-    <Card className="flex flex-col items-start gap-2 text-left text-sm md:w-[580px]">
+    <Card className="flex text-sm w-[calc(100dvw_-_1.5rem)] md:w-[580px]">
       <CardContent className="w-full grid gap-6 p-3 py-1">
         <div className="flex">
           <div className="mt-2 mr-2">

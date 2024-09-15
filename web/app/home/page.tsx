@@ -7,7 +7,7 @@ const Page = () => {
     <div className="flex h-dvh justify-center">
       <Navigation />
       {/* <Nav /> */}
-      <main>
+      <main className="">
         <Timeline />
       </main>
     </div>
