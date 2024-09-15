@@ -47,6 +47,11 @@ type User struct {
 	Username string `json:"username"`
 }
 
+// AuthorizeWithLineParams defines parameters for AuthorizeWithLine.
+type AuthorizeWithLineParams struct {
+	Code string `form:"code" json:"code"`
+}
+
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
@@ -120,8 +125,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// AuthorizeWithLINE request
-	AuthorizeWithLINE(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// AuthorizeWithLine request
+	AuthorizeWithLine(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RefreshAuthorization request
 	RefreshAuthorization(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -130,8 +135,8 @@ type ClientInterface interface {
 	GetUser(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) AuthorizeWithLINE(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthorizeWithLINERequest(c.Server)
+func (c *Client) AuthorizeWithLine(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthorizeWithLineRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -166,8 +171,8 @@ func (c *Client) GetUser(ctx context.Context, userId string, reqEditors ...Reque
 	return c.Client.Do(req)
 }
 
-// NewAuthorizeWithLINERequest generates requests for AuthorizeWithLINE
-func NewAuthorizeWithLINERequest(server string) (*http.Request, error) {
+// NewAuthorizeWithLineRequest generates requests for AuthorizeWithLine
+func NewAuthorizeWithLineRequest(server string, params *AuthorizeWithLineParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -183,6 +188,24 @@ func NewAuthorizeWithLINERequest(server string) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "code", runtime.ParamLocationQuery, params.Code); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("POST", queryURL.String(), nil)
@@ -297,8 +320,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// AuthorizeWithLINEWithResponse request
-	AuthorizeWithLINEWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*AuthorizeWithLINEResponse, error)
+	// AuthorizeWithLineWithResponse request
+	AuthorizeWithLineWithResponse(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*AuthorizeWithLineResponse, error)
 
 	// RefreshAuthorizationWithResponse request
 	RefreshAuthorizationWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error)
@@ -307,7 +330,7 @@ type ClientWithResponsesInterface interface {
 	GetUserWithResponse(ctx context.Context, userId string, reqEditors ...RequestEditorFn) (*GetUserResponse, error)
 }
 
-type AuthorizeWithLINEResponse struct {
+type AuthorizeWithLineResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
@@ -321,7 +344,7 @@ type AuthorizeWithLINEResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r AuthorizeWithLINEResponse) Status() string {
+func (r AuthorizeWithLineResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -329,7 +352,7 @@ func (r AuthorizeWithLINEResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r AuthorizeWithLINEResponse) StatusCode() int {
+func (r AuthorizeWithLineResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -394,13 +417,13 @@ func (r GetUserResponse) StatusCode() int {
 	return 0
 }
 
-// AuthorizeWithLINEWithResponse request returning *AuthorizeWithLINEResponse
-func (c *ClientWithResponses) AuthorizeWithLINEWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*AuthorizeWithLINEResponse, error) {
-	rsp, err := c.AuthorizeWithLINE(ctx, reqEditors...)
+// AuthorizeWithLineWithResponse request returning *AuthorizeWithLineResponse
+func (c *ClientWithResponses) AuthorizeWithLineWithResponse(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*AuthorizeWithLineResponse, error) {
+	rsp, err := c.AuthorizeWithLine(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseAuthorizeWithLINEResponse(rsp)
+	return ParseAuthorizeWithLineResponse(rsp)
 }
 
 // RefreshAuthorizationWithResponse request returning *RefreshAuthorizationResponse
@@ -421,15 +444,15 @@ func (c *ClientWithResponses) GetUserWithResponse(ctx context.Context, userId st
 	return ParseGetUserResponse(rsp)
 }
 
-// ParseAuthorizeWithLINEResponse parses an HTTP response from a AuthorizeWithLINEWithResponse call
-func ParseAuthorizeWithLINEResponse(rsp *http.Response) (*AuthorizeWithLINEResponse, error) {
+// ParseAuthorizeWithLineResponse parses an HTTP response from a AuthorizeWithLineWithResponse call
+func ParseAuthorizeWithLineResponse(rsp *http.Response) (*AuthorizeWithLineResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &AuthorizeWithLINEResponse{
+	response := &AuthorizeWithLineResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -524,7 +547,7 @@ func ParseGetUserResponse(rsp *http.Response) (*GetUserResponse, error) {
 type ServerInterface interface {
 	// LINE でログイン
 	// (POST /authorize/line)
-	AuthorizeWithLINE(ctx echo.Context) error
+	AuthorizeWithLine(ctx echo.Context, params AuthorizeWithLineParams) error
 	// 認証トークンを更新
 	// (POST /authorize/refresh)
 	RefreshAuthorization(ctx echo.Context) error
@@ -538,12 +561,21 @@ type ServerInterfaceWrapper struct {
 	Handler ServerInterface
 }
 
-// AuthorizeWithLINE converts echo context to params.
-func (w *ServerInterfaceWrapper) AuthorizeWithLINE(ctx echo.Context) error {
+// AuthorizeWithLine converts echo context to params.
+func (w *ServerInterfaceWrapper) AuthorizeWithLine(ctx echo.Context) error {
 	var err error
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params AuthorizeWithLineParams
+	// ------------- Required query parameter "code" -------------
+
+	err = runtime.BindQueryParameter("form", true, true, "code", ctx.QueryParams(), &params.Code)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter code: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.AuthorizeWithLINE(ctx)
+	err = w.Handler.AuthorizeWithLine(ctx, params)
 	return err
 }
 
@@ -600,7 +632,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
-	router.POST(baseURL+"/authorize/line", wrapper.AuthorizeWithLINE)
+	router.POST(baseURL+"/authorize/line", wrapper.AuthorizeWithLine)
 	router.POST(baseURL+"/authorize/refresh", wrapper.RefreshAuthorization)
 	router.GET(baseURL+"/users/:user_id", wrapper.GetUser)
 
@@ -609,19 +641,19 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xV32sTSxT+Vy7n3sdtkt77tm8XFCmID4L4UEqY7p4k02ZnxpnZQgx92F2ollJaCraI",
-	"iA9K1WqxUH9UKf4zY9r+GTKzaZPNbkWfpOBLsuzZOec73/edM30IeCQ4Q6YV+H1QQQcj4h7/j3WHS3qf",
-	"aMqZfSEkFyg1RRcmQYBKNTVfRBfVPYHgg9KSsjYseyCxJVF1fvBFrFA2aVgRc8fvxVRiCP7sxYdesepk",
-	"jTnvPA+fX8BA2xp3FMoK8EtEE9mMZbcS2DzlbUlEp3dJVOpOSDTaaIvLiGjwwb6Y0jRC8MpHAr6El5cL",
-	"JBKNYdPm+dmMIVWiS3pNRiKsTJrzGqIKJBW5hDBz7fTR3mDjE3ijKnHsiC2LI8JfBmV1OgdUrDzYXB+s",
-	"rpfPTAjtoFxkmejSG5dtnNNxwcblKTRRoLnsFIuEshZ3XFLddSCZmiJCgAdLKFXeyHStUWvYXrlARgQF",
-	"H/6rNWrT4IEguuPcVSfD0cF6lzLHhuDK8WhN6AZqJgT/YsTwLtWdmzO3rjtLK8GZyn36b6Nh/wLONDKX",
-	"gAjRpYFLUV9Q+WDmQ1t2ecDDCilM9takn0321GSH9iE9NNmxyVZH4lCmsY3S2Yxol/gfiS3w4e/6aF3U",
-	"h7uiXlwUlprFctWT/eeDoyOTvBk82D3dXDHp1umH9NuXFZPsmOSZSdZM8tokKyZZG+GY57yLhJVcwhed",
-	"/KFziAVYLWcRgMuiMIgl1T3wZ+c8UHEUEdkDHyz3f5nkpcn2TXpg0hcmO3QHxqQc7prL1bydf1Ck44+g",
-	"v0XQs731s1fHJntoqUjfOWa2Tp68P9k+yHW1S0bV+8ObZdn218YKUW+gdleIHW9JItQoFfizfaAWgx15",
-	"8CDfeWPX1Kg5LWP0xgSd3H9zV9EgjpEr6QuT7TpHfHS/W4ON7cHXHZM8NumazbX8PQAA//+rEflPEAkA",
-	"AA==",
+	"H4sIAAAAAAAC/+xVz2sUSxD+Vx713nGyu3nvNrcHigSCB0E8hLB0Zmp3O9np7nT3BNYlh5mBaAghIWCC",
+	"iHhQokaDgfgjSvCfaTfJnyHds8nuZCaiJ1G87A7T1VVffd9XNX0IeCQ4Q6YV+H1QQQcj4h7/j3WHS3qX",
+	"aMqZfSEkFyg1RXdMggCVamq+gO5U9wSCD0pLytqw7IHElkTV+UZErFA2aVhx5q4vxlRiCP7MRaBXrHq5",
+	"xqx3nofPzWOgbY3bCmUF+CWiiWzGslsJbI7ytiSi07viVOpOSDTa0xaXEdHgg30xoWmE4JWvBHwJry4X",
+	"SCQaw6bN870ZQ6pEl/SajERYmTTnNUQVSCpyCWHq2umDvcHGB/BGVeLYEVsWR4Q/DMrqdA6oWHmwuT5Y",
+	"XS/fuSS0g3KR5VKX3rhs45yOCzYuT6GJAs1lp1gklLW445LqrgPJ1AQRAjxYQqnyRiZrjVrD9soFMiIo",
+	"+PBfrVGbBA8E0R3nrjoZjg7Wu5Q5NgRXjkdrQjdQUyH4FyOGd6juTNtQm0WSCDVKBf5MH6gtuhijtK3l",
+	"3ELAQ4Rx4rSM0RvObtU0zdpgJThTuf3/bTTsX8CZRuZwESG6NHDI6vMqn/dRvuLwuPIlhU322qQfTfbY",
+	"ZIf2IT002bHJVkeaU6axjdK5l2iX+B+JLfDh7/poC9WHK6he3D+W8YVy1ZP9p4OjI5O8GtzbPd1cMenW",
+	"6bv0y6cVk+yY5IlJ1kzy0iQrJlkb4ZjjvIuElczHF5yrHLcOYLVLigBcFoVBLKnugT8z64GKo4jIHvgw",
+	"PXXz+l8meW6yfZMemPSZyQ7dhTGHDFfY1Sa5lQcU6fgj6E8R9Gxv/ezFscnuWyrSN46ZrZNHb0+2D3Jd",
+	"7e5S9f7wg7Vs+2tjhag3ULsvU/W8200yGvfR1+83n3jHyC/pC5PtOke8d79bg43twecdkzw06ZrNtfw1",
+	"AAD//zF0T5ZnCQAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

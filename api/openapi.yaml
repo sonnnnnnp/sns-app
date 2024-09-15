@@ -10,7 +10,7 @@ paths:
       summary: 認証トークンを更新
       deprecated: false
       description: ''
-      operationId: RefreshAuthorization
+      operationId: refreshAuthorization
       tags: []
       parameters: []
       responses:
@@ -41,9 +41,15 @@ paths:
       summary: LINE でログイン
       deprecated: false
       description: ''
-      operationId: AuthorizeWithLINE
+      operationId: authorizeWithLine
       tags: []
-      parameters: []
+      parameters:
+        - name: code
+          in: query
+          description: ''
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: ''
@@ -70,7 +76,7 @@ paths:
       summary: ユーザーを取得する
       deprecated: false
       description: ''
-      operationId: GetUser
+      operationId: getUser
       tags: []
       parameters:
         - name: user_id

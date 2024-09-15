@@ -7,16 +7,18 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	echomiddleware "github.com/labstack/echo/v4/middleware"
 
 	_ "github.com/lib/pq"
 
+	"github.com/sonnnnnnp/sns-app/internal/middleware"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type Response struct {
-	Ok   bool        `json:"ok"`
+	OK   bool        `json:"ok"`
 	Code int         `json:"code"`
 	Data interface{} `json:"data"`
 }
@@ -31,24 +33,24 @@ func NewServer(db *ent.Client) Server {
 	}
 }
 
-func (s Server) json(ctx echo.Context, data interface{}) error {
+func (s Server) json(ctx echo.Context, code int, data interface{}) error {
 	return ctx.JSON(http.StatusOK, &Response{
-		Code: http.StatusOK,
+		Code: code,
+		OK:   code == http.StatusOK,
 		Data: data,
-		Ok:   true,
 	})
 }
 
-func (s Server) AuthorizeWithLINE(ctx echo.Context) error {
-	return s.json(ctx, &oapi.Authorization{
+func (s Server) AuthorizeWithLine(ctx echo.Context, params oapi.AuthorizeWithLineParams) error {
+	return s.json(ctx, http.StatusOK, &oapi.Authorization{
 		AccessToken:  "1234567890",
 		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
-		UserId:       "or4p90.fo0qg4",
+		UserId:       params.Code,
 	})
 }
 
 func (s Server) RefreshAuthorization(ctx echo.Context) error {
-	return s.json(ctx, &oapi.Authorization{
+	return s.json(ctx, http.StatusOK, &oapi.Authorization{
 		AccessToken:  "1234567890",
 		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
 		UserId:       "or4p90.fo0qg4",
@@ -56,14 +58,12 @@ func (s Server) RefreshAuthorization(ctx echo.Context) error {
 }
 
 func (s Server) GetUser(ctx echo.Context, userId string) error {
-	u, err := s.db.Debug().User.Create().SetUsername(userId).SetDisplayName(userId).Save(ctx.Request().Context())
+	u, err := s.db.User.Create().SetUsername(userId).SetDisplayName(userId).Save(ctx.Request().Context())
 	if err != nil {
-		return s.json(ctx, &struct {
-			Message string `json:"message"`
-		}{Message: fmt.Sprintf("%e", err)})
+		return echo.NewHTTPError(http.StatusBadRequest, "failed to create a user")
 	}
 
-	return s.json(ctx, &oapi.User{
+	return s.json(ctx, http.StatusOK, &oapi.User{
 		Id:          u.ID,
 		Username:    u.Username,
 		DisplayName: u.DisplayName,
@@ -90,6 +90,35 @@ func Init(cfg *config.Config) {
 	server := NewServer(db)
 
 	e := echo.New()
+
+	e.HTTPErrorHandler = func(err error, ctx echo.Context) {
+		if he, ok := err.(*echo.HTTPError); ok {
+			ctx.JSON(http.StatusOK, &Response{
+				Code: he.Code,
+				OK:   false,
+				Data: he.Message,
+			})
+			return
+		}
+		ctx.JSON(http.StatusOK, &Response{
+			Code: http.StatusInternalServerError,
+			OK:   false,
+			Data: &struct {
+				Message string `json:"message"`
+			}{
+				// TODO: hide error details under production mode
+				Message: fmt.Sprintf("Internal server error: %v", err),
+			},
+		})
+	}
+
+	swagger, err := oapi.GetSwagger()
+	if err != nil {
+		panic(err)
+	}
+
+	e.Use(echomiddleware.Logger())
+	e.Use(middleware.RequestValidatorMiddleware(swagger))
 
 	oapi.RegisterHandlers(e, server)
 
