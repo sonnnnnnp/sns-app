@@ -23,7 +23,9 @@
 
 ### Getting Started
 
-セットアップ
+#### Setup
+
+アプリケーションの準備
 
 ```shell
 make setup
@@ -39,4 +41,12 @@ make up
 
 ```shell
 make down
+```
+
+#### Help
+
+その他のコマンドは以下を実行して参照！
+
+```shell
+make help
 ```
