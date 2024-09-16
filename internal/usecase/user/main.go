@@ -1,10 +1,10 @@
-package usecase
+package user_usecase
 
 import (
 	"context"
 
 	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
-	repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
+	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
 )
 
 type IUserUsecase interface {
@@ -12,10 +12,10 @@ type IUserUsecase interface {
 }
 
 type UserUsecase struct {
-	userRepo *repository.UserRepository
+	userRepo *user_repository.UserRepository
 }
 
-func NewUserUsecase(userRepo *repository.UserRepository) *UserUsecase {
+func New(userRepo *user_repository.UserRepository) *UserUsecase {
 	return &UserUsecase{
 		userRepo: userRepo,
 	}

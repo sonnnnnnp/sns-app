@@ -1,4 +1,4 @@
-package repository
+package user_repository
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type UserRepository struct {
 	db *ent.Client
 }
 
-func NewUserRepository(db *ent.Client) *UserRepository {
+func New(db *ent.Client) *UserRepository {
 	return &UserRepository{
 		db: db,
 	}

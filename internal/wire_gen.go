@@ -16,8 +16,8 @@ import (
 // Injectors from wire.go:
 
 func Init(db *ent.Client) *controller.Controller {
-	userRepository := repository.NewUserRepository(db)
-	userUsecase := usecase.NewUserUsecase(userRepository)
+	userRepository := user_repository.New(db)
+	userUsecase := user_usecase.New(userRepository)
 	controllerController := controller.New(userUsecase)
 	return controllerController
 }
