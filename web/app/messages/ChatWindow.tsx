@@ -12,7 +12,7 @@ const ChatWindow = () => {
   return (
     <div className="hidden md:flex h-full">
       <Separator orientation="vertical" className="h-full" />
-      <div className="flex-1 overflow-hidden max-w-[480px]">
+      <div className="flex flex-col max-w-[480px]">
         <ScrollableChatMessageList>
           {[...Array(30)].map((_, i) => (
             <ChatBubble key={i}>
@@ -30,19 +30,20 @@ const ChatWindow = () => {
             </ChatBubbleMessage>
           </ChatBubble>
         </ScrollableChatMessageList>
+        {/* input */}
         <div>
           <Separator />
-          <div>
+          <div className="flex items-center p-1">
             <ChatInput
               placeholder="Type your message here..."
               className="min-h-0"
             />
-            <Button size="sm" className="ml-auto mt-2 gap-1.5">
-              Send Message
-              {/* <CornerDownLeft className="size-3.5" /> */}
+            <Button size="sm" className="ml-1">
+              送信
             </Button>
           </div>
         </div>
+        {/* input */}
       </div>
     </div>
   );
