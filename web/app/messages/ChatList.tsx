@@ -21,7 +21,7 @@ const ChatList = () => {
         </div>
       </div>
       <Separator />
-      <ScrollArea className="flex-1 overflow-y-auto">
+      <ScrollArea className="flex-1">
         {[...Array(30)].map((_, index) => (
           <ChatListItem key={index} />
         ))}
