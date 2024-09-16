@@ -1,9 +1,8 @@
 package main
 
 import (
-	server "github.com/sonnnnnnp/sns-app/internal"
-
 	"github.com/sonnnnnnp/sns-app/pkg/config"
+	"github.com/sonnnnnnp/sns-app/pkg/server"
 )
 
 func main() {
@@ -12,5 +11,5 @@ func main() {
 		panic(err)
 	}
 
-	server.Init(cfg)
+	server.Run(cfg)
 }
