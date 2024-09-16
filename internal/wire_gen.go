@@ -4,7 +4,7 @@
 //go:build !wireinject
 // +build !wireinject
 
-package wire
+package internal
 
 import (
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"

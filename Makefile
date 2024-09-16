@@ -44,4 +44,4 @@ ent-gen:
 
 #? wire: 依存関係の自動生成
 wire:
-	docker compose run --rm api bash -c "cd ./pkg/wire/config && wire gen && mv wire_gen.go ../wire_gen.go"
+	docker compose run --rm api bash -c "cd ./internal && wire gen"

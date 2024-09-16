@@ -9,15 +9,15 @@ import (
 
 	_ "github.com/lib/pq"
 
+	"github.com/sonnnnnnp/sns-app/internal"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/middleware"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
-	"github.com/sonnnnnnp/sns-app/pkg/wire"
 )
 
-func Init(cfg *config.Config) {
+func Run(cfg *config.Config) {
 	db, err := db.Open(&db.ConnectionOptions{
 		Host:     "db",
 		Port:     5432,
@@ -35,8 +35,6 @@ func Init(cfg *config.Config) {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	controller := wire.Init(db)
-
 	e := echo.New()
 
 	e.HTTPErrorHandler = errors.ErrorHandler
@@ -49,7 +47,7 @@ func Init(cfg *config.Config) {
 	e.Use(echomiddleware.Logger())
 	e.Use(middleware.RequestValidatorMiddleware(swagger))
 
-	oapi.RegisterHandlers(e, controller)
+	oapi.RegisterHandlers(e, internal.Init(db))
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
