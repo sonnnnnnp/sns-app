@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SquarePen } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const ChatList = () => {
   return (
@@ -20,11 +21,11 @@ const ChatList = () => {
         </div>
       </div>
       <Separator />
-      <div className="flex-1 overflow-y-auto">
+      <ScrollArea className="flex-1 overflow-y-auto">
         {[...Array(30)].map((_, index) => (
           <ChatListItem key={index} />
         ))}
-      </div>
+      </ScrollArea>
     </div>
   );
 };

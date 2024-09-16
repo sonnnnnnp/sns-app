@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 
 export function TimelineTab() {
   return (
-    <div className="fixed w-[calc(100dvw_-_1.5rem)] md:w-[580px]">
+    <div className="fixed w-[calc(100dvw_-_1.5rem)] md:w-[580px] z-10">
       <Tabs className="h-14 z-50" defaultValue="recommendations">
         <TabsList>
           <TabsTrigger value="recommendations">おすすめ</TabsTrigger>

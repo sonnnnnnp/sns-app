@@ -9,6 +9,7 @@ export function Timeline() {
       <div className="grid gap-y-3 pt-[68px]">
         {[...Array(30)].map((_, i) => (
           <Post
+            key={i}
             username="kaworu"
             display_name="カヲル"
             avatar_image_url="/kaworu_icon.jpg"
