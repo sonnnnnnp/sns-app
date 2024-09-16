@@ -24,7 +24,7 @@ const ChatWindow = () => {
           ))}
           <ChatBubble className="max-w-[80%]" variant={"sent"}>
             <ChatBubbleAvatar src="/kaworu_icon.jpg" />
-            <ChatBubbleMessage>
+            <ChatBubbleMessage variant={"sent"}>
               この問題を解決するには、フレックスボックスレイアウトを使用して水平方向にコンポーネントを配置する必要があります。以下のように
               ChatWindow コンポーネントを修正することをお勧めします：
             </ChatBubbleMessage>
