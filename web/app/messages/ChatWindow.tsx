@@ -12,7 +12,7 @@ const ChatWindow = () => {
   return (
     <div className="hidden md:flex h-full">
       <Separator orientation="vertical" className="h-full" />
-      <div className="flex flex-col max-w-[480px]">
+      <div className="flex flex-col w-[500px]">
         <ScrollableChatMessageList>
           {[...Array(30)].map((_, i) => (
             <ChatBubble key={i}>
