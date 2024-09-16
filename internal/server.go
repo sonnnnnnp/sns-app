@@ -2,31 +2,20 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 
 	_ "github.com/lib/pq"
 
-	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/middleware"
+	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/pkg/wire"
 )
-
-type Response struct {
-	OK   bool        `json:"ok"`
-	Code int         `json:"code"`
-	Data interface{} `json:"data"`
-}
-
-type ErrorMessage struct {
-	Message interface{} `json:"message"`
-}
 
 func Init(cfg *config.Config) {
 	db, err := db.Open(&db.ConnectionOptions{
@@ -46,30 +35,11 @@ func Init(cfg *config.Config) {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	controller := controller.New(db)
+	controller := wire.Init(db)
 
 	e := echo.New()
 
-	e.HTTPErrorHandler = func(err error, ctx echo.Context) {
-		if he, ok := err.(*echo.HTTPError); ok {
-			ctx.JSON(http.StatusOK, &Response{
-				Code: he.Code,
-				OK:   false,
-				Data: &ErrorMessage{
-					Message: he.Message,
-				},
-			})
-			return
-		}
-		ctx.JSON(http.StatusOK, &Response{
-			Code: http.StatusInternalServerError,
-			OK:   false,
-			Data: &ErrorMessage{
-				// TODO: hide error details under production mode
-				Message: fmt.Sprintf("Internal server error: %v", err),
-			},
-		})
-	}
+	e.HTTPErrorHandler = errors.ErrorHandler
 
 	swagger, err := oapi.GetSwagger()
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 )
 
 func (c Controller) GetUser(ctx echo.Context, userId string) error {
-	u, err := c.db.User.Create().SetUsername(userId).SetDisplayName(userId).Save(ctx.Request().Context())
+	u, err := c.userUsecase.CreateUser(ctx.Request().Context(), userId)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "failed to create a user")
 	}

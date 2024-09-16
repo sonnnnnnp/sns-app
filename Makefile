@@ -41,3 +41,7 @@ ent-new:
 #? ent-gen: ent エンティティからコードを生成
 ent-gen:
 	docker compose run --rm api bash -c "go generate ./internal/domain/ent"
+
+#? wire: 依存関係の自動生成
+wire:
+	docker compose run --rm api bash -c "cd ./pkg/wire/config && wire gen && mv wire_gen.go ../wire_gen.go"
