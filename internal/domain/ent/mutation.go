@@ -40,6 +40,7 @@ type UserMutation struct {
 	cover_url     *string
 	biography     *string
 	birthdate     *time.Time
+	line_id       *string
 	created_at    *time.Time
 	updated_at    *time.Time
 	clearedFields map[string]struct{}
@@ -420,6 +421,55 @@ func (m *UserMutation) ResetBirthdate() {
 	delete(m.clearedFields, user.FieldBirthdate)
 }
 
+// SetLineID sets the "line_id" field.
+func (m *UserMutation) SetLineID(s string) {
+	m.line_id = &s
+}
+
+// LineID returns the value of the "line_id" field in the mutation.
+func (m *UserMutation) LineID() (r string, exists bool) {
+	v := m.line_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLineID returns the old "line_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldLineID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLineID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLineID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLineID: %w", err)
+	}
+	return oldValue.LineID, nil
+}
+
+// ClearLineID clears the value of the "line_id" field.
+func (m *UserMutation) ClearLineID() {
+	m.line_id = nil
+	m.clearedFields[user.FieldLineID] = struct{}{}
+}
+
+// LineIDCleared returns if the "line_id" field was cleared in this mutation.
+func (m *UserMutation) LineIDCleared() bool {
+	_, ok := m.clearedFields[user.FieldLineID]
+	return ok
+}
+
+// ResetLineID resets all changes to the "line_id" field.
+func (m *UserMutation) ResetLineID() {
+	m.line_id = nil
+	delete(m.clearedFields, user.FieldLineID)
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (m *UserMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -526,7 +576,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.username != nil {
 		fields = append(fields, user.FieldUsername)
 	}
@@ -544,6 +594,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.birthdate != nil {
 		fields = append(fields, user.FieldBirthdate)
+	}
+	if m.line_id != nil {
+		fields = append(fields, user.FieldLineID)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -571,6 +624,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Biography()
 	case user.FieldBirthdate:
 		return m.Birthdate()
+	case user.FieldLineID:
+		return m.LineID()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	case user.FieldUpdatedAt:
@@ -596,6 +651,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldBiography(ctx)
 	case user.FieldBirthdate:
 		return m.OldBirthdate(ctx)
+	case user.FieldLineID:
+		return m.OldLineID(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case user.FieldUpdatedAt:
@@ -650,6 +707,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBirthdate(v)
+		return nil
+	case user.FieldLineID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLineID(v)
 		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
@@ -707,6 +771,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldBirthdate) {
 		fields = append(fields, user.FieldBirthdate)
 	}
+	if m.FieldCleared(user.FieldLineID) {
+		fields = append(fields, user.FieldLineID)
+	}
 	return fields
 }
 
@@ -733,6 +800,9 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldBirthdate:
 		m.ClearBirthdate()
 		return nil
+	case user.FieldLineID:
+		m.ClearLineID()
+		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
@@ -758,6 +828,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldBirthdate:
 		m.ResetBirthdate()
+		return nil
+	case user.FieldLineID:
+		m.ResetLineID()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()

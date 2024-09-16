@@ -8,11 +8,12 @@ import (
 )
 
 func (c Controller) AuthorizeWithLine(ctx echo.Context, params oapi.AuthorizeWithLineParams) error {
-	return c.json(ctx, http.StatusOK, &oapi.Authorization{
-		AccessToken:  "1234567890",
-		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
-		UserId:       params.Code,
-	})
+	auth, err := c.authUsecase.AuthorizeWithLine(ctx.Request().Context(), params.Code)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "failed to authorize with line")
+	}
+
+	return c.json(ctx, http.StatusOK, &auth)
 }
 
 func (c Controller) RefreshAuthorization(ctx echo.Context) error {

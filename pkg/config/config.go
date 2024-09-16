@@ -8,6 +8,10 @@ type Config struct {
 	DBPassword string `env:"DB_PASSWORD" envDefault:"password"`
 	DBName     string `env:"DB_NAME" envDefault:"db"`
 	DBPort     int    `env:"DB_PORT" envDefault:"5432"`
+
+	LineAuthRedirectURL  string `env:"LINE_AUTH_REDIRECT_URL"`
+	LineAuthClientID     string `env:"LINE_AUTH_CLIENT_ID"`
+	LineAuthClientSecret string `env:"LINE_AUTH_CLIENT_SECRET"`
 }
 
 func New() (*Config, error) {

@@ -26,6 +26,8 @@ const (
 	FieldBiography = "biography"
 	// FieldBirthdate holds the string denoting the birthdate field in the database.
 	FieldBirthdate = "birthdate"
+	// FieldLineID holds the string denoting the line_id field in the database.
+	FieldLineID = "line_id"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -43,6 +45,7 @@ var Columns = []string{
 	FieldCoverURL,
 	FieldBiography,
 	FieldBirthdate,
+	FieldLineID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -106,6 +109,11 @@ func ByBiography(opts ...sql.OrderTermOption) OrderOption {
 // ByBirthdate orders the results by the birthdate field.
 func ByBirthdate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBirthdate, opts...).ToFunc()
+}
+
+// ByLineID orders the results by the line_id field.
+func ByLineID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLineID, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

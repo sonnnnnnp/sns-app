@@ -85,6 +85,11 @@ func Birthdate(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldBirthdate, v))
 }
 
+// LineID applies equality check predicate on the "line_id" field. It's identical to LineIDEQ.
+func LineID(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldLineID, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -498,6 +503,81 @@ func BirthdateIsNil() predicate.User {
 // BirthdateNotNil applies the NotNil predicate on the "birthdate" field.
 func BirthdateNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldBirthdate))
+}
+
+// LineIDEQ applies the EQ predicate on the "line_id" field.
+func LineIDEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldLineID, v))
+}
+
+// LineIDNEQ applies the NEQ predicate on the "line_id" field.
+func LineIDNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldLineID, v))
+}
+
+// LineIDIn applies the In predicate on the "line_id" field.
+func LineIDIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldLineID, vs...))
+}
+
+// LineIDNotIn applies the NotIn predicate on the "line_id" field.
+func LineIDNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldLineID, vs...))
+}
+
+// LineIDGT applies the GT predicate on the "line_id" field.
+func LineIDGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldLineID, v))
+}
+
+// LineIDGTE applies the GTE predicate on the "line_id" field.
+func LineIDGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldLineID, v))
+}
+
+// LineIDLT applies the LT predicate on the "line_id" field.
+func LineIDLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldLineID, v))
+}
+
+// LineIDLTE applies the LTE predicate on the "line_id" field.
+func LineIDLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldLineID, v))
+}
+
+// LineIDContains applies the Contains predicate on the "line_id" field.
+func LineIDContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldLineID, v))
+}
+
+// LineIDHasPrefix applies the HasPrefix predicate on the "line_id" field.
+func LineIDHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldLineID, v))
+}
+
+// LineIDHasSuffix applies the HasSuffix predicate on the "line_id" field.
+func LineIDHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldLineID, v))
+}
+
+// LineIDIsNil applies the IsNil predicate on the "line_id" field.
+func LineIDIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldLineID))
+}
+
+// LineIDNotNil applies the NotNil predicate on the "line_id" field.
+func LineIDNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldLineID))
+}
+
+// LineIDEqualFold applies the EqualFold predicate on the "line_id" field.
+func LineIDEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldLineID, v))
+}
+
+// LineIDContainsFold applies the ContainsFold predicate on the "line_id" field.
+func LineIDContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldLineID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

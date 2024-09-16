@@ -17,6 +17,7 @@ var (
 		{Name: "cover_url", Type: field.TypeString, Nullable: true},
 		{Name: "biography", Type: field.TypeString, Nullable: true},
 		{Name: "birthdate", Type: field.TypeTime, Nullable: true},
+		{Name: "line_id", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 	}
