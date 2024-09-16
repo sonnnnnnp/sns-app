@@ -10,12 +10,12 @@ import (
 	"reflect"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/pkg/ent/migrate"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent/migrate"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
-	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent/user"
 )
 
 // Client is the client that holds all ent builders.

@@ -11,9 +11,10 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/sonnnnnnp/sns-app/internal/middleware"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/middleware"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
@@ -77,9 +78,16 @@ func (s Server) GetUser(ctx echo.Context, userId string) error {
 }
 
 func Init(cfg *config.Config) {
-	db, err := ent.Open("postgres", "host=db port=5432 user=user dbname=db password=password sslmode=disable")
+	db, err := db.Open(&db.ConnectionOptions{
+		Host:     "db",
+		Port:     5432,
+		User:     "user",
+		Name:     "db",
+		Password: "password",
+		SSLMode:  "disable",
+	})
 	if err != nil {
-		log.Fatalf("failed opening connection to postgres: %v", err)
+		log.Fatalf("failed opening connection to database: %v", err)
 	}
 	defer db.Close()
 

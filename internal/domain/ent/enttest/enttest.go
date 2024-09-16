@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
 	// required by schema hooks.
-	_ "github.com/sonnnnnnp/sns-app/pkg/ent/runtime"
+	_ "github.com/sonnnnnnp/sns-app/internal/domain/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/sonnnnnnp/sns-app/pkg/ent/migrate"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent/migrate"
 )
 
 type (

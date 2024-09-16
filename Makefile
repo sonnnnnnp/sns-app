@@ -36,8 +36,8 @@ oapi:
 
 #? ent-new: ent エンティティを生成
 ent-new:
-	docker compose run --rm api bash -c "cd pkg && go run -mod=mod entgo.io/ent/cmd/ent new $(name)"
+	docker compose run --rm api bash -c "cd ./internal/domain && go run -mod=mod entgo.io/ent/cmd/ent new $(name)"
 
 #? ent-gen: ent エンティティからコードを生成
 ent-gen:
-	docker compose run --rm api bash -c "go generate ./pkg/ent"
+	docker compose run --rm api bash -c "go generate ./internal/domain/ent"

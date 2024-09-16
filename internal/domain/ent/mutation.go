@@ -12,8 +12,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/pkg/ent/predicate"
-	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent/predicate"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent/user"
 )
 
 const (

@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/pkg/ent/schema"
-	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent/schema"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code

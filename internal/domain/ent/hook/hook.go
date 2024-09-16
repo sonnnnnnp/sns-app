@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
+	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
 )
 
 // The UserFunc type is an adapter to allow the use of ordinary
