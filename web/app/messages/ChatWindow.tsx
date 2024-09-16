@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
+import { ScrollableChatMessageList } from "@/components/ui/chat/scrollable-chat-message-list";
 import {
   ChatBubble,
   ChatBubbleAvatar,
@@ -12,26 +12,24 @@ const ChatWindow = () => {
   return (
     <div className="hidden md:flex h-full">
       <Separator orientation="vertical" className="h-full" />
-      <div className="flex flex-col flex-1 max-w-[480px]">
-        <div className="flex-1 overflow-y-auto">
-          <ChatMessageList>
-            {[...Array(30)].map((_, i) => (
-              <ChatBubble>
-                <ChatBubbleAvatar />
-                <ChatBubbleMessage>
-                  Message and other content here
-                </ChatBubbleMessage>
-              </ChatBubble>
-            ))}
-            <ChatBubble className="max-w-[80%]">
+      <div className="flex-1 overflow-hidden max-w-[480px]">
+        <ScrollableChatMessageList>
+          {[...Array(30)].map((_, i) => (
+            <ChatBubble key={i}>
               <ChatBubbleAvatar />
               <ChatBubbleMessage>
-                この問題を解決するには、フレックスボックスレイアウトを使用して水平方向にコンポーネントを配置する必要があります。以下のように
-                ChatWindow コンポーネントを修正することをお勧めします：
+                Message and other content here
               </ChatBubbleMessage>
             </ChatBubble>
-          </ChatMessageList>
-        </div>
+          ))}
+          <ChatBubble className="max-w-[80%]">
+            <ChatBubbleAvatar />
+            <ChatBubbleMessage>
+              この問題を解決するには、フレックスボックスレイアウトを使用して水平方向にコンポーネントを配置する必要があります。以下のように
+              ChatWindow コンポーネントを修正することをお勧めします：
+            </ChatBubbleMessage>
+          </ChatBubble>
+        </ScrollableChatMessageList>
         <div>
           <Separator />
           <div>
@@ -49,4 +47,5 @@ const ChatWindow = () => {
     </div>
   );
 };
+
 export default ChatWindow;
