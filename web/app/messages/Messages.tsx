@@ -8,15 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 const Messages = () => {
   return (
     <div className="h-dvh py-7">
       <Card className="h-full flex">
         <ChatList />
-        <Separator orientation="vertical" />
-        <ChatWindow />
+        <ChatWindow/>
       </Card>
     </div>
   );
