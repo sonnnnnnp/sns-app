@@ -11,9 +11,9 @@ import (
 
 	_ "github.com/lib/pq"
 
+	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/middleware"
-	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
@@ -24,57 +24,8 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
-type Server struct {
-	db *ent.Client
-}
-
-func NewServer(db *ent.Client) Server {
-	return Server{
-		db: db,
-	}
-}
-
-func (s Server) json(ctx echo.Context, code int, data interface{}) error {
-	return ctx.JSON(http.StatusOK, &Response{
-		Code: code,
-		OK:   code == http.StatusOK,
-		Data: data,
-	})
-}
-
-func (s Server) AuthorizeWithLine(ctx echo.Context, params oapi.AuthorizeWithLineParams) error {
-	return s.json(ctx, http.StatusOK, &oapi.Authorization{
-		AccessToken:  "1234567890",
-		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
-		UserId:       params.Code,
-	})
-}
-
-func (s Server) RefreshAuthorization(ctx echo.Context) error {
-	return s.json(ctx, http.StatusOK, &oapi.Authorization{
-		AccessToken:  "1234567890",
-		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
-		UserId:       "or4p90.fo0qg4",
-	})
-}
-
-func (s Server) GetUser(ctx echo.Context, userId string) error {
-	u, err := s.db.User.Create().SetUsername(userId).SetDisplayName(userId).Save(ctx.Request().Context())
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "failed to create a user")
-	}
-
-	return s.json(ctx, http.StatusOK, &oapi.User{
-		Id:          u.ID,
-		Username:    u.Username,
-		DisplayName: u.DisplayName,
-		AvatarUrl:   u.AvatarURL,
-		CoverUrl:    u.CoverURL,
-		Biography:   u.Biography,
-		Birthdate:   u.Birthdate,
-		UpdatedAt:   u.UpdatedAt,
-		CreatedAt:   u.CreatedAt,
-	})
+type ErrorMessage struct {
+	Message interface{} `json:"message"`
 }
 
 func Init(cfg *config.Config) {
@@ -95,7 +46,7 @@ func Init(cfg *config.Config) {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	server := NewServer(db)
+	controller := controller.New(db)
 
 	e := echo.New()
 
@@ -104,16 +55,16 @@ func Init(cfg *config.Config) {
 			ctx.JSON(http.StatusOK, &Response{
 				Code: he.Code,
 				OK:   false,
-				Data: he.Message,
+				Data: &ErrorMessage{
+					Message: he.Message,
+				},
 			})
 			return
 		}
 		ctx.JSON(http.StatusOK, &Response{
 			Code: http.StatusInternalServerError,
 			OK:   false,
-			Data: &struct {
-				Message string `json:"message"`
-			}{
+			Data: &ErrorMessage{
 				// TODO: hide error details under production mode
 				Message: fmt.Sprintf("Internal server error: %v", err),
 			},
@@ -128,7 +79,7 @@ func Init(cfg *config.Config) {
 	e.Use(echomiddleware.Logger())
 	e.Use(middleware.RequestValidatorMiddleware(swagger))
 
-	oapi.RegisterHandlers(e, server)
+	oapi.RegisterHandlers(e, controller)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

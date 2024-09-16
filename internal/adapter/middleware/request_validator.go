@@ -25,12 +25,8 @@ func RequestValidatorMiddleware(swagger *openapi3.T) echo.MiddlewareFunc {
 			},
 			MultiErrorHandler: func(muerr openapi3.MultiError) *echo.HTTPError {
 				return &echo.HTTPError{
-					Code: http.StatusBadRequest,
-					Message: &struct {
-						Message string `json:"message"`
-					}{
-						Message: muerr.Error(),
-					},
+					Code:     http.StatusBadRequest,
+					Message:  muerr.Error(),
 					Internal: muerr,
 				}
 			},

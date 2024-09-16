@@ -2,7 +2,7 @@ services:
   api:
     container_name: api
     build:
-      context: .
+      context: ./docker
       dockerfile: Dockerfile
     ports:
       - 1323:1323
@@ -26,7 +26,7 @@ services:
     ports:
       - 8080:80
     volumes:
-      - ./config/pgadmin.json:/pgadmin4/servers.json
+      - ./docker/pgadmin.json:/pgadmin4/servers.json
     environment:
       - PGADMIN_DEFAULT_EMAIL=user@example.com
       - PGADMIN_DEFAULT_PASSWORD=password
