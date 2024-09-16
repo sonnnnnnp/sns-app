@@ -8,6 +8,8 @@ services:
       - 1323:1323
     volumes:
       - .:/api
+    env_file:
+      - .env
     depends_on:
       - db
   db:

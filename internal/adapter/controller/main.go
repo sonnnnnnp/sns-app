@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	usecase "github.com/sonnnnnnp/sns-app/internal/usecase/user"
+	authorize_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
+	user_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/user"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
@@ -15,11 +16,16 @@ type Response struct {
 }
 
 type Controller struct {
-	userUsecase *usecase.UserUsecase
+	authUsecase *authorize_usecase.AuthorizeUsecase
+	userUsecase *user_usecase.UserUsecase
 }
 
-func New(userUsecase *usecase.UserUsecase) *Controller {
+func New(
+	authUsecase *authorize_usecase.AuthorizeUsecase,
+	userUsecase *user_usecase.UserUsecase,
+) *Controller {
 	return &Controller{
+		authUsecase: authUsecase,
 		userUsecase: userUsecase,
 	}
 }

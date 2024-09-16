@@ -47,7 +47,7 @@ func Run(cfg *config.Config) {
 	e.Use(echomiddleware.Logger())
 	e.Use(middleware.RequestValidatorMiddleware(swagger))
 
-	oapi.RegisterHandlers(e, internal.Init(db))
+	oapi.RegisterHandlers(e, internal.Init(cfg, db))
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

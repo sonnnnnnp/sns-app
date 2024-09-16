@@ -136,6 +136,26 @@ func (uu *UserUpdate) ClearBirthdate() *UserUpdate {
 	return uu
 }
 
+// SetLineID sets the "line_id" field.
+func (uu *UserUpdate) SetLineID(s string) *UserUpdate {
+	uu.mutation.SetLineID(s)
+	return uu
+}
+
+// SetNillableLineID sets the "line_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLineID(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetLineID(*s)
+	}
+	return uu
+}
+
+// ClearLineID clears the value of the "line_id" field.
+func (uu *UserUpdate) ClearLineID() *UserUpdate {
+	uu.mutation.ClearLineID()
+	return uu
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
 	uu.mutation.SetCreatedAt(t)
@@ -252,6 +272,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.BirthdateCleared() {
 		_spec.ClearField(user.FieldBirthdate, field.TypeTime)
+	}
+	if value, ok := uu.mutation.LineID(); ok {
+		_spec.SetField(user.FieldLineID, field.TypeString, value)
+	}
+	if uu.mutation.LineIDCleared() {
+		_spec.ClearField(user.FieldLineID, field.TypeString)
 	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
@@ -384,6 +410,26 @@ func (uuo *UserUpdateOne) SetNillableBirthdate(t *time.Time) *UserUpdateOne {
 // ClearBirthdate clears the value of the "birthdate" field.
 func (uuo *UserUpdateOne) ClearBirthdate() *UserUpdateOne {
 	uuo.mutation.ClearBirthdate()
+	return uuo
+}
+
+// SetLineID sets the "line_id" field.
+func (uuo *UserUpdateOne) SetLineID(s string) *UserUpdateOne {
+	uuo.mutation.SetLineID(s)
+	return uuo
+}
+
+// SetNillableLineID sets the "line_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLineID(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetLineID(*s)
+	}
+	return uuo
+}
+
+// ClearLineID clears the value of the "line_id" field.
+func (uuo *UserUpdateOne) ClearLineID() *UserUpdateOne {
+	uuo.mutation.ClearLineID()
 	return uuo
 }
 
@@ -533,6 +579,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.BirthdateCleared() {
 		_spec.ClearField(user.FieldBirthdate, field.TypeTime)
+	}
+	if value, ok := uuo.mutation.LineID(); ok {
+		_spec.SetField(user.FieldLineID, field.TypeString, value)
+	}
+	if uuo.mutation.LineIDCleared() {
+		_spec.ClearField(user.FieldLineID, field.TypeString)
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)

@@ -10,14 +10,19 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
 	"github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/user"
+	"github.com/sonnnnnnp/sns-app/pkg/config"
+	"github.com/sonnnnnnp/sns-app/pkg/line"
 )
 
 // Injectors from wire.go:
 
-func Init(db *ent.Client) *controller.Controller {
+func Init(cfg *config.Config, db *ent.Client) *controller.Controller {
+	client := line.New()
 	userRepository := user_repository.New(db)
+	authorizeUsecase := authorize_usecase.New(cfg, client, userRepository)
 	userUsecase := user_usecase.New(userRepository)
-	controllerController := controller.New(userUsecase)
+	controllerController := controller.New(authorizeUsecase, userUsecase)
 	return controllerController
 }

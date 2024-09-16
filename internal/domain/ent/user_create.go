@@ -89,6 +89,20 @@ func (uc *UserCreate) SetNillableBirthdate(t *time.Time) *UserCreate {
 	return uc
 }
 
+// SetLineID sets the "line_id" field.
+func (uc *UserCreate) SetLineID(s string) *UserCreate {
+	uc.mutation.SetLineID(s)
+	return uc
+}
+
+// SetNillableLineID sets the "line_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLineID(s *string) *UserCreate {
+	if s != nil {
+		uc.SetLineID(*s)
+	}
+	return uc
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 	uc.mutation.SetCreatedAt(t)
@@ -262,6 +276,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Birthdate(); ok {
 		_spec.SetField(user.FieldBirthdate, field.TypeTime, value)
 		_node.Birthdate = value
+	}
+	if value, ok := uc.mutation.LineID(); ok {
+		_spec.SetField(user.FieldLineID, field.TypeString, value)
+		_node.LineID = value
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
