@@ -16,21 +16,21 @@ const ChatWindow = () => {
         <ScrollableChatMessageList>
           {[...Array(30)].map((_, i) => (
             <ChatBubble key={i}>
-              <ChatBubbleAvatar />
+              <ChatBubbleAvatar src="/kaworu_icon.jpg" />
               <ChatBubbleMessage>
                 Message and other content here
               </ChatBubbleMessage>
             </ChatBubble>
           ))}
-          <ChatBubble className="max-w-[80%]">
-            <ChatBubbleAvatar />
+          <ChatBubble className="max-w-[80%]" variant={"sent"}>
+            <ChatBubbleAvatar src="/kaworu_icon.jpg" />
             <ChatBubbleMessage>
               この問題を解決するには、フレックスボックスレイアウトを使用して水平方向にコンポーネントを配置する必要があります。以下のように
               ChatWindow コンポーネントを修正することをお勧めします：
             </ChatBubbleMessage>
           </ChatBubble>
         </ScrollableChatMessageList>
-        {/* input */}
+        {/* ~~~~~~~~~~ input ~~~~~~~~~~ */}
         <div>
           <Separator />
           <div className="flex items-center p-1">
@@ -43,7 +43,7 @@ const ChatWindow = () => {
             </Button>
           </div>
         </div>
-        {/* input */}
+        {/* ~~~~~~~~~~ input ~~~~~~~~~~ */}
       </div>
     </div>
   );
