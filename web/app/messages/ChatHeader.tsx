@@ -5,7 +5,7 @@ interface ContainerProps {
 }
 
 const ChatHeader: React.FC<ContainerProps> = ({ children }) => {
-  return <div className="flex items-center mx-4 h-[52px]">{children}</div>;
+  return <div className="flex items-center mx-4 min-h-[52px]">{children}</div>;
 };
 
 const ChatHeaderTitle: React.FC<ContainerProps> = ({ children }) => {
