@@ -21,6 +21,9 @@ const ChatListItem = () => {
               それってあなたの感想ですよね
             </div>
           </div>
+          <div className="ml-auto flex items-center">
+            <div className="bg-blue-600 w-[8px] h-[8px] rounded-full mr-2 text-white"></div>
+          </div>
         </div>
       </div>
       <Separator />

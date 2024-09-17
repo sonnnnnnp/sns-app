@@ -24,7 +24,7 @@ const ChatWindow = () => {
         </ChatHeader>
         <Separator />
         <ScrollableChatMessageList>
-          {[...Array(30)].map((_, i) => (
+          {[...Array(10)].map((_, i) => (
             <React.Fragment key={i}>
               <ChatBubble>
                 <ChatBubbleAvatar src="/kaworu_icon.jpg" />
