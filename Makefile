@@ -12,6 +12,7 @@ help: Makefile
 #? setup: アプリケーションのセットアップ
 setup:
 	docker compose build --no-cache
+	[ -f .env ] || cp .env.example .env
 	cd web && [ -f .env ] || cp .env.example .env && npm ci
 
 #? up: アプリケーションの起動
@@ -31,17 +32,17 @@ tidy:
 
 #? oapi: OpenAPI からコードを生成
 oapi:
-	docker compose run --rm api bash -c "cd pkg && oapi-codegen -package oapi ../api/openapi.yaml > ./oapi/server.go"
+	docker compose run --rm api bash -c "cd pkg && oapi-codegen -package oapi /api/api/openapi.yaml > /api/pkg/oapi/server.go"
 	npx openapi-typescript ./api/openapi.yaml -o ./web/lib/api/client.ts
 
 #? ent-new: ent エンティティを生成
 ent-new:
-	docker compose run --rm api bash -c "cd ./internal/domain && go run -mod=mod entgo.io/ent/cmd/ent new $(name)"
+	docker compose run --rm api bash -c "cd /api/internal/domain && go run -mod=mod entgo.io/ent/cmd/ent new $(name)"
 
 #? ent-gen: ent エンティティからコードを生成
 ent-gen:
-	docker compose run --rm api bash -c "go generate ./internal/domain/ent"
+	docker compose run --rm api bash -c "go generate /api/internal/domain/ent"
 
 #? wire: 依存関係の自動生成
 wire:
-	docker compose run --rm api bash -c "cd ./internal && wire gen"
+	docker compose run --rm api bash -c "cd /api/pkg/server/internal && wire gen && mv ./wire_gen.go /api/internal/wire.go"
