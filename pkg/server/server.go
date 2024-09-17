@@ -39,12 +39,17 @@ func Run(cfg *config.Config) {
 
 	e.HTTPErrorHandler = errors.ErrorHandler
 
+	jwtExcludePaths := []string{
+		"/authorize/line",
+	}
+
 	swagger, err := oapi.GetSwagger()
 	if err != nil {
 		panic(err)
 	}
 
 	e.Use(echomiddleware.Logger())
+	e.Use(middleware.JWTMiddleware(jwtExcludePaths))
 	e.Use(middleware.RequestValidatorMiddleware(swagger))
 
 	oapi.RegisterHandlers(e, internal.Init(cfg, db))
