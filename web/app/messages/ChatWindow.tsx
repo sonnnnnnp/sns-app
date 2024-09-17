@@ -7,28 +7,37 @@ import {
 } from "@/components/ui/chat/chat-bubble";
 import { ChatInput } from "@/components/ui/chat/chat-input";
 import { Button } from "@/components/ui/button";
+import { Info } from "lucide-react";
+import { ChatHeader, ChatHeaderTitle, ChatHeaderButtons } from "./ChatHeader";
+import React from "react";
 
 const ChatWindow = () => {
   return (
     <div className="hidden md:flex h-full">
       <Separator orientation="vertical" className="h-full" />
       <div className="flex flex-col w-[500px]">
+        <ChatHeader>
+          <ChatHeaderTitle>カヲル</ChatHeaderTitle>
+          <ChatHeaderButtons>
+            <Info />
+          </ChatHeaderButtons>
+        </ChatHeader>
+        <Separator />
         <ScrollableChatMessageList>
           {[...Array(30)].map((_, i) => (
-            <ChatBubble key={i}>
-              <ChatBubbleAvatar src="/kaworu_icon.jpg" />
-              <ChatBubbleMessage>
-                Message and other content here
-              </ChatBubbleMessage>
-            </ChatBubble>
+            <React.Fragment key={i}>
+              <ChatBubble>
+                <ChatBubbleAvatar src="/kaworu_icon.jpg" />
+                <ChatBubbleMessage>
+                  なんかプログラミングってやつすれば色々作れるらしいぜ
+                </ChatBubbleMessage>
+              </ChatBubble>
+              <ChatBubble className="max-w-[80%]" variant={"sent"}>
+                <ChatBubbleAvatar src="/kaworu_icon.jpg" />
+                <ChatBubbleMessage variant={"sent"}>まじ？</ChatBubbleMessage>
+              </ChatBubble>
+            </React.Fragment>
           ))}
-          <ChatBubble className="max-w-[80%]" variant={"sent"}>
-            <ChatBubbleAvatar src="/kaworu_icon.jpg" />
-            <ChatBubbleMessage variant={"sent"}>
-              この問題を解決するには、フレックスボックスレイアウトを使用して水平方向にコンポーネントを配置する必要があります。以下のように
-              ChatWindow コンポーネントを修正することをお勧めします：
-            </ChatBubbleMessage>
-          </ChatBubble>
         </ScrollableChatMessageList>
         {/* ~~~~~~~~~~ input ~~~~~~~~~~ */}
         <div>
