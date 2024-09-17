@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 const ChatListItem = () => {
   return (
     <>
-      <div className="px-2 py-3 w-80">
+      <div className="px-2 py-3" tabIndex={0}>
         <div className="flex">
           <div className="mx-2">
             <Avatar>
