@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 const ChatListItem = () => {
   return (
     <>
-      <div className="px-2 py-3 w-80">
+      <div className="px-2 py-3" tabIndex={0}>
         <div className="flex">
           <div className="mx-2">
             <Avatar>
@@ -20,6 +20,9 @@ const ChatListItem = () => {
             <div className="text-sm text-muted-foreground">
               それってあなたの感想ですよね
             </div>
+          </div>
+          <div className="ml-auto flex items-center">
+            <div className="bg-blue-600 w-[8px] h-[8px] rounded-full mr-2 text-white"></div>
           </div>
         </div>
       </div>

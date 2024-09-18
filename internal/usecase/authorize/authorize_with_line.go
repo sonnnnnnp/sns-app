@@ -4,15 +4,18 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 func (au *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) (*oapi.Authorization, error) {
+	cfg := ctxhelper.GetConfig(ctx)
+
 	resp, err := au.line.GetToken(
 		code,
-		au.cfg.LineAuthRedirectURL,
-		au.cfg.LineAuthClientID,
-		au.cfg.LineAuthClientSecret,
+		cfg.LineAuthRedirectURL,
+		cfg.LineAuthClientID,
+		cfg.LineAuthClientSecret,
 	)
 	if err != nil {
 		return nil, err

@@ -14,7 +14,7 @@ export function Post(props: {
   created_at: number;
 }) {
   return (
-    <Card className="flex flex-col items-start gap-2 text-left text-sm md:w-[580px]">
+    <Card className="flex text-sm w-[calc(100dvw_-_1.5rem)] md:w-[580px] dark:bg-black dark:border-slate-800">
       <CardContent className="w-full grid gap-6 p-3 py-1">
         <div className="flex">
           <div className="mt-2 mr-2">
@@ -27,20 +27,22 @@ export function Post(props: {
           <div className="flex-1">
             <div className="flex items-center">
               <div className="flex items-center gap-1">
-                <span className="text-sm font-semibold">
+                <span className="text-sm font-semibold dark:text-white">
                   {props.display_name}
                 </span>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-muted-foreground dark:text-slate-400">
                   {`@${props.username}`}
                 </span>
-                <span className="text-xs text-muted-foreground">{` ･ 3分前`}</span>
+                <span className="text-xs text-muted-foreground dark:text-slate-400">{` ･ 3分前`}</span>
               </div>
               <div className="ml-auto">
                 <PostHandler />
               </div>
             </div>
             <div className="mb-1.5">
-              <p className="text-sm text-muted-foreground">{props.content}</p>
+              <p className="text-sm text-muted-foreground dark:text-slate-300">
+                {props.content}
+              </p>
             </div>
             <div className="flex items-center justify-between opacity-60">
               <Button
