@@ -49,10 +49,11 @@ func Run(cfg *config.Config) {
 	}
 
 	e.Use(echomiddleware.Logger())
+	e.Use(middleware.ConfigMiddleware(cfg))
 	e.Use(middleware.JWTMiddleware(jwtExcludePaths))
 	e.Use(middleware.RequestValidatorMiddleware(swagger))
 
-	oapi.RegisterHandlers(e, internal.Wire(cfg, db))
+	oapi.RegisterHandlers(e, internal.Wire(db))
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

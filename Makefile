@@ -28,7 +28,7 @@ down:
 tidy:
 	docker compose run --rm api bash -c "go mod tidy"
 
-.PHONY: openapi ent-new ent-gen
+.PHONY: openapi ent-new ent-gen wire
 
 #? oapi: OpenAPI からコードを生成
 oapi:

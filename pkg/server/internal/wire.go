@@ -7,11 +7,10 @@ import (
 	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
 	authorize_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
 	user_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/user"
-	"github.com/sonnnnnnp/sns-app/pkg/config"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 )
 
-func Wire(cfg *config.Config, db *ent.Client) *controller.Controller {
+func Wire(db *ent.Client) *controller.Controller {
 	wire.Build(
 		line.New,
 
