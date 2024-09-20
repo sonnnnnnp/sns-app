@@ -5,13 +5,14 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 func (c Controller) GetUserById(ctx echo.Context, id uuid.UUID) error {
 	u, err := c.userUsecase.GetUserByID(ctx.Request().Context(), id)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "failed to create a user")
+		return echo.NewHTTPError(http.StatusBadRequest, ctxhelper.GetUserID(ctx.Request().Context()).String())
 	}
 
 	return c.json(ctx, http.StatusOK, &oapi.User{
