@@ -3,7 +3,6 @@ package authorize_usecase
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
@@ -26,21 +25,21 @@ func (au *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) 
 		return nil, err
 	}
 
+	isNew := false // 新規ユーザーを判定するためのフラグ
+
 	u, err := au.userRepo.GetUserByLineID(ctx, lineUser.UserID)
 	if err != nil {
 		return nil, err
 	}
 
 	if u == nil {
-		u, err = au.userRepo.CreateUser(ctx, uuid.NewString())
+		isNew = true
+
+		u, err = au.userRepo.CreateUser(ctx)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return &oapi.Authorization{
-		AccessToken:  lineUser.UserID,
-		RefreshToken: "RefreshToken",
-		UserId:       u.ID.String(),
-	}, nil
+	return au.generateAuthorization(u.ID, isNew), nil
 }

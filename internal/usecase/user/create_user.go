@@ -6,8 +6,8 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
 )
 
-func (uu *UserUsecase) CreateUser(ctx context.Context, id string) (*ent.User, error) {
-	u, err := uu.userRepo.CreateUser(ctx, id)
+func (uu *UserUsecase) CreateUser(ctx context.Context) (*ent.User, error) {
+	u, err := uu.userRepo.CreateUser(ctx)
 	if err != nil {
 		return nil, err
 	}

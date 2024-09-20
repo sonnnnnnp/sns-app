@@ -6,11 +6,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
 	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
+	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type IUserUsecase interface {
-	GetUser(ctx context.Context, id uuid.UUID) (*ent.User, error)
-	CreateUser(ctx context.Context, id string) (*ent.User, error)
+	GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error)
+	CreateUser(ctx context.Context) (*ent.User, error)
+	UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*oapi.User, error)
 }
 
 type UserUsecase struct {

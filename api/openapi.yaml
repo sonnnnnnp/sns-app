@@ -76,7 +76,7 @@ paths:
       summary: ユーザーを取得する
       deprecated: false
       description: ''
-      operationId: getUser
+      operationId: getUserById
       tags: []
       parameters:
         - name: user_id
@@ -85,6 +85,7 @@ paths:
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: ''
@@ -99,9 +100,64 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data:
+                  data: &ref_1
                     description: データ
                     $ref: '#/components/schemas/User'
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security: []
+  /users/{user_id}/update:
+    get:
+      summary: ユーザーを更新する
+      deprecated: false
+      description: ''
+      operationId: updateUser
+      tags: []
+      parameters:
+        - name: user_id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                display_name:
+                  type: string
+                avatar_url:
+                  type: string
+                cover_url:
+                  type: string
+                biography:
+                  type: string
+                birthdate:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: *ref_1
                 required:
                   - ok
                   - code
@@ -156,10 +212,13 @@ components:
           type: string
         refresh_token:
           type: string
+        is_new:
+          type: boolean
       required:
         - user_id
         - access_token
         - refresh_token
+        - is_new
     Response:
       title: ''
       type: object

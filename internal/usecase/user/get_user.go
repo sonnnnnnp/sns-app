@@ -7,8 +7,8 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
 )
 
-func (uu *UserUsecase) GetUser(ctx context.Context, id uuid.UUID) (*ent.User, error) {
-	u, err := uu.userRepo.GetUser(ctx, id)
+func (uu *UserUsecase) GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error) {
+	u, err := uu.userRepo.GetUserByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}

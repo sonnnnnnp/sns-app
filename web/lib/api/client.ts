@@ -46,7 +46,24 @@ export interface paths {
             cookie?: never;
         };
         /** ユーザーを取得する */
-        get: operations["getUser"];
+        get: operations["getUserById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{user_id}/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ユーザーを更新する */
+        get: operations["updateUser"];
         put?: never;
         post?: never;
         delete?: never;
@@ -82,6 +99,7 @@ export interface components {
             user_id: string;
             access_token: string;
             refresh_token: string;
+            is_new: boolean;
         };
         Response: {
             /** @description 正常に処理を終了したかどうか */
@@ -154,7 +172,7 @@ export interface operations {
             };
         };
     };
-    getUser: {
+    getUserById: {
         parameters: {
             query?: never;
             header?: never;
@@ -164,6 +182,46 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["User"];
+                    };
+                };
+            };
+        };
+    };
+    updateUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    username?: string;
+                    display_name?: string;
+                    avatar_url?: string;
+                    cover_url?: string;
+                    biography?: string;
+                    /** Format: date-time */
+                    birthdate?: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
