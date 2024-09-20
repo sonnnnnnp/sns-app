@@ -5,12 +5,14 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
+	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type IUserRepository interface {
-	GetUser(ctx context.Context, id uuid.UUID) (*ent.User, error)
+	GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error)
 	GetUserByLineID(ctx context.Context, lineID string) (*ent.User, error)
-	CreateUser(ctx context.Context, id string) (*ent.User, error)
+	CreateUser(ctx context.Context) (*ent.User, error)
+	UpdateUser(ctx context.Context, id uuid.UUID, data *oapi.UpdateUserJSONBody) (*ent.User, error)
 }
 
 type UserRepository struct {

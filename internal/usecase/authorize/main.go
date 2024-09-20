@@ -3,6 +3,7 @@ package authorize_usecase
 import (
 	"context"
 
+	"github.com/google/uuid"
 	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
@@ -26,6 +27,15 @@ func New(
 		line: line,
 
 		userRepo: userRepo,
+	}
+}
+
+func (au *AuthorizeUsecase) generateAuthorization(uid uuid.UUID, IsNew bool) *oapi.Authorization {
+	return &oapi.Authorization{
+		AccessToken:  "AccessToken",
+		RefreshToken: "RefreshToken",
+		UserId:       uid.String(),
+		IsNew:        IsNew,
 	}
 }
 

@@ -9,6 +9,8 @@ type Config struct {
 	DBName     string `env:"DB_NAME" envDefault:"db"`
 	DBPort     int    `env:"DB_PORT" envDefault:"5432"`
 
+	JWTSecret string `env:"JWT_SECRET" envDefault:"jwt_secret"`
+
 	LineAuthRedirectURL  string `env:"LINE_AUTH_REDIRECT_URL"`
 	LineAuthClientID     string `env:"LINE_AUTH_CLIENT_ID"`
 	LineAuthClientSecret string `env:"LINE_AUTH_CLIENT_SECRET"`
