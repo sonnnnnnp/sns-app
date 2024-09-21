@@ -193,9 +193,39 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
+                  data: &ref_2
+                    $ref: '#/components/schemas/Post'
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security: []
+  /timeline:
+    get:
+      summary: タイムラインを取得する
+      deprecated: false
+      description: ''
+      operationId: getTimeline
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
                   data:
                     description: データ
-                    $ref: '#/components/schemas/Post'
+                    $ref: '#/components/schemas/Timeline'
                 required:
                   - ok
                   - code
@@ -278,6 +308,14 @@ components:
         - author
         - updated_at
         - created_at
+    Timeline:
+      type: object
+      properties:
+        posts:
+          type: array
+          items: *ref_2
+      required:
+        - posts
     Response:
       title: ''
       type: object

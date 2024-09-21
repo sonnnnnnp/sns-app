@@ -42,6 +42,11 @@ type Post struct {
 	UpdatedAt time.Time          `json:"updated_at"`
 }
 
+// Timeline defines model for Timeline.
+type Timeline struct {
+	Posts []Post `json:"posts"`
+}
+
 // User defines model for User.
 type User struct {
 	AvatarUrl   string    `json:"avatar_url"`
@@ -169,6 +174,9 @@ type ClientInterface interface {
 
 	CreatePost(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetTimeline request
+	GetTimeline(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetUserById request
 	GetUserById(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -216,6 +224,18 @@ func (c *Client) CreatePostWithBody(ctx context.Context, contentType string, bod
 
 func (c *Client) CreatePost(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreatePostRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTimeline(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTimelineRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -374,6 +394,33 @@ func NewCreatePostRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
+// NewGetTimelineRequest generates requests for GetTimeline
+func NewGetTimelineRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/timeline")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetUserByIdRequest generates requests for GetUserById
 func NewGetUserByIdRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
 	var err error
@@ -509,6 +556,9 @@ type ClientWithResponsesInterface interface {
 
 	CreatePostWithResponse(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
 
+	// GetTimelineWithResponse request
+	GetTimelineWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
+
 	// GetUserByIdWithResponse request
 	GetUserByIdWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserByIdResponse, error)
 
@@ -599,6 +649,35 @@ func (r CreatePostResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreatePostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetTimelineResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int      `json:"code"`
+		Data Timeline `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTimelineResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTimelineResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -696,6 +775,15 @@ func (c *ClientWithResponses) CreatePostWithResponse(ctx context.Context, body C
 		return nil, err
 	}
 	return ParseCreatePostResponse(rsp)
+}
+
+// GetTimelineWithResponse request returning *GetTimelineResponse
+func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error) {
+	rsp, err := c.GetTimeline(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTimelineResponse(rsp)
 }
 
 // GetUserByIdWithResponse request returning *GetUserByIdResponse
@@ -823,6 +911,39 @@ func ParseCreatePostResponse(rsp *http.Response) (*CreatePostResponse, error) {
 	return response, nil
 }
 
+// ParseGetTimelineResponse parses an HTTP response from a GetTimelineWithResponse call
+func ParseGetTimelineResponse(rsp *http.Response) (*GetTimelineResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTimelineResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int      `json:"code"`
+			Data Timeline `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetUserByIdResponse parses an HTTP response from a GetUserByIdWithResponse call
 func ParseGetUserByIdResponse(rsp *http.Response) (*GetUserByIdResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -900,6 +1021,9 @@ type ServerInterface interface {
 	// 投稿を作成する
 	// (POST /posts/create)
 	CreatePost(ctx echo.Context) error
+	// タイムラインを取得する
+	// (GET /timeline)
+	GetTimeline(ctx echo.Context) error
 	// ユーザーを取得する
 	// (GET /users/{user_id})
 	GetUserById(ctx echo.Context, userId openapi_types.UUID) error
@@ -946,6 +1070,15 @@ func (w *ServerInterfaceWrapper) CreatePost(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.CreatePost(ctx)
+	return err
+}
+
+// GetTimeline converts echo context to params.
+func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetTimeline(ctx)
 	return err
 }
 
@@ -1012,6 +1145,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/authorize/line", wrapper.AuthorizeWithLine)
 	router.POST(baseURL+"/authorize/refresh", wrapper.RefreshAuthorization)
 	router.POST(baseURL+"/posts/create", wrapper.CreatePost)
+	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
 	router.GET(baseURL+"/users/:user_id", wrapper.GetUserById)
 	router.GET(baseURL+"/users/:user_id/update", wrapper.UpdateUser)
 
@@ -1020,21 +1154,22 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

@@ -13,7 +13,7 @@ func (c Controller) CreatePost(ctx echo.Context) error {
 		return err
 	}
 
-	p, u, err := c.postUsecase.CreatePost(ctx.Request().Context(), body)
+	p, err := c.postUsecase.CreatePost(ctx.Request().Context(), body)
 	if err != nil {
 		return err
 	}
@@ -21,15 +21,15 @@ func (c Controller) CreatePost(ctx echo.Context) error {
 	return c.json(ctx, http.StatusOK, &oapi.Post{
 		Id: p.ID,
 		Author: oapi.User{
-			AvatarUrl:   u.AvatarURL,
-			Biography:   u.Biography,
-			Birthdate:   u.Birthdate,
-			CoverUrl:    u.CoverURL,
-			CreatedAt:   u.CreatedAt,
-			DisplayName: u.DisplayName,
-			Id:          u.ID,
-			UpdatedAt:   u.UpdatedAt,
-			Username:    u.Username,
+			AvatarUrl:   p.Edges.Author.AvatarURL,
+			Biography:   p.Edges.Author.Biography,
+			Birthdate:   p.Edges.Author.Birthdate,
+			CoverUrl:    p.Edges.Author.CoverURL,
+			CreatedAt:   p.Edges.Author.CreatedAt,
+			DisplayName: p.Edges.Author.DisplayName,
+			Id:          p.Edges.Author.ID,
+			UpdatedAt:   p.Edges.Author.UpdatedAt,
+			Username:    p.Edges.Author.Username,
 		},
 		Content:   &p.Content,
 		CreatedAt: p.CreatedAt,

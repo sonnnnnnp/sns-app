@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	authorize_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
 	post_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/post"
+	timeline_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
 	user_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/user"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
@@ -17,20 +18,23 @@ type Response struct {
 }
 
 type Controller struct {
-	authUsecase *authorize_usecase.AuthorizeUsecase
-	postUsecase *post_usecase.PostUsecase
-	userUsecase *user_usecase.UserUsecase
+	authUsecase     *authorize_usecase.AuthorizeUsecase
+	postUsecase     *post_usecase.PostUsecase
+	timelineUsecase *timeline_usecase.TimelineUsecase
+	userUsecase     *user_usecase.UserUsecase
 }
 
 func New(
 	authUsecase *authorize_usecase.AuthorizeUsecase,
 	postUsecase *post_usecase.PostUsecase,
+	timelineUsecase *timeline_usecase.TimelineUsecase,
 	userUsecase *user_usecase.UserUsecase,
 ) *Controller {
 	return &Controller{
-		authUsecase: authUsecase,
-		postUsecase: postUsecase,
-		userUsecase: userUsecase,
+		authUsecase:     authUsecase,
+		postUsecase:     postUsecase,
+		timelineUsecase: timelineUsecase,
+		userUsecase:     userUsecase,
 	}
 }
 

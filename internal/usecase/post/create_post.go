@@ -8,13 +8,13 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*ent.Post, *ent.User, error) {
+func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*ent.Post, error) {
 	uID := ctxhelper.GetUserID(ctx)
 
-	p, u, err := pu.postRepo.CreatePost(ctx, uID, body)
+	p, err := pu.postRepo.CreatePost(ctx, uID, body)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return p, u, nil
+	return p, nil
 }

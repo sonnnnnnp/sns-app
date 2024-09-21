@@ -9,7 +9,8 @@ import (
 )
 
 type IPostRepository interface {
-	CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (*ent.Post, *ent.User, error)
+	GetPosts(ctx context.Context) ([]*ent.Post, error)
+	CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (*ent.Post, error)
 }
 
 type PostRepository struct {
