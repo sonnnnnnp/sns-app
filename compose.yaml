@@ -24,7 +24,7 @@ services:
       - 5432:5432
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:8.4
+    image: dpage/pgadmin4:8.11
     ports:
       - 8080:80
     volumes:
