@@ -18,7 +18,7 @@ export function Post(props: {
       <CardContent className="w-full grid gap-6 p-3 py-1">
         <div className="flex">
           <div className="mt-2 mr-2">
-            <Link href={`/users/${props.username}`}>
+            <Link href={`/user/${props.username}`}>
               <Avatar>
                 <AvatarImage src={props.avatar_image_url} />
               </Avatar>
