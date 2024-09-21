@@ -220,6 +220,16 @@ func DisplayNameHasSuffix(v string) predicate.User {
 	return predicate.User(sql.FieldHasSuffix(FieldDisplayName, v))
 }
 
+// DisplayNameIsNil applies the IsNil predicate on the "display_name" field.
+func DisplayNameIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldDisplayName))
+}
+
+// DisplayNameNotNil applies the NotNil predicate on the "display_name" field.
+func DisplayNameNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldDisplayName))
+}
+
 // DisplayNameEqualFold applies the EqualFold predicate on the "display_name" field.
 func DisplayNameEqualFold(v string) predicate.User {
 	return predicate.User(sql.FieldEqualFold(FieldDisplayName, v))

@@ -18,7 +18,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
 		field.String("username").NotEmpty().Unique(),
-		field.String("display_name").NotEmpty(),
+		field.String("display_name").Optional(),
 		field.String("avatar_url").Optional(),
 		field.String("cover_url").Optional(),
 		field.String("biography").Optional(),

@@ -2,7 +2,9 @@ package authorize_usecase
 
 import (
 	"context"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
@@ -30,13 +32,40 @@ func New(
 	}
 }
 
-func (au *AuthorizeUsecase) generateAuthorization(uid uuid.UUID, IsNew bool) *oapi.Authorization {
-	return &oapi.Authorization{
-		AccessToken:  "AccessToken",
-		RefreshToken: "RefreshToken",
-		UserId:       uid.String(),
-		IsNew:        IsNew,
-	}
+var _ IAuthorizeUsecase = (*AuthorizeUsecase)(nil)
+
+func (au *AuthorizeUsecase) generateToken(jwtSecret []byte, claims jwt.Claims) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(jwtSecret)
 }
 
-var _ IAuthorizeUsecase = (*AuthorizeUsecase)(nil)
+func (au *AuthorizeUsecase) generateAuthorization(jwtSecret []byte, uid uuid.UUID, IsNew bool) (*oapi.Authorization, error) {
+	atoken, err := au.generateToken(
+		jwtSecret,
+		jwt.MapClaims{
+			"id":  uid.String(),
+			"exp": jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	rtoken, err := au.generateToken(
+		jwtSecret,
+		jwt.MapClaims{
+			"id":  uid.String(),
+			"exp": jwt.NewNumericDate(time.Now().Add(30 * 24 * time.Hour)),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oapi.Authorization{
+		AccessToken:  atoken,
+		RefreshToken: rtoken,
+		UserId:       uid.String(),
+		IsNew:        IsNew,
+	}, nil
+}

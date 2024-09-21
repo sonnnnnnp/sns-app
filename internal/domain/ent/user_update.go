@@ -56,6 +56,12 @@ func (uu *UserUpdate) SetNillableDisplayName(s *string) *UserUpdate {
 	return uu
 }
 
+// ClearDisplayName clears the value of the "display_name" field.
+func (uu *UserUpdate) ClearDisplayName() *UserUpdate {
+	uu.mutation.ClearDisplayName()
+	return uu
+}
+
 // SetAvatarURL sets the "avatar_url" field.
 func (uu *UserUpdate) SetAvatarURL(s string) *UserUpdate {
 	uu.mutation.SetAvatarURL(s)
@@ -223,11 +229,6 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
 		}
 	}
-	if v, ok := uu.mutation.DisplayName(); ok {
-		if err := user.DisplayNameValidator(v); err != nil {
-			return &ValidationError{Name: "display_name", err: fmt.Errorf(`ent: validator failed for field "User.display_name": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -248,6 +249,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.DisplayName(); ok {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
+	}
+	if uu.mutation.DisplayNameCleared() {
+		_spec.ClearField(user.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := uu.mutation.AvatarURL(); ok {
 		_spec.SetField(user.FieldAvatarURL, field.TypeString, value)
@@ -330,6 +334,12 @@ func (uuo *UserUpdateOne) SetNillableDisplayName(s *string) *UserUpdateOne {
 	if s != nil {
 		uuo.SetDisplayName(*s)
 	}
+	return uuo
+}
+
+// ClearDisplayName clears the value of the "display_name" field.
+func (uuo *UserUpdateOne) ClearDisplayName() *UserUpdateOne {
+	uuo.mutation.ClearDisplayName()
 	return uuo
 }
 
@@ -513,11 +523,6 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
 		}
 	}
-	if v, ok := uuo.mutation.DisplayName(); ok {
-		if err := user.DisplayNameValidator(v); err != nil {
-			return &ValidationError{Name: "display_name", err: fmt.Errorf(`ent: validator failed for field "User.display_name": %w`, err)}
-		}
-	}
 	return nil
 }
 
@@ -555,6 +560,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.DisplayName(); ok {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
+	}
+	if uuo.mutation.DisplayNameCleared() {
+		_spec.ClearField(user.FieldDisplayName, field.TypeString)
 	}
 	if value, ok := uuo.mutation.AvatarURL(); ok {
 		_spec.SetField(user.FieldAvatarURL, field.TypeString, value)

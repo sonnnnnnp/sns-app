@@ -12,7 +12,7 @@ var (
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
 		{Name: "username", Type: field.TypeString, Unique: true},
-		{Name: "display_name", Type: field.TypeString},
+		{Name: "display_name", Type: field.TypeString, Nullable: true},
 		{Name: "avatar_url", Type: field.TypeString, Nullable: true},
 		{Name: "cover_url", Type: field.TypeString, Nullable: true},
 		{Name: "biography", Type: field.TypeString, Nullable: true},

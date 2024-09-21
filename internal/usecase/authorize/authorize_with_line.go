@@ -41,5 +41,5 @@ func (au *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) 
 		}
 	}
 
-	return au.generateAuthorization(u.ID, isNew), nil
+	return au.generateAuthorization([]byte(cfg.JWTSecret), u.ID, isNew)
 }

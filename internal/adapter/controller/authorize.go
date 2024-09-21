@@ -10,7 +10,7 @@ import (
 func (c Controller) AuthorizeWithLine(ctx echo.Context, params oapi.AuthorizeWithLineParams) error {
 	auth, err := c.authUsecase.AuthorizeWithLine(ctx.Request().Context(), params.Code)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "failed to authorize with line")
+		return err
 	}
 
 	return c.json(ctx, http.StatusOK, &auth)
