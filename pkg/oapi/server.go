@@ -31,6 +31,17 @@ type Authorization struct {
 	UserId       string `json:"user_id"`
 }
 
+// Post defines model for Post.
+type Post struct {
+	Author    User      `json:"author"`
+	Content   *string   `json:"content,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
+
+	// Id ID番号
+	Id        openapi_types.UUID `json:"id"`
+	UpdatedAt time.Time          `json:"updated_at"`
+}
+
 // User defines model for User.
 type User struct {
 	AvatarUrl   string    `json:"avatar_url"`
@@ -53,6 +64,11 @@ type AuthorizeWithLineParams struct {
 	Code string `form:"code" json:"code"`
 }
 
+// CreatePostJSONBody defines parameters for CreatePost.
+type CreatePostJSONBody struct {
+	Content *string `json:"content,omitempty"`
+}
+
 // UpdateUserJSONBody defines parameters for UpdateUser.
 type UpdateUserJSONBody struct {
 	AvatarUrl   *string    `json:"avatar_url,omitempty"`
@@ -62,6 +78,9 @@ type UpdateUserJSONBody struct {
 	DisplayName *string    `json:"display_name,omitempty"`
 	Username    *string    `json:"username,omitempty"`
 }
+
+// CreatePostJSONRequestBody defines body for CreatePost for application/json ContentType.
+type CreatePostJSONRequestBody CreatePostJSONBody
 
 // UpdateUserJSONRequestBody defines body for UpdateUser for application/json ContentType.
 type UpdateUserJSONRequestBody UpdateUserJSONBody
@@ -145,6 +164,11 @@ type ClientInterface interface {
 	// RefreshAuthorization request
 	RefreshAuthorization(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// CreatePostWithBody request with any body
+	CreatePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreatePost(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetUserById request
 	GetUserById(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -168,6 +192,30 @@ func (c *Client) AuthorizeWithLine(ctx context.Context, params *AuthorizeWithLin
 
 func (c *Client) RefreshAuthorization(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewRefreshAuthorizationRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreatePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreatePostRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreatePost(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreatePostRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -282,6 +330,46 @@ func NewRefreshAuthorizationRequest(server string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewCreatePostRequest calls the generic CreatePost builder with application/json body
+func NewCreatePostRequest(server string, body CreatePostJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreatePostRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreatePostRequestWithBody generates requests for CreatePost with any type of body
+func NewCreatePostRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/posts/create")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -416,6 +504,11 @@ type ClientWithResponsesInterface interface {
 	// RefreshAuthorizationWithResponse request
 	RefreshAuthorizationWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error)
 
+	// CreatePostWithBodyWithResponse request with any body
+	CreatePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
+
+	CreatePostWithResponse(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
+
 	// GetUserByIdWithResponse request
 	GetUserByIdWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserByIdResponse, error)
 
@@ -477,6 +570,35 @@ func (r RefreshAuthorizationResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r RefreshAuthorizationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreatePostResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int  `json:"code"`
+		Data Post `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r CreatePostResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreatePostResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -557,6 +679,23 @@ func (c *ClientWithResponses) RefreshAuthorizationWithResponse(ctx context.Conte
 		return nil, err
 	}
 	return ParseRefreshAuthorizationResponse(rsp)
+}
+
+// CreatePostWithBodyWithResponse request with arbitrary body returning *CreatePostResponse
+func (c *ClientWithResponses) CreatePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePostResponse, error) {
+	rsp, err := c.CreatePostWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreatePostResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreatePostWithResponse(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePostResponse, error) {
+	rsp, err := c.CreatePost(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreatePostResponse(rsp)
 }
 
 // GetUserByIdWithResponse request returning *GetUserByIdResponse
@@ -651,6 +790,39 @@ func ParseRefreshAuthorizationResponse(rsp *http.Response) (*RefreshAuthorizatio
 	return response, nil
 }
 
+// ParseCreatePostResponse parses an HTTP response from a CreatePostWithResponse call
+func ParseCreatePostResponse(rsp *http.Response) (*CreatePostResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreatePostResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int  `json:"code"`
+			Data Post `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetUserByIdResponse parses an HTTP response from a GetUserByIdWithResponse call
 func ParseGetUserByIdResponse(rsp *http.Response) (*GetUserByIdResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -725,6 +897,9 @@ type ServerInterface interface {
 	// 認証トークンを更新
 	// (POST /authorize/refresh)
 	RefreshAuthorization(ctx echo.Context) error
+	// 投稿を作成する
+	// (POST /posts/create)
+	CreatePost(ctx echo.Context) error
 	// ユーザーを取得する
 	// (GET /users/{user_id})
 	GetUserById(ctx echo.Context, userId openapi_types.UUID) error
@@ -762,6 +937,15 @@ func (w *ServerInterfaceWrapper) RefreshAuthorization(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.RefreshAuthorization(ctx)
+	return err
+}
+
+// CreatePost converts echo context to params.
+func (w *ServerInterfaceWrapper) CreatePost(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.CreatePost(ctx)
 	return err
 }
 
@@ -827,6 +1011,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 
 	router.POST(baseURL+"/authorize/line", wrapper.AuthorizeWithLine)
 	router.POST(baseURL+"/authorize/refresh", wrapper.RefreshAuthorization)
+	router.POST(baseURL+"/posts/create", wrapper.CreatePost)
 	router.GET(baseURL+"/users/:user_id", wrapper.GetUserById)
 	router.GET(baseURL+"/users/:user_id/update", wrapper.UpdateUser)
 
@@ -835,20 +1020,21 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xWz0scSRT+V5baPbbT4+6tbyu7LAOyhwXZg8hQdr+ZKZ3uKquqXWaHOXQ3uCsiihAl",
-	"hJBDgklMJIL5YYLkn6mM+meEqh5nuqd7YkIgRvCiQ7+q9776vu+9qi5yqc9oAIEUyOki4bbAx+bnr6Fs",
-	"UU7+xZLQQH9gnDLgkoAJY9cFIeqSLoOJyg4D5CAhOQmaqGchIuoB/JMJLVLaBhzoGIcGB9H6xO5QAK8T",
-	"ryRmtq+EhIOHnPnhQiuPaLzGEM+CdZmQLi6BK3WxOQG85ISrWGJeD3m7FOEioU2OWaszIcply8MSdLRB",
-	"uY8lcpD+MCWJD8gqbnHpKkwu53LAEry6zvO5GT0iWBt36gH2oVwjQ7AHwuWEpTqj2m/ndw76W2+QNaoS",
-	"hobhokrM+2JQWrBLQPnK/e3N/vpmcc+Y4gbKMMvYKa2sbFlOs4Jl5ckdIkdz0SkaCQka1HBJZNuADMQU",
-	"ZgxZaBW4SA8yXalWqvqslEGAGUEO+qVSrUwjCzEsW8ZdNh70F9htEhg2GBWGR21C03U1DznDPoS/iWzN",
-	"6qU6C8c+SOACOfNdRHTRlRC4PlrKLXKpByhLnOQhWIMGL2urBb1YMBqI1P4/V6v6n0sDCYHBhRlrE9cg",
-	"s5dEOhRG+fLNY8oXFFbJcxW/Vcl9lRzrH/GxSk5Vsj7SnAQSmsCNe7E0iX/i0EAO+tEejSp7MKfs/JDS",
-	"jC8Xq54dPuyfnKjoWf+//fPtNRXvnL+KP7xbU9Geih6oaENFT1W0pqKNEY7hsBozH102rjLcGoDlLskD",
-	"MFkEuCEnsoOc+QULidD3Me8gB83W/vz9BxU9Vsmhio9U/Eglx2ZDxiGDWTbZJH+lC/J03Ap6LYJeHGxe",
-	"PDlVyf+aiviFYWbn7N7Ls92jVFc9u4TdHdxcPX2+JpSI+gdIfTPNdGrehJ7X02TU8qOrcHLXXzHSb+YU",
-	"MPf3jfSKSvaNS16bvzv9rd3++z0V3VXxRqlX7PSymmiZORM2fHxTx6yEIOQM9TpfYZbv67115dsp+44p",
-	"PlgKtujdNtY1NlY6foeN1et9DAAA///DNR9r+QwAAA==",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

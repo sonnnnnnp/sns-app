@@ -101,7 +101,6 @@ paths:
                     type: integer
                     description: レスポンスコード
                   data: &ref_1
-                    description: データ
                     $ref: '#/components/schemas/User'
                 required:
                   - ok
@@ -164,6 +163,45 @@ paths:
                   - data
           headers: {}
       security: []
+  /posts/create:
+    post:
+      summary: 投稿を作成する
+      deprecated: false
+      description: ''
+      operationId: createPost
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data:
+                    description: データ
+                    $ref: '#/components/schemas/Post'
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security: []
 components:
   schemas:
     User:
@@ -219,6 +257,27 @@ components:
         - access_token
         - refresh_token
         - is_new
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID番号
+          format: uuid
+        author: *ref_1
+        content:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - author
+        - updated_at
+        - created_at
     Response:
       title: ''
       type: object

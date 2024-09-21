@@ -9,8 +9,10 @@ package internal
 import (
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
+	"github.com/sonnnnnnp/sns-app/internal/domain/repository/post"
 	"github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/post"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/user"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 )
@@ -21,7 +23,9 @@ func Wire(db *ent.Client) *controller.Controller {
 	client := line.New()
 	userRepository := user_repository.New(db)
 	authorizeUsecase := authorize_usecase.New(client, userRepository)
+	postRepository := post_repository.New(db)
+	postUsecase := post_usecase.New(postRepository)
 	userUsecase := user_usecase.New(userRepository)
-	controllerController := controller.New(authorizeUsecase, userUsecase)
+	controllerController := controller.New(authorizeUsecase, postUsecase, userUsecase)
 	return controllerController
 }

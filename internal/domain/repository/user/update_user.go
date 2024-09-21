@@ -10,30 +10,30 @@ import (
 )
 
 func (ur *UserRepository) UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*ent.User, error) {
-	builder := ur.db.User.UpdateOneID(id)
+	query := ur.db.User.UpdateOneID(id)
 
 	if body.Username != nil {
-		builder.SetUsername(*body.Username)
+		query.SetUsername(*body.Username)
 	}
 	if body.DisplayName != nil {
-		builder.SetDisplayName(*body.DisplayName)
+		query.SetDisplayName(*body.DisplayName)
 	}
 	if body.Biography != nil {
-		builder.SetBiography(*body.Biography)
+		query.SetBiography(*body.Biography)
 	}
 	if body.AvatarUrl != nil {
-		builder.SetAvatarURL(*body.AvatarUrl)
+		query.SetAvatarURL(*body.AvatarUrl)
 	}
 	if body.CoverUrl != nil {
-		builder.SetCoverURL(*body.CoverUrl)
+		query.SetCoverURL(*body.CoverUrl)
 	}
 	if body.Birthdate != nil {
-		builder.SetBirthdate(*body.Birthdate)
+		query.SetBirthdate(*body.Birthdate)
 	}
 
-	builder.SetUpdatedAt(time.Now())
+	query.SetUpdatedAt(time.Now())
 
-	u, err := builder.Save(ctx)
+	u, err := query.Save(ctx)
 	if err != nil {
 		return nil, err
 	}
