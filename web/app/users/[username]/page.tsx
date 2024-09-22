@@ -1,6 +1,6 @@
 import { useFetchWithTokens } from "@/lib/useFetchWithToken";
 const Page = ({ params }: { params: { username: string } }) => {
-  useFetchWithTokens("http://localhost:1323/timeline");
+  useFetchWithTokens("/timeline");
   return (
     <>
       <h1>{params.username}</h1>
