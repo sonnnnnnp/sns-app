@@ -8,12 +8,12 @@ import (
 )
 
 func (c Controller) CreatePost(ctx echo.Context) error {
-	var body *oapi.CreatePostJSONBody
+	var body oapi.CreatePostJSONBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}
 
-	p, err := c.postUsecase.CreatePost(ctx.Request().Context(), body)
+	p, err := c.postUsecase.CreatePost(ctx.Request().Context(), &body)
 	if err != nil {
 		return err
 	}

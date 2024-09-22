@@ -17,12 +17,12 @@ func (c Controller) AuthorizeWithLine(ctx echo.Context, params oapi.AuthorizeWit
 }
 
 func (c Controller) RefreshAuthorization(ctx echo.Context) error {
-	var body *oapi.RefreshAuthorizationJSONBody
+	var body oapi.RefreshAuthorizationJSONBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}
 
-	auth, err := c.authUsecase.RefreshAuthorization(ctx.Request().Context(), body)
+	auth, err := c.authUsecase.RefreshAuthorization(ctx.Request().Context(), &body)
 	if err != nil {
 		return err
 	}
