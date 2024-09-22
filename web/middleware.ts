@@ -26,6 +26,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // クッキーから取得したトークンの有効性を確認
   let accessToken = req.cookies.get("access-token")?.value;
   let refreshToken = req.cookies.get("refresh-token")?.value;
 
@@ -45,6 +46,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // トークン期限切れの場合、リフレッシュトークンを使って再取得
   if (data?.code === -1002) {
     const { ok, access_token, refresh_token } = await refreshTokens(
       refreshToken!
@@ -60,7 +62,6 @@ export async function middleware(req: NextRequest) {
       response.cookies.set("access-token", access_token!, {
         expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
       });
-
       response.cookies.set("refresh-token", refresh_token!, {
         expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       });
@@ -69,7 +70,14 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(new URL("/login", req.url));
+  // 再取得に失敗した場合はクッキーを削除してログイン画面にリダイレクト
+  const response = NextResponse.redirect(new URL("/login", req.url));
+
+  req.cookies.getAll().forEach((cookie) => {
+    response.cookies.delete(cookie.name);
+  });
+
+  return response;
 }
 
 export const config = {
