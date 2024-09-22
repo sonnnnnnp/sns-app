@@ -38,7 +38,7 @@ func JWTMiddleware(excludePaths []string) echo.MiddlewareFunc {
 			// 認証トークンを検証
 			cfg := ctxhelper.GetConfig(ctx.Request().Context())
 
-			if uID, err := jwter.Verify(token, []byte(cfg.JWTSecret)); err == nil {
+			if uID, err := jwter.Verify(token, "access", []byte(cfg.JWTSecret)); err == nil {
 				c := ctxhelper.SetUserID(ctx.Request().Context(), uID)
 				ctx.SetRequest(ctx.Request().WithContext(c))
 			} else {

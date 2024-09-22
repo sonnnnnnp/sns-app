@@ -11,7 +11,7 @@ import (
 func (au *AuthorizeUsecase) RefreshAuthorization(ctx context.Context, body *oapi.RefreshAuthorizationJSONBody) (*oapi.Authorization, error) {
 	cfg := ctxhelper.GetConfig(ctx)
 
-	uID, err := jwter.Verify(body.RefreshToken, []byte(cfg.JWTSecret))
+	uID, err := jwter.Verify(body.RefreshToken, "refresh", []byte(cfg.JWTSecret))
 	if err != nil {
 		return nil, err
 	}

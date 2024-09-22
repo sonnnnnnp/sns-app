@@ -58,13 +58,13 @@ func (c Controller) GetUserById(ctx echo.Context, id uuid.UUID) error {
 }
 
 func (c Controller) UpdateUser(ctx echo.Context, id uuid.UUID) error {
-	var body *oapi.UpdateUserJSONBody
+	var body oapi.UpdateUserJSONBody
 	if err := ctx.Bind(&body); err != nil {
 		// return errors.ValidationFailed.Wrap(errors.WithStack(err), err.Error())
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	u, err := c.userUsecase.UpdateUser(ctx.Request().Context(), id, body)
+	u, err := c.userUsecase.UpdateUser(ctx.Request().Context(), id, &body)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "failed to update a user")
 	}
