@@ -44,8 +44,9 @@ func (au *AuthorizeUsecase) generateAuthorization(jwtSecret []byte, uid uuid.UUI
 	atoken, err := au.generateToken(
 		jwtSecret,
 		jwt.MapClaims{
-			"id":  uid.String(),
-			"exp": jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
+			"sub":   uid.String(),
+			"exp":   jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
+			"scope": "access",
 		},
 	)
 	if err != nil {
@@ -55,8 +56,9 @@ func (au *AuthorizeUsecase) generateAuthorization(jwtSecret []byte, uid uuid.UUI
 	rtoken, err := au.generateToken(
 		jwtSecret,
 		jwt.MapClaims{
-			"id":  uid.String(),
-			"exp": jwt.NewNumericDate(time.Now().Add(30 * 24 * time.Hour)),
+			"sub":   uid.String(),
+			"exp":   jwt.NewNumericDate(time.Now().Add(30 * 24 * time.Hour)),
+			"scope": "refresh",
 		},
 	)
 	if err != nil {
