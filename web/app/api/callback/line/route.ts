@@ -10,19 +10,19 @@ export async function GET(req: NextRequest) {
   const { data } = await client.POST("/authorize/line", {
     params: {
       query: {
-        code: code as string,
+        code: code!,
       },
     },
   });
 
   const cookieStore = cookies();
-  cookieStore.set("user-id", data?.data.user_id as string, {
-    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+  cookieStore.set("user-id", data?.data.user_id!, {
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
   });
-  cookieStore.set("access-token", data?.data.access_token as string, {
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day
+  cookieStore.set("access-token", data?.data.access_token!, {
+    expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
   });
-  cookieStore.set("refresh-token", data?.data.refresh_token as string, {
+  cookieStore.set("refresh-token", data?.data.refresh_token!, {
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
   });
 

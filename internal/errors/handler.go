@@ -1,7 +1,6 @@
 package errors
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -28,12 +27,14 @@ func ErrorHandler(err error, ctx echo.Context) {
 		})
 		return
 	}
+
+	code := getErrorCode(err)
+
 	ctx.JSON(http.StatusOK, &Response{
-		Code: http.StatusInternalServerError,
+		Code: code,
 		OK:   false,
 		Data: &ErrorMessage{
-			// TODO: hide error details under production mode
-			Message: fmt.Sprintf("Internal server error: %v", err),
+			Message: err.Error(),
 		},
 	})
 }

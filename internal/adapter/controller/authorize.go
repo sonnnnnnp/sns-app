@@ -17,9 +17,15 @@ func (c Controller) AuthorizeWithLine(ctx echo.Context, params oapi.AuthorizeWit
 }
 
 func (c Controller) RefreshAuthorization(ctx echo.Context) error {
-	return c.json(ctx, http.StatusOK, &oapi.Authorization{
-		AccessToken:  "1234567890",
-		RefreshToken: "abcdefghijklmnopqrstuvwxyz",
-		UserId:       "or4p90.fo0qg4",
-	})
+	var body *oapi.RefreshAuthorizationJSONBody
+	if err := ctx.Bind(&body); err != nil {
+		return err
+	}
+
+	auth, err := c.authUsecase.RefreshAuthorization(ctx.Request().Context(), body)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, &auth)
 }

@@ -23,6 +23,10 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+const (
+	BearerScopes = "bearer.Scopes"
+)
+
 // Authorization defines model for Authorization.
 type Authorization struct {
 	AccessToken  string `json:"access_token"`
@@ -69,6 +73,11 @@ type AuthorizeWithLineParams struct {
 	Code string `form:"code" json:"code"`
 }
 
+// RefreshAuthorizationJSONBody defines parameters for RefreshAuthorization.
+type RefreshAuthorizationJSONBody struct {
+	RefreshToken string `json:"refresh_token"`
+}
+
 // CreatePostJSONBody defines parameters for CreatePost.
 type CreatePostJSONBody struct {
 	Content *string `json:"content,omitempty"`
@@ -83,6 +92,9 @@ type UpdateUserJSONBody struct {
 	DisplayName *string    `json:"display_name,omitempty"`
 	Username    *string    `json:"username,omitempty"`
 }
+
+// RefreshAuthorizationJSONRequestBody defines body for RefreshAuthorization for application/json ContentType.
+type RefreshAuthorizationJSONRequestBody RefreshAuthorizationJSONBody
 
 // CreatePostJSONRequestBody defines body for CreatePost for application/json ContentType.
 type CreatePostJSONRequestBody CreatePostJSONBody
@@ -166,8 +178,10 @@ type ClientInterface interface {
 	// AuthorizeWithLine request
 	AuthorizeWithLine(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// RefreshAuthorization request
-	RefreshAuthorization(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// RefreshAuthorizationWithBody request with any body
+	RefreshAuthorizationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	RefreshAuthorization(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreatePostWithBody request with any body
 	CreatePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -176,6 +190,9 @@ type ClientInterface interface {
 
 	// GetTimeline request
 	GetTimeline(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetSelf request
+	GetSelf(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetUserById request
 	GetUserById(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -198,8 +215,20 @@ func (c *Client) AuthorizeWithLine(ctx context.Context, params *AuthorizeWithLin
 	return c.Client.Do(req)
 }
 
-func (c *Client) RefreshAuthorization(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRefreshAuthorizationRequest(c.Server)
+func (c *Client) RefreshAuthorizationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRefreshAuthorizationRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RefreshAuthorization(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRefreshAuthorizationRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -236,6 +265,18 @@ func (c *Client) CreatePost(ctx context.Context, body CreatePostJSONRequestBody,
 
 func (c *Client) GetTimeline(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTimelineRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSelf(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSelfRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -327,8 +368,19 @@ func NewAuthorizeWithLineRequest(server string, params *AuthorizeWithLineParams)
 	return req, nil
 }
 
-// NewRefreshAuthorizationRequest generates requests for RefreshAuthorization
-func NewRefreshAuthorizationRequest(server string) (*http.Request, error) {
+// NewRefreshAuthorizationRequest calls the generic RefreshAuthorization builder with application/json body
+func NewRefreshAuthorizationRequest(server string, body RefreshAuthorizationJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRefreshAuthorizationRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewRefreshAuthorizationRequestWithBody generates requests for RefreshAuthorization with any type of body
+func NewRefreshAuthorizationRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -346,10 +398,12 @@ func NewRefreshAuthorizationRequest(server string) (*http.Request, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -404,6 +458,33 @@ func NewGetTimelineRequest(server string) (*http.Request, error) {
 	}
 
 	operationPath := fmt.Sprintf("/timeline")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetSelfRequest generates requests for GetSelf
+func NewGetSelfRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/me")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -548,8 +629,10 @@ type ClientWithResponsesInterface interface {
 	// AuthorizeWithLineWithResponse request
 	AuthorizeWithLineWithResponse(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*AuthorizeWithLineResponse, error)
 
-	// RefreshAuthorizationWithResponse request
-	RefreshAuthorizationWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error)
+	// RefreshAuthorizationWithBodyWithResponse request with any body
+	RefreshAuthorizationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error)
+
+	RefreshAuthorizationWithResponse(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error)
 
 	// CreatePostWithBodyWithResponse request with any body
 	CreatePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
@@ -558,6 +641,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetTimelineWithResponse request
 	GetTimelineWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
+
+	// GetSelfWithResponse request
+	GetSelfWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSelfResponse, error)
 
 	// GetUserByIdWithResponse request
 	GetUserByIdWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserByIdResponse, error)
@@ -684,6 +770,35 @@ func (r GetTimelineResponse) StatusCode() int {
 	return 0
 }
 
+type GetSelfResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int  `json:"code"`
+		Data User `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSelfResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSelfResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetUserByIdResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -751,9 +866,17 @@ func (c *ClientWithResponses) AuthorizeWithLineWithResponse(ctx context.Context,
 	return ParseAuthorizeWithLineResponse(rsp)
 }
 
-// RefreshAuthorizationWithResponse request returning *RefreshAuthorizationResponse
-func (c *ClientWithResponses) RefreshAuthorizationWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error) {
-	rsp, err := c.RefreshAuthorization(ctx, reqEditors...)
+// RefreshAuthorizationWithBodyWithResponse request with arbitrary body returning *RefreshAuthorizationResponse
+func (c *ClientWithResponses) RefreshAuthorizationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error) {
+	rsp, err := c.RefreshAuthorizationWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRefreshAuthorizationResponse(rsp)
+}
+
+func (c *ClientWithResponses) RefreshAuthorizationWithResponse(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error) {
+	rsp, err := c.RefreshAuthorization(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -784,6 +907,15 @@ func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, reqEd
 		return nil, err
 	}
 	return ParseGetTimelineResponse(rsp)
+}
+
+// GetSelfWithResponse request returning *GetSelfResponse
+func (c *ClientWithResponses) GetSelfWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSelfResponse, error) {
+	rsp, err := c.GetSelf(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSelfResponse(rsp)
 }
 
 // GetUserByIdWithResponse request returning *GetUserByIdResponse
@@ -944,6 +1076,39 @@ func ParseGetTimelineResponse(rsp *http.Response) (*GetTimelineResponse, error) 
 	return response, nil
 }
 
+// ParseGetSelfResponse parses an HTTP response from a GetSelfWithResponse call
+func ParseGetSelfResponse(rsp *http.Response) (*GetSelfResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSelfResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int  `json:"code"`
+			Data User `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetUserByIdResponse parses an HTTP response from a GetUserByIdWithResponse call
 func ParseGetUserByIdResponse(rsp *http.Response) (*GetUserByIdResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -1024,6 +1189,9 @@ type ServerInterface interface {
 	// タイムラインを取得する
 	// (GET /timeline)
 	GetTimeline(ctx echo.Context) error
+	// 自分を取得する
+	// (GET /users/me)
+	GetSelf(ctx echo.Context) error
 	// ユーザーを取得する
 	// (GET /users/{user_id})
 	GetUserById(ctx echo.Context, userId openapi_types.UUID) error
@@ -1059,6 +1227,8 @@ func (w *ServerInterfaceWrapper) AuthorizeWithLine(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) RefreshAuthorization(ctx echo.Context) error {
 	var err error
 
+	ctx.Set(BearerScopes, []string{})
+
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.RefreshAuthorization(ctx)
 	return err
@@ -1067,6 +1237,8 @@ func (w *ServerInterfaceWrapper) RefreshAuthorization(ctx echo.Context) error {
 // CreatePost converts echo context to params.
 func (w *ServerInterfaceWrapper) CreatePost(ctx echo.Context) error {
 	var err error
+
+	ctx.Set(BearerScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.CreatePost(ctx)
@@ -1077,8 +1249,21 @@ func (w *ServerInterfaceWrapper) CreatePost(ctx echo.Context) error {
 func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
 	var err error
 
+	ctx.Set(BearerScopes, []string{})
+
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetTimeline(ctx)
+	return err
+}
+
+// GetSelf converts echo context to params.
+func (w *ServerInterfaceWrapper) GetSelf(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetSelf(ctx)
 	return err
 }
 
@@ -1092,6 +1277,8 @@ func (w *ServerInterfaceWrapper) GetUserById(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
 	}
+
+	ctx.Set(BearerScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetUserById(ctx, userId)
@@ -1108,6 +1295,8 @@ func (w *ServerInterfaceWrapper) UpdateUser(ctx echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
 	}
+
+	ctx.Set(BearerScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.UpdateUser(ctx, userId)
@@ -1146,6 +1335,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/authorize/refresh", wrapper.RefreshAuthorization)
 	router.POST(baseURL+"/posts/create", wrapper.CreatePost)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
+	router.GET(baseURL+"/users/me", wrapper.GetSelf)
 	router.GET(baseURL+"/users/:user_id", wrapper.GetUserById)
 	router.GET(baseURL+"/users/:user_id/update", wrapper.UpdateUser)
 
@@ -1154,22 +1344,23 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

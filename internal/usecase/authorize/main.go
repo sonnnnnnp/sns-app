@@ -13,6 +13,7 @@ import (
 
 type IAuthorizeUsecase interface {
 	AuthorizeWithLine(ctx context.Context, code string) (*oapi.Authorization, error)
+	RefreshAuthorization(ctx context.Context, body *oapi.RefreshAuthorizationJSONBody) (*oapi.Authorization, error)
 }
 
 type AuthorizeUsecase struct {

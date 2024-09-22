@@ -72,6 +72,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 自分を取得する */
+        get: operations["getSelf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/posts/create": {
         parameters: {
             query?: never;
@@ -175,7 +192,13 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    refresh_token: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -271,6 +294,31 @@ export interface operations {
                 };
             };
         };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["User"];
+                    };
+                };
+            };
+        };
+    };
+    getSelf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {

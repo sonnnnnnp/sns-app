@@ -13,6 +13,16 @@ paths:
       operationId: refreshAuthorization
       tags: []
       parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+              required:
+                - refresh_token
       responses:
         '200':
           description: ''
@@ -35,7 +45,8 @@ paths:
                   - code
                   - data
           headers: {}
-      security: []
+      security:
+        - bearer: []
   /authorize/line:
     post:
       summary: LINE でログイン
@@ -107,7 +118,8 @@ paths:
                   - code
                   - data
           headers: {}
-      security: []
+      security:
+        - bearer: []
   /users/{user_id}/update:
     get:
       summary: ユーザーを更新する
@@ -162,7 +174,38 @@ paths:
                   - code
                   - data
           headers: {}
-      security: []
+      security:
+        - bearer: []
+  /users/me:
+    get:
+      summary: 自分を取得する
+      deprecated: false
+      description: ''
+      operationId: getSelf
+      tags: []
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: *ref_1
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security:
+        - bearer: []
   /posts/create:
     post:
       summary: 投稿を作成する
@@ -200,7 +243,8 @@ paths:
                   - code
                   - data
           headers: {}
-      security: []
+      security:
+        - bearer: []
   /timeline:
     get:
       summary: タイムラインを取得する
@@ -231,7 +275,8 @@ paths:
                   - code
                   - data
           headers: {}
-      security: []
+      security:
+        - bearer: []
 components:
   schemas:
     User:
@@ -334,5 +379,8 @@ components:
         - ok
         - code
         - data
-  securitySchemes: {}
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
 servers: []

@@ -41,6 +41,7 @@ func Run(cfg *config.Config) {
 
 	jwtExcludePaths := []string{
 		"/authorize/line",
+		"/authorize/refresh",
 	}
 
 	swagger, err := oapi.GetSwagger()
