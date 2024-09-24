@@ -1,23 +1,21 @@
-import { Post } from "./post";
-import { Tabs } from "./tabs";
-import { TimelineTab } from "./timeline-tab";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
+import { PostList } from "./post-list";
 
 export function Timeline() {
   return (
-    <div className="px-3">
-      <TimelineTab />
-      <div className="grid gap-y-3 pt-[68px]">
-        {[...Array(30)].map((_, i) => (
-          <Post
-            key={i}
-            username="kaworu"
-            display_name="カヲル"
-            avatar_image_url="/kaworu_icon.jpg"
-            content="s"
-            created_at={1234567}
-          />
-        ))}
+    <Tabs className="z-50 md:w-[580px]" defaultValue="following">
+      <div>
+        <TabsList className="h-14 w-full sticky top-0 z-10">
+          <TabsTrigger value="following">フォロー中</TabsTrigger>
+          <TabsTrigger value="recommendations">おすすめ</TabsTrigger>
+        </TabsList>
+        <TabsContent value="following">
+          <PostList />
+        </TabsContent>
+        <TabsContent value="recommendations">
+          <PostList />
+        </TabsContent>
       </div>
-    </div>
+    </Tabs>
   );
 }

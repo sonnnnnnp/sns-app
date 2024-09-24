@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { client } from "./lib/api";
+import client from "./lib/api";
 
 async function refreshTokens(
   refreshToken: string
