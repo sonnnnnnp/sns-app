@@ -14,7 +14,7 @@ const Messages = () => {
     <div className="h-dvh py-7">
       <Card className="h-full flex">
         <ChatList />
-        <ChatWindow/>
+        <ChatWindow />
       </Card>
     </div>
   );

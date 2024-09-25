@@ -7,7 +7,7 @@ const Page = () => {
     <div className="flex h-dvh justify-center">
       <Navigation />
       {/* <Nav /> */}
-      <main className="">
+      <main className="flex justify-center w-[950px]">
         <Timeline />
       </main>
     </div>
