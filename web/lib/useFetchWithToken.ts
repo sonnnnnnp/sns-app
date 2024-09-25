@@ -6,7 +6,7 @@ export const useFetchWithTokens = async (path: string) => {
   const accesToken = cookiesStore.get("access-token")!.value;
   const response = await client.GET(path, {
     headers: {
-      // Authorization: `Bearer ${accesToken}`,
+      Authorization: `Bearer ${accesToken}`,
     },
   });
   console.log(response);
