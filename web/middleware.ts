@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { client } from "./lib/api";
+import client from "./lib/api";
 
 async function refreshTokens(
   refreshToken: string
@@ -60,7 +60,7 @@ export async function middleware(req: NextRequest) {
       const response = NextResponse.next();
 
       response.cookies.set("access-token", access_token!, {
-        expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       });
       response.cookies.set("refresh-token", refresh_token!, {
         expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days

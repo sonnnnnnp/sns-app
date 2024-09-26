@@ -1,11 +1,5 @@
-"use client";
-
-import { Post } from "./post";
-import { Tabs } from "./tabs";
-import { TimelineTab } from "./timeline-tab";
-import { PostForm } from "./post-form";
-import { useEffect } from "react";
-import { client } from "@/lib/api";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
+import { PostList } from "./post-list";
 
 export function Timeline() {
   useEffect(() => {
@@ -14,24 +8,19 @@ export function Timeline() {
     })();
   }, []);
   return (
-    <div className="">
+    <Tabs className="z-50 md:w-[580px]" defaultValue="following">
       <div>
-        <TimelineTab />
-        <div className="h-[68px]"></div>
-        <PostForm />
-        <div>
-          {[...Array(30)].map((_, i) => (
-            <Post
-              key={i}
-              username="kaworu"
-              display_name="カヲル"
-              avatar_image_url="/kaworu_icon.jpg"
-              content="s"
-              created_at={1234567}
-            />
-          ))}
-        </div>
+        <TabsList className="h-14 w-full sticky top-0 z-10">
+          <TabsTrigger value="following">フォロー中</TabsTrigger>
+          <TabsTrigger value="recommendations">おすすめ</TabsTrigger>
+        </TabsList>
+        <TabsContent value="following">
+          <PostList />
+        </TabsContent>
+        <TabsContent value="recommendations">
+          <PostList />
+        </TabsContent>
       </div>
-    </div>
+    </Tabs>
   );
 }

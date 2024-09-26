@@ -10,6 +10,7 @@ import {
   Bell,
   Settings,
 } from "lucide-react";
+import { Separator } from "../ui/separator";
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -24,35 +25,36 @@ export default function Navigation() {
   ];
 
   return (
-    <div className="w-52 hidden md:block">
+    <div className="w-52 mr-12">
       <div className="fixed">
         <nav className="text-xl">
-          <ul>
+          <ul className="flex flex-col gap-y-5">
             {navItems.map((item) => (
               <li
                 key={item.label}
-                className={`w-52 p-3  rounded-xl ${
+                className={`w-52 rounded-xl ${
                   pathname === item.href
-                    ? "bg-slate-100 dark:bg-neutral-900 hover:bg-slate-200"
-                    : "hover:bg-slate-100 dark:hover:bg-neutral-900"
+                    ? "bg-muted p-1 text-primary"
+                    : "text-muted-foreground"
                 }`}
               >
                 <Link
                   href={item.href}
-                  className={`flex items-center ${
-                    pathname === item.href ? "font-bold" : ""
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                    pathname === item.href ? "font-[550]" : ""
                   }`}
                 >
                   <item.icon
-                    size={24}
+                    size={20}
                     strokeWidth={pathname === item.href ? "2.5" : "2"}
                   />
-                  <span className="ml-4">{item.label}</span>
+                  {item.label}
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
+        {/* <Separator className="ml-[230px] h-[480px]" orientation="vertical" /> */}
       </div>
     </div>
   );

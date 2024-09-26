@@ -9,7 +9,7 @@ import (
 	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
 )
 
-func Verify(tokenString string, secret []byte) (uID uuid.UUID, err error) {
+func Verify(tokenString string, scope string, secret []byte) (uID uuid.UUID, err error) {
 	token, err := jwt.Parse(
 		tokenString,
 		func(token *jwt.Token) (interface{}, error) {
@@ -29,8 +29,14 @@ func Verify(tokenString string, secret []byte) (uID uuid.UUID, err error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		if id, ok := claims["id"].(string); ok {
-			uID, err := uuid.Parse(id)
+		if scopeClaim, ok := claims["scope"].(string); ok {
+			if scopeClaim != scope {
+				return uuid.Nil, internal_errors.ErrInvalidTokenScope
+			}
+		}
+
+		if sub, ok := claims["sub"].(string); ok {
+			uID, err := uuid.Parse(sub)
 			if err != nil {
 				return uuid.Nil, internal_errors.ErrInvalidToken
 			}
