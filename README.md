@@ -28,7 +28,7 @@
 アプリケーションの準備
 
 ```shell
-make setup
+make build
 ```
 
 アプリケーションの起動

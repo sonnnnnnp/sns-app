@@ -9,8 +9,8 @@ help: Makefile
 	@echo "Targets:"
 	@sed -n "s/^#?//p" $< | column -t -s ":"
 
-#? setup: アプリケーションのセットアップ
-setup:
+#? build: アプリケーションのセットアップ
+build:
 	docker compose build --no-cache
 	[ -f .env ] || cp .env.example .env
 	cd web && [ -f .env ] || cp .env.example .env && npm ci
