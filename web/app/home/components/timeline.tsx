@@ -2,11 +2,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 import { PostList } from "./post-list";
 
 export function Timeline() {
-  useEffect(() => {
-    (async () => {
-      await client.GET("/timeline");
-    })();
-  }, []);
   return (
     <Tabs className="z-50 md:w-[580px]" defaultValue="following">
       <div>

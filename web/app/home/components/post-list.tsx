@@ -2,7 +2,7 @@ import { Post } from "./post";
 
 export function PostList() {
   return (
-    <div className="grid gap-y-3">
+    <div className="">
       {[...Array(30)].map((_, i) => (
         <Post
           key={i}
