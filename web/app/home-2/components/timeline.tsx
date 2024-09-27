@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-import { PostList } from "./post-list";
+import { PostList } from "../../home/components/post-list";
 
 export function Timeline() {
   return (

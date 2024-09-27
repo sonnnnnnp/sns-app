@@ -1,15 +1,7 @@
-import Navigation from "@/components/common/Navigation";
-import { Timeline } from "./components/timeline";
+import Layout from "./layout";
 
 const Page = () => {
-  return (
-    <main className="flex h-dvh justify-center">
-      <Navigation />
-      <div>
-        <Timeline />
-      </div>
-    </main>
-  );
+  return <Layout />;
 };
 
 export default Page;
