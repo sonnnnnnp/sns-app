@@ -14,10 +14,10 @@ export function PostList() {
     const fetchTimeline = async () => {
       const { data } = await client.GET("/timeline");
       if (!data?.ok) {
-        console.error("error fetching timeline");
+        return console.error("error fetching timeline");
       }
 
-      setPosts(data?.data.posts!);
+      setPosts(data?.data.posts ?? []);
     };
 
     fetchTimeline();
@@ -25,17 +25,16 @@ export function PostList() {
 
   return (
     <div className="">
-      {posts &&
-        posts.map((post, i) => (
-          <Post
-            key={i}
-            username={post.author.username}
-            display_name={post.author.display_name}
-            avatar_image_url="/kaworu_icon.jpg"
-            content={post.content ?? ""}
-            created_at={post.created_at}
-          />
-        ))}
+      {posts.map((post, i) => (
+        <Post
+          key={i}
+          username={post.author.username}
+          display_name={post.author.display_name}
+          avatar_image_url="/kaworu_icon.jpg"
+          content={post.content ?? ""}
+          created_at={post.created_at}
+        />
+      ))}
     </div>
   );
 }
