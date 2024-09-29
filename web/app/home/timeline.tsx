@@ -10,7 +10,7 @@ export const containerClassName = "w-full h-full";
 
 export default function Timeline() {
   return (
-    <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 max-w-[780px]">
+    <main className="p-4 sm:px-6 sm:py-0 max-w-[780px]">
       <Tabs defaultValue="following">
         <div className="flex items-center">
           <TabsList>
