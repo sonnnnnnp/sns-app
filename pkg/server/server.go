@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"log"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
@@ -39,6 +40,11 @@ func Run(cfg *config.Config) {
 
 	e.HTTPErrorHandler = errors.ErrorHandler
 
+	middlewarecfg := echomiddleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+	}
+
 	jwtExcludePaths := []string{
 		"/authorize/line",
 		"/authorize/refresh",
@@ -50,6 +56,7 @@ func Run(cfg *config.Config) {
 	}
 
 	e.Use(echomiddleware.Logger())
+	e.Use(echomiddleware.CORSWithConfig(middlewarecfg))
 	e.Use(middleware.ConfigMiddleware(cfg))
 	e.Use(middleware.JWTMiddleware(jwtExcludePaths))
 	e.Use(middleware.RequestValidatorMiddleware(swagger))

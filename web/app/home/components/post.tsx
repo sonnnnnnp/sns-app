@@ -11,7 +11,7 @@ export function Post(props: {
   display_name: string;
   avatar_image_url: string;
   content: string;
-  created_at: number;
+  created_at: string;
 }) {
   return (
     <Card className="flex text-sm my-3 w-full dark:bg-black dark:border-slate-800">
