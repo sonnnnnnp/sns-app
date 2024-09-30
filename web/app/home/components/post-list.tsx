@@ -30,7 +30,7 @@ export function PostList() {
           key={i}
           username={post.author.username}
           display_name={post.author.display_name}
-          avatar_image_url="/kaworu_icon.jpg"
+          avatar_image_url={post.author.avatar_url}
           content={post.content ?? ""}
           created_at={post.created_at}
         />

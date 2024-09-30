@@ -37,6 +37,12 @@ make build
 make up
 ```
 
+初期データの投入
+
+```shell
+make seed
+```
+
 アプリケーションの停止
 
 ```shell
