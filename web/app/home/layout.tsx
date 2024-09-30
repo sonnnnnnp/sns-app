@@ -9,6 +9,7 @@ import {
   Phone,
   Search,
   Settings,
+  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -211,6 +212,50 @@ export default function Layout() {
           </DropdownMenu>
         </header>
         <Timeline />
+        <div className="sticky bottom-0 z-30 flex h-14 items-center justify-between border-t bg-background px-6 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
+            <Home className="h-5 w-5 text-muted-foreground" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
+            <Search className="h-5 w-5 text-muted-foreground" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
+            <Phone className="h-5 w-5 text-muted-foreground" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
+            <Users className="h-5 w-5 text-muted-foreground" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
+            <Bell className="h-5 w-5 text-muted-foreground" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="overflow-hidden rounded-full"
+          >
+            <MessagesSquare className="h-5 w-5 text-muted-foreground" />
+          </Button>
+        </div>
       </div>
     </div>
   );
