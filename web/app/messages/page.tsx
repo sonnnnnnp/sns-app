@@ -4,7 +4,7 @@ const Page = () => {
   return (
     <div className="flex justify-center">
       <Navigation />
-      <main>
+      <main className="flex justify-center w-[950px]">
         <Messages />
       </main>
     </div>

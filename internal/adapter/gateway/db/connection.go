@@ -5,7 +5,7 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
+	"github.com/sonnnnnnp/sns-app/pkg/ent"
 )
 
 type ConnectionOptions struct {

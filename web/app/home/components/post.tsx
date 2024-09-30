@@ -2,7 +2,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Heart, MessageCircle, Repeat2, Share } from "lucide-react";
-import { PostHandler } from "./post-handler";
+import { PostHandler } from "../../home-2/components/post-handler";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -11,14 +11,14 @@ export function Post(props: {
   display_name: string;
   avatar_image_url: string;
   content: string;
-  created_at: number;
+  created_at: string;
 }) {
   return (
-    <Card className="flex text-sm w-[calc(100dvw_-_1.5rem)] md:w-[580px] dark:bg-black dark:border-slate-800">
+    <Card className="flex text-sm my-3 w-full dark:bg-black dark:border-slate-800">
       <CardContent className="w-full grid gap-6 p-3 py-1">
         <div className="flex">
           <div className="mt-2 mr-2">
-            <Link href={`/user/${props.username}`}>
+            <Link href={`/users/${props.username}`}>
               <Avatar>
                 <AvatarImage src={props.avatar_image_url} />
               </Avatar>

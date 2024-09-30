@@ -1,4 +1,4 @@
-package authorize_usecase
+package authorize
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
+	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )

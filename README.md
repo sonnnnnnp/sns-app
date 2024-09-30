@@ -12,7 +12,7 @@
 		</tr>
 		<tr>
 			<td>DB GUI</td>
-			<td><a href="http://localhost:8080">http://localhost:8080</a></td>
+			<td><a href="http://localhost:8080">http://localhost:8888</a></td>
 		</tr>
 </table>
 
@@ -28,7 +28,7 @@
 アプリケーションの準備
 
 ```shell
-make setup
+make build
 ```
 
 アプリケーションの起動
