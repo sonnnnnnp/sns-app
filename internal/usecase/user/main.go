@@ -1,11 +1,11 @@
-package user_usecase
+package user
 
 import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
-	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
+	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
+	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 

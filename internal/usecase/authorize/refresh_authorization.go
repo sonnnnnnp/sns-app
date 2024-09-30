@@ -1,4 +1,4 @@
-package authorize_usecase
+package authorize
 
 import (
 	"context"

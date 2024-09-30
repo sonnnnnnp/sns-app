@@ -1,9 +1,9 @@
-package timeline_usecase
+package timeline
 
 import (
 	"context"
 
-	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
+	"github.com/sonnnnnnp/sns-app/pkg/ent"
 )
 
 func (tu *TimelineUsecase) GetTimeline(ctx context.Context) ([]*ent.Post, error) {

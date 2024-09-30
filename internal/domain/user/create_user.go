@@ -7,8 +7,8 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/ent"
 )
 
-func (uu *UserUsecase) GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error) {
-	u, err := uu.userRepo.GetUserByID(ctx, id)
+func (ur *UserRepository) CreateUser(ctx context.Context) (*ent.User, error) {
+	u, err := ur.db.User.Create().SetUsername(uuid.New().String()).Save(ctx)
 	if err != nil {
 		return nil, err
 	}

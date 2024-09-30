@@ -1,9 +1,9 @@
-package user_usecase
+package user
 
 import (
 	"context"
 
-	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
+	"github.com/sonnnnnnp/sns-app/pkg/ent"
 )
 
 func (uu *UserUsecase) CreateUser(ctx context.Context) (*ent.User, error) {

@@ -3,13 +3,13 @@ package internal
 import (
 	"github.com/google/wire"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
-	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
-	post_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/post"
-	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/user"
+	post_repository "github.com/sonnnnnnp/sns-app/internal/domain/post"
+	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
 	authorize_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
 	post_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/post"
 	timeline_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
 	user_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/user"
+	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 )
 

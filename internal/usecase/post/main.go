@@ -1,10 +1,10 @@
-package post_usecase
+package post
 
 import (
 	"context"
 
-	"github.com/sonnnnnnp/sns-app/internal/domain/ent"
-	post_repository "github.com/sonnnnnnp/sns-app/internal/domain/repository/post"
+	post_repository "github.com/sonnnnnnp/sns-app/internal/domain/post"
+	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
