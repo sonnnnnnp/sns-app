@@ -8,6 +8,7 @@ type Config struct {
 	DBPassword string `env:"DB_PASSWORD" envDefault:"password"`
 	DBName     string `env:"DB_NAME" envDefault:"db"`
 	DBPort     int    `env:"DB_PORT" envDefault:"5432"`
+	DBSSLMode  string `env:"DB_SSL_MODE" envDefault:"disable"`
 
 	JWTSecret string `env:"JWT_SECRET" envDefault:"jwt_secret"`
 

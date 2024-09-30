@@ -20,12 +20,12 @@ import (
 
 func Run(cfg *config.Config) {
 	db, err := db.Open(&db.ConnectionOptions{
-		Host:     "db",
-		Port:     5432,
-		User:     "user",
-		Name:     "db",
-		Password: "password",
-		SSLMode:  "disable",
+		Host:     cfg.DBHost,
+		Port:     cfg.DBPort,
+		User:     cfg.DBUser,
+		Name:     cfg.DBName,
+		Password: cfg.DBPassword,
+		SSLMode:  cfg.DBSSLMode,
 	})
 	if err != nil {
 		log.Fatalf("failed opening connection to database: %v", err)
