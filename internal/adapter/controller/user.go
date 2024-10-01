@@ -3,7 +3,6 @@ package controller
 import (
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
@@ -28,14 +27,13 @@ func (c Controller) GetSelf(ctx echo.Context) error {
 		AvatarUrl:   u.AvatarURL,
 		CoverUrl:    u.CoverURL,
 		Biography:   u.Biography,
-		Birthdate:   u.Birthdate,
 		UpdatedAt:   u.UpdatedAt,
 		CreatedAt:   u.CreatedAt,
 	})
 }
 
-func (c Controller) GetUserById(ctx echo.Context, id uuid.UUID) error {
-	u, err := c.userUsecase.GetUserByID(ctx.Request().Context(), id)
+func (c Controller) GetUser(ctx echo.Context, username string) error {
+	u, err := c.userUsecase.GetUserByUsername(ctx.Request().Context(), username)
 	if err != nil {
 		return err
 	}
@@ -51,20 +49,21 @@ func (c Controller) GetUserById(ctx echo.Context, id uuid.UUID) error {
 		AvatarUrl:   u.AvatarURL,
 		CoverUrl:    u.CoverURL,
 		Biography:   u.Biography,
-		Birthdate:   u.Birthdate,
 		UpdatedAt:   u.UpdatedAt,
 		CreatedAt:   u.CreatedAt,
 	})
 }
 
-func (c Controller) UpdateUser(ctx echo.Context, id uuid.UUID) error {
+func (c Controller) UpdateUser(ctx echo.Context) error {
+	uID := ctxhelper.GetUserID(ctx.Request().Context())
+
 	var body oapi.UpdateUserJSONBody
 	if err := ctx.Bind(&body); err != nil {
 		// return errors.ValidationFailed.Wrap(errors.WithStack(err), err.Error())
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	u, err := c.userUsecase.UpdateUser(ctx.Request().Context(), id, &body)
+	u, err := c.userUsecase.UpdateUser(ctx.Request().Context(), uID, &body)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "failed to update a user")
 	}
@@ -76,7 +75,6 @@ func (c Controller) UpdateUser(ctx echo.Context, id uuid.UUID) error {
 		AvatarUrl:   u.AvatarUrl,
 		CoverUrl:    u.CoverUrl,
 		Biography:   u.Biography,
-		Birthdate:   u.Birthdate,
 		UpdatedAt:   u.UpdatedAt,
 		CreatedAt:   u.CreatedAt,
 	})

@@ -10,6 +10,7 @@ import (
 
 type IUserRepository interface {
 	GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error)
+	GetUserByUsername(ctx context.Context, username string) (*ent.User, error)
 	GetUserByLineID(ctx context.Context, lineID string) (*ent.User, error)
 	CreateUser(ctx context.Context) (*ent.User, error)
 	UpdateUser(ctx context.Context, id uuid.UUID, data *oapi.UpdateUserJSONBody) (*ent.User, error)

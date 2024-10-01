@@ -82,21 +82,20 @@ paths:
                   - data
           headers: {}
       security: []
-  /users/{user_id}:
+  /users/{username}:
     get:
       summary: ユーザーを取得する
       deprecated: false
       description: ''
-      operationId: getUserById
+      operationId: getUser
       tags: []
       parameters:
-        - name: user_id
+        - name: username
           in: path
           description: ''
           required: true
           schema:
             type: string
-            format: uuid
       responses:
         '200':
           description: ''
@@ -120,21 +119,14 @@ paths:
           headers: {}
       security:
         - bearer: []
-  /users/{user_id}/update:
-    get:
+  /users/update:
+    put:
       summary: ユーザーを更新する
       deprecated: false
       description: ''
       operationId: updateUser
       tags: []
-      parameters:
-        - name: user_id
-          in: path
-          description: ''
-          required: true
-          schema:
-            type: string
-            format: uuid
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -297,9 +289,6 @@ components:
           type: string
         biography:
           type: string
-        birthdate:
-          type: string
-          format: date-time
         updated_at:
           type: string
           format: date-time
@@ -313,7 +302,6 @@ components:
         - avatar_url
         - cover_url
         - biography
-        - birthdate
         - updated_at
         - created_at
     Authorization:
@@ -361,6 +349,14 @@ components:
           items: *ref_2
       required:
         - posts
+    SocialSetting:
+      type: object
+      properties:
+        lineId:
+          type: string
+          nullable: true
+      required:
+        - lineId
     Response:
       title: ''
       type: object

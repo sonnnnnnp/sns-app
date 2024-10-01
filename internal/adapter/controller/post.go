@@ -23,7 +23,6 @@ func (c Controller) CreatePost(ctx echo.Context) error {
 		Author: oapi.User{
 			AvatarUrl:   p.Edges.Author.AvatarURL,
 			Biography:   p.Edges.Author.Biography,
-			Birthdate:   p.Edges.Author.Birthdate,
 			CoverUrl:    p.Edges.Author.CoverURL,
 			CreatedAt:   p.Edges.Author.CreatedAt,
 			DisplayName: p.Edges.Author.DisplayName,
