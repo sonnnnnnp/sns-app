@@ -2,7 +2,7 @@ import { PlusCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PostList } from "./components/post-list";
+import { PostList } from "./post-list";
 
 export const iframeHeight = "938px";
 

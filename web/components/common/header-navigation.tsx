@@ -9,7 +9,6 @@ import {
   Phone,
   Search,
   Settings,
-  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,15 +28,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Timeline from "./timeline";
 
 export const iframeHeight = "938px";
 
 export const containerClassName = "w-full h-full";
 
-export default function Layout() {
+type Props = {
+  children: React.ReactNode;
+};
+
+export default function HeaderNavigation({ children }: Props) {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
+    <div>
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex md:hidden">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
@@ -211,51 +213,7 @@ export default function Layout() {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <Timeline />
-        <div className="fixed bottom-0 z-30 flex h-16 w-full items-center justify-between border-t bg-background px-6 sm:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <Home className="h-6 w-6 text-muted-foreground" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <Search className="h-6 w-6 text-muted-foreground" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <Phone className="h-6 w-6 text-muted-foreground" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <Users className="h-6 w-6 text-muted-foreground" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <Bell className="h-6 w-6 text-muted-foreground" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
-            <MessagesSquare className="h-6 w-6 text-muted-foreground" />
-          </Button>
-        </div>
+        {children}
       </div>
     </div>
   );
