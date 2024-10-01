@@ -27,11 +27,11 @@ export function Post(props: {
           </div>
           <div className="flex-1">
             <div className="flex items-center">
-              <div className="flex items-center gap-1 px-2">
-                <span className="text-sm font-semibold dark:text-white">
+              <div className="flex items-center gap-1.5 px-2 text-sm">
+                <span className="font-semibold dark:text-white">
                   {props.display_name}
                 </span>
-                <span className="text-sm text-muted-foreground dark:text-slate-400">
+                <span className="text-muted-foreground dark:text-slate-400 hidden md:block">
                   {`@${props.username}`}
                 </span>
                 <span className="text-xs text-muted-foreground dark:text-slate-400">

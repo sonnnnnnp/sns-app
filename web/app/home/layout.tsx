@@ -212,48 +212,48 @@ export default function Layout() {
           </DropdownMenu>
         </header>
         <Timeline />
-        <div className="sticky bottom-0 z-30 flex h-14 items-center justify-between border-t bg-background px-6 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+        <div className="fixed bottom-0 z-30 flex h-16 w-full items-center justify-between border-t bg-background px-6 sm:hidden">
           <Button
             variant="ghost"
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <Home className="h-5 w-5 text-muted-foreground" />
+            <Home className="h-6 w-6 text-muted-foreground" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <Search className="h-5 w-5 text-muted-foreground" />
+            <Search className="h-6 w-6 text-muted-foreground" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <Phone className="h-5 w-5 text-muted-foreground" />
+            <Phone className="h-6 w-6 text-muted-foreground" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <Users className="h-5 w-5 text-muted-foreground" />
+            <Users className="h-6 w-6 text-muted-foreground" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <Bell className="h-5 w-5 text-muted-foreground" />
+            <Bell className="h-6 w-6 text-muted-foreground" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             className="overflow-hidden rounded-full"
           >
-            <MessagesSquare className="h-5 w-5 text-muted-foreground" />
+            <MessagesSquare className="h-6 w-6 text-muted-foreground" />
           </Button>
         </div>
       </div>
