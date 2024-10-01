@@ -1,8 +1,8 @@
 import Cookies from "js-cookie";
 
-const Cookie = {
-  accessToken(): string | undefined {
-    return Cookies.get("access-token");
+export const Cookie = {
+  accessToken(): string | null {
+    return Cookies.get("access-token") ?? null;
   },
 
   setAccessToken(token: string) {
@@ -11,8 +11,8 @@ const Cookie = {
     });
   },
 
-  refreshToken(): string | undefined {
-    return Cookies.get("refresh-token");
+  refreshToken(): string | null {
+    return Cookies.get("refresh-token") ?? null;
   },
 
   setRefreshToken(token: string) {
@@ -27,5 +27,3 @@ const Cookie = {
     }
   },
 };
-
-export default Cookie;

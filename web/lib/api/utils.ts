@@ -1,5 +1,5 @@
 import client from ".";
-import Cookie from "../cookies";
+import { Cookie } from "../cookies";
 
 export const refreshAuthorization = async (
   refreshToken: string

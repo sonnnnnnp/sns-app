@@ -1,3 +1,5 @@
+"use client";
+
 import { Bell, Home, MessagesSquare, Phone, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

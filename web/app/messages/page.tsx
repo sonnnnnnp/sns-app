@@ -1,13 +1,12 @@
-import Navigation from "@/components/common/Navigation";
 import Messages from "@/app/messages/Messages";
+import DefaultLayout from "@/components/layouts/default-layout";
+
 const Page = () => {
   return (
-    <div className="flex justify-center">
-      <Navigation />
-      <main className="flex justify-center w-[950px]">
-        <Messages />
-      </main>
-    </div>
+    <DefaultLayout>
+      <Messages />
+    </DefaultLayout>
   );
 };
+
 export default Page;

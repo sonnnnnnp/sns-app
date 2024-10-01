@@ -10,7 +10,7 @@ export const containerClassName = "w-full h-full";
 
 export default function Timeline() {
   return (
-    <main className="p-4 sm:px-6 sm:py-0 max-w-[780px]">
+    <div className="max-w-[780px]">
       <Tabs defaultValue="following">
         <div className="flex items-center">
           <TabsList>
@@ -37,6 +37,6 @@ export default function Timeline() {
           <PostList />
         </TabsContent>
       </Tabs>
-    </main>
+    </div>
   );
 }

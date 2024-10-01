@@ -2,7 +2,7 @@ import createClient, { Middleware } from "openapi-fetch";
 
 import type { paths } from "./client";
 import { destroyAuthorization, refreshAuthorization } from "./utils";
-import Cookie from "../cookies";
+import { Cookie } from "../cookies";
 
 interface responseBody {
   ok: boolean;
