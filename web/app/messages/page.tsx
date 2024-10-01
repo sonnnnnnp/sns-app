@@ -1,11 +1,11 @@
+import Layout from "@/layouts/layout";
 import Messages from "@/app/messages/Messages";
-import DefaultLayout from "@/components/layouts/default-layout";
 
 const Page = () => {
   return (
-    <DefaultLayout>
+    <Layout>
       <Messages />
-    </DefaultLayout>
+    </Layout>
   );
 };
 

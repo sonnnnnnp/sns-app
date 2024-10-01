@@ -33,7 +33,7 @@ export const GlobalStateProvider = ({
     const state = initialState;
 
     try {
-      const user = JSON.parse(localStorage.getItem("user")!);
+      const user = JSON.parse(sessionStorage.getItem("user")!);
       state.session = {
         user: user ? user : null,
       };
@@ -52,7 +52,7 @@ export const GlobalStateProvider = ({
   });
 
   const updateSessionUser = (user: components["schemas"]["User"]) => {
-    localStorage.setItem("user", JSON.stringify(user));
+    sessionStorage.setItem("user", JSON.stringify(user));
     setState({ ...state, session: { user } });
   };
 

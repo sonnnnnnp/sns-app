@@ -1,11 +1,11 @@
-import DefaultLayout from "@/components/layouts/default-layout";
+import Layout from "@/layouts/layout";
 import Timeline from "./components/timeline";
 
 const Page = () => {
   return (
-    <DefaultLayout>
+    <Layout>
       <Timeline />
-    </DefaultLayout>
+    </Layout>
   );
 };
 

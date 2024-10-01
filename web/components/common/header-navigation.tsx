@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {
   Bell,
@@ -35,9 +34,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useContext, useEffect } from "react";
+import { useContext, useLayoutEffect } from "react";
 import client from "@/lib/api";
 import { GlobalStateContext } from "@/context/global-state-provider";
+import { Avatar, AvatarImage } from "../ui/avatar";
 
 export const iframeHeight = "938px";
 
@@ -49,8 +49,9 @@ type Props = {
 
 export default function HeaderNavigation({ children }: Props) {
   const context = useContext(GlobalStateContext);
+  const { session } = context.state;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const fetchMyself = async () => {
       const { data } = await client.GET("/users/me");
       if (!data?.ok) {
@@ -224,31 +225,19 @@ export default function HeaderNavigation({ children }: Props) {
                 size="icon"
                 className="overflow-hidden rounded-full"
               >
-                {context.state.session?.user?.avatar_url ? (
-                  <Image
-                    src={context.state.session.user.avatar_url}
-                    width={36}
-                    height={36}
-                    alt="Avatar"
-                    className="overflow-hidden rounded-full"
-                  />
-                ) : (
-                  <Image
-                    src="/users/placeholder-profile.svg"
-                    width={36}
-                    height={36}
-                    alt="Avatar"
-                    className="overflow-hidden rounded-full"
-                  />
-                )}
+                <Avatar className="h-9 w-9">
+                  {context.state.session?.user?.avatar_url ? (
+                    <AvatarImage src={context.state.session.user.avatar_url} />
+                  ) : (
+                    <AvatarImage src="/users/placeholder-profile.svg" />
+                  )}
+                </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <Link href={`/users/${context.state.session?.user?.id}`}>
+              <Link href={`/users/${session?.user?.username}`}>
                 <DropdownMenuLabel>
-                  {context.state.session?.user?.display_name === ""
-                    ? "未設定"
-                    : context.state.session?.user?.display_name}
+                  {session?.user?.display_name ?? "未設定"}
                 </DropdownMenuLabel>
               </Link>
               <DropdownMenuSeparator />

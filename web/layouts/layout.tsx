@@ -1,8 +1,8 @@
 import { GlobalStateProvider } from "@/context/global-state-provider";
-import FooterNavigation from "../common/footer-navigation";
-import HeaderNavigation from "../common/header-navigation";
+import HeaderNavigation from "@/components/common/header-navigation";
+import FooterNavigation from "@/components/common/footer-navigation";
 
-export default function DefaultLayout({
+export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
