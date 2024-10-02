@@ -26,25 +26,34 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import client from "@/lib/api";
+import { toast } from "sonner";
 
 export const iframeHeight = "938px";
 
 export const containerClassName = "w-full h-full";
 
 export default function Timeline() {
-  const [postDialogOpen, SetPostDialogOpen] = useState(false);
+  const [postDialogOpen, setPostDialogOpen] = useState(false);
+  const [postContent, setPostContent] = useState("");
 
   const handleDraftPost = async (): Promise<void> => {
-    SetPostDialogOpen(false);
+    setPostDialogOpen(false);
   };
 
   const handleCreatePost = async (): Promise<void> => {
+    if (postContent.length <= 0) {
+      toast("エラー", {
+        description: "本文を入力してください",
+      });
+      return;
+    }
+
     const { data } = await client.POST("/posts/create", {
       body: {
-        content: "hello, world!",
+        content: postContent,
       },
     });
-    SetPostDialogOpen(false);
+    setPostDialogOpen(false);
   };
 
   return (
@@ -80,7 +89,7 @@ export default function Timeline() {
           size="icon"
           className="h-14 w-14 overflow-hidden rounded-full"
           onClick={() => {
-            SetPostDialogOpen(true);
+            setPostDialogOpen(true);
           }}
         >
           <Pencil className=" h-6 w-6" />
@@ -88,8 +97,8 @@ export default function Timeline() {
         <Dialog open={postDialogOpen}>
           <DialogContent
             hideCloseButton={true}
-            onInteractOutside={() => SetPostDialogOpen(false)}
-            onEscapeKeyDown={() => SetPostDialogOpen(false)}
+            onInteractOutside={() => setPostDialogOpen(false)}
+            onEscapeKeyDown={() => setPostDialogOpen(false)}
             className="pb-3"
           >
             <VisuallyHidden.Root>
@@ -106,6 +115,10 @@ export default function Timeline() {
                 <Textarea
                   placeholder="なんでも気軽につぶやいてみよう！"
                   className="min-h-28 resize-none border-0 shadow-none focus-visible:ring-0"
+                  onChange={(event) => {
+                    setPostContent(event.target.value);
+                  }}
+                  value={postContent}
                 />
               </div>
             </div>
