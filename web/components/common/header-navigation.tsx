@@ -34,9 +34,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useContext, useLayoutEffect } from "react";
-import client from "@/lib/api";
-import { GlobalStateContext } from "@/context/global-state-provider";
 import { Avatar, AvatarImage } from "../ui/avatar";
 
 export const iframeHeight = "938px";
@@ -48,25 +45,6 @@ type Props = {
 };
 
 export default function HeaderNavigation({ children }: Props) {
-  const context = useContext(GlobalStateContext);
-  const { session } = context.state;
-
-  useLayoutEffect(() => {
-    const fetchMyself = async () => {
-      const { data } = await client.GET("/users/me");
-      if (!data?.ok) {
-        return console.error("error fetching myself");
-      }
-      context.updateSessionUser(data?.data);
-    };
-
-    console.log(JSON.stringify(context.state));
-
-    if (!context.state.session?.user) {
-      fetchMyself();
-    }
-  }, [context]);
-
   return (
     <div>
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex md:hidden">
@@ -226,19 +204,13 @@ export default function HeaderNavigation({ children }: Props) {
                 className="overflow-hidden rounded-full"
               >
                 <Avatar className="h-9 w-9">
-                  {context.state.session?.user?.avatar_url ? (
-                    <AvatarImage src={context.state.session.user.avatar_url} />
-                  ) : (
-                    <AvatarImage src="/users/placeholder-profile.svg" />
-                  )}
+                  <AvatarImage src="/users/placeholder-profile.svg" />
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <Link href={`/users/${session?.user?.username}`}>
-                <DropdownMenuLabel>
-                  {session?.user?.display_name ?? "未設定"}
-                </DropdownMenuLabel>
+              <Link href={`/users/username`}>
+                <DropdownMenuLabel>{"未設定"}</DropdownMenuLabel>
               </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem>通知</DropdownMenuItem>
