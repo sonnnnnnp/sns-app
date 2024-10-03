@@ -25,8 +25,12 @@ func (User) Fields() []ent.Field {
 		field.String("biography").Optional(),
 		field.Time("birthdate").Optional(),
 		field.String("line_id").Optional(),
-		field.Time("created_at").Default(time.Now()),
-		field.Time("updated_at").Default(time.Now()),
+		field.Time("created_at").Default(func() time.Time {
+			return time.Now().Truncate(time.Millisecond)
+		}),
+		field.Time("updated_at").Default(func() time.Time {
+			return time.Now().Truncate(time.Millisecond)
+		}),
 	}
 }
 
