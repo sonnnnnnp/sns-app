@@ -4,7 +4,7 @@ export async function middleware(req: NextRequest) {
   const path = new URL(req.url).pathname;
 
   // 認証が不必要なパスを除外
-  if (path === "/" || path.startsWith("/login") || path.startsWith("/api")) {
+  if (path.startsWith("/login") || path.startsWith("/api")) {
     return NextResponse.next();
   }
 
@@ -12,11 +12,14 @@ export async function middleware(req: NextRequest) {
   let accessToken = req.cookies.get("access-token")?.value;
   let refreshToken = req.cookies.get("refresh-token")?.value;
 
-  if (!accessToken || !refreshToken) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  if (accessToken && refreshToken) {
+    if (path === "/" || path.startsWith("/login")) {
+      return NextResponse.redirect(new URL("/home", req.url));
+    }
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  return NextResponse.redirect(new URL("/login", req.url));
 }
 
 export const config = {
