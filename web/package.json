@@ -19,6 +19,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tabs": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
+    "@types/twitter-text": "^3.1.10",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "js-cookie": "^3.0.5",
@@ -30,7 +31,8 @@
     "react-dom": "^18",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "twitter-text": "^3.1.0"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",

@@ -13,7 +13,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Tooltip,
@@ -24,9 +23,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import client from "@/lib/api";
 import { toast } from "sonner";
+
+import twitterText from "twitter-text";
 
 export const iframeHeight = "938px";
 
@@ -34,13 +35,22 @@ export const containerClassName = "w-full h-full";
 
 export default function Timeline() {
   const [postDialogOpen, setPostDialogOpen] = useState(false);
+  const [postContentValid, setPostContentValid] = useState(false);
   const [postContent, setPostContent] = useState("");
 
-  const handleDraftPost = async (): Promise<void> => {
+  const onPostContentChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setPostContent(e.target.value);
+
+    const parsedContent = twitterText.parseTweet(e.target.value);
+
+    setPostContentValid(parsedContent.valid);
+  };
+
+  const handleDraftPost = async () => {
     setPostDialogOpen(false);
   };
 
-  const handleCreatePost = async (): Promise<void> => {
+  const handleCreatePost = async () => {
     if (postContent.length <= 0) {
       toast("エラー", {
         description: "本文を入力してください",
@@ -115,9 +125,7 @@ export default function Timeline() {
                 <Textarea
                   placeholder="なんでも気軽につぶやいてみよう！"
                   className="min-h-28 resize-none border-0 shadow-none focus-visible:ring-0"
-                  onChange={(event) => {
-                    setPostContent(event.target.value);
-                  }}
+                  onChange={onPostContentChange}
                   value={postContent}
                 />
               </div>
@@ -157,6 +165,7 @@ export default function Timeline() {
                 size="sm"
                 className="ml-2 gap-1.5"
                 onClick={handleCreatePost}
+                disabled={!postContentValid}
               >
                 投稿する
                 <Pencil className="size-3.5" />
