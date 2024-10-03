@@ -44,7 +44,7 @@ export function Post(props: {
           </div>
         </div>
         <div className="grid gap-y-1">
-          <p className="text-sm text-muted-foreground dark:text-slate-300 px-2">
+          <p className="pl-2 pr-3 text-sm text-muted-foreground break-all dark:text-slate-300">
             {props.content}
           </p>
           <div className="flex items-center justify-between">
