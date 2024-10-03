@@ -33,7 +33,7 @@ func (c Controller) GetSelf(ctx echo.Context) error {
 }
 
 func (c Controller) GetUser(ctx echo.Context, username string) error {
-	u, err := c.userUsecase.GetUserByUsername(ctx.Request().Context(), username)
+	u, sc, err := c.userUsecase.GetUserByUsername(ctx.Request().Context(), username)
 	if err != nil {
 		return err
 	}
@@ -43,14 +43,15 @@ func (c Controller) GetUser(ctx echo.Context, username string) error {
 	}
 
 	return c.json(ctx, http.StatusOK, &oapi.User{
-		Id:          u.ID,
-		Username:    u.Username,
-		DisplayName: u.DisplayName,
-		AvatarUrl:   u.AvatarURL,
-		CoverUrl:    u.CoverURL,
-		Biography:   u.Biography,
-		UpdatedAt:   u.UpdatedAt,
-		CreatedAt:   u.CreatedAt,
+		Id:            u.ID,
+		Username:      u.Username,
+		DisplayName:   u.DisplayName,
+		AvatarUrl:     u.AvatarURL,
+		CoverUrl:      u.CoverURL,
+		Biography:     u.Biography,
+		SocialContext: sc,
+		UpdatedAt:     u.UpdatedAt,
+		CreatedAt:     u.CreatedAt,
 	})
 }
 

@@ -11,7 +11,7 @@ import (
 
 type IUserUsecase interface {
 	GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error)
-	GetUserByUsername(ctx context.Context, username string) (*ent.User, error)
+	GetUserByUsername(ctx context.Context, username string) (*ent.User, *oapi.SocialContext, error)
 	CreateUser(ctx context.Context) (*ent.User, error)
 	UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*oapi.User, error)
 }

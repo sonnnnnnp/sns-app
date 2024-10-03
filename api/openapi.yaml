@@ -289,6 +289,8 @@ components:
           type: string
         biography:
           type: string
+        social_context:
+          $ref: '#/components/schemas/SocialContext'
         updated_at:
           type: string
           format: date-time
@@ -304,6 +306,16 @@ components:
         - biography
         - updated_at
         - created_at
+    SocialContext:
+      type: object
+      properties:
+        following:
+          type: boolean
+        followed_by:
+          type: boolean
+      required:
+        - following
+        - followed_by
     Authorization:
       type: object
       properties:
@@ -380,3 +392,4 @@ components:
       type: http
       scheme: bearer
 servers: []
+

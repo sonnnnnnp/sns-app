@@ -38,5 +38,6 @@ func (User) Fields() []ent.Field {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("posts", Post.Type),
+		edge.To("following", User.Type).From("followers"),
 	}
 }

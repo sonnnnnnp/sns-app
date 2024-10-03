@@ -139,10 +139,15 @@ export interface components {
             avatar_url: string;
             cover_url: string;
             biography: string;
+            social_context?: components["schemas"]["SocialContext"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
             created_at: string;
+        };
+        SocialContext: {
+            following: boolean;
+            followed_by: boolean;
         };
         Authorization: {
             user_id: string;
