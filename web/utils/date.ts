@@ -18,16 +18,7 @@ export const getTimeAgo = (date: Date): string => {
 
   const diffInDays = Math.floor(diffInHours / 24);
   if (diffInDays < 7) {
-    const daysOfWeek = [
-      "日曜日",
-      "月曜日",
-      "火曜日",
-      "水曜日",
-      "木曜日",
-      "金曜日",
-      "土曜日",
-    ];
-    return daysOfWeek[date.getDay()];
+    return `${diffInDays}日前`;
   }
 
   const diffInWeeks = Math.floor(diffInDays / 7);
