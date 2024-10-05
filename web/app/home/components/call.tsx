@@ -8,6 +8,7 @@ export function Call({ call }: { call: CallData }) {
         {call.participants.slice(0, 4).map((participant, i) => (
           <Avatar key={i} className="rounded-none">
             <AvatarImage
+              className="object-cover"
               src={participant.avatar_url ?? "/users/placeholder-profile.svg"}
             />
           </Avatar>

@@ -23,11 +23,17 @@ export function CallList({ calls }: Props) {
   return (
     <div>
       <ScrollArea className="border-b">
-        <div className="flex w-max space-x-5 p-4 pb-5">
-          {calls.map((call, i) => (
-            <Call key={i} call={call} />
-          ))}
-        </div>
+        {calls.length > 0 ? (
+          <div className="flex w-max space-x-5 p-4 pb-5">
+            {calls.map((call, i) => (
+              <Call key={i} call={call} />
+            ))}
+          </div>
+        ) : (
+          <p className="p-3 text-center text-gray-500">
+            アクティブな通話は見つかりませんでした
+          </p>
+        )}
         <ScrollBar className="h-3" orientation="horizontal" />
       </ScrollArea>
     </div>
