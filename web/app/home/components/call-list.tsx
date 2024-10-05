@@ -22,7 +22,7 @@ type Props = {
 export function CallList({ calls }: Props) {
   return (
     <div>
-      <ScrollArea className="whitespace-nowrap rounded-md border">
+      <ScrollArea className="border-b">
         <div className="flex w-max space-x-5 p-4 pb-5">
           {calls.map((call, i) => (
             <Call key={i} call={call} />
