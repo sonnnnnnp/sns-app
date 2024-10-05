@@ -132,7 +132,7 @@ export default function Timeline() {
         <TabsContent className="my-0" value={tabValue}>
           <Card className="flex text-sm w-full rounded-none border-x-0 mb-16 sm:mb-0 sm:border-r-[1px] md:border-x-[1px] dark:bg-black dark:border-slate-800">
             <CardContent className="w-full p-0">
-              <TabsList className="h-12 rounded-none w-full bg-transparent border-b">
+              <TabsList className="sticky top-0 z-10 h-12 rounded-none w-full bg-transparent backdrop-blur-sm border-b">
                 <CustomTabsTrigger value="following" label="フォロー中" />
                 <CustomTabsTrigger value="public" label="オープン" />
               </TabsList>
