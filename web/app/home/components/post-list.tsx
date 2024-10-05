@@ -1,5 +1,3 @@
-"use client";
-
 import { Post } from "./post";
 import { components } from "@/lib/api/client";
 
