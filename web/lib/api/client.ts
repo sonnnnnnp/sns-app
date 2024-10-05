@@ -100,10 +100,7 @@ export interface paths {
         put?: never;
         /** ユーザーをフォローする */
         post: operations["followUser"];
-        /**
-         * ユーザーをアンフォローする
-         * @description 相手からのフォローもこれで解除する。
-         */
+        /** ユーザーをアンフォローする */
         delete: operations["unfollowUser"];
         options?: never;
         head?: never;
@@ -121,7 +118,8 @@ export interface paths {
         get: operations["getUserFollowing"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** ユーザーをフォロワーから削除する */
+        delete: operations["removeUserFromFollowers"];
         options?: never;
         head?: never;
         patch?: never;
@@ -475,6 +473,33 @@ export interface operations {
                         code: number;
                         /** @description データ */
                         data: components["schemas"]["Users"];
+                    };
+                };
+            };
+        };
+    };
+    removeUserFromFollowers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["SocialContext"];
                     };
                 };
             };

@@ -149,3 +149,12 @@ func (c Controller) UnfollowUser(ctx echo.Context, id uuid.UUID) error {
 
 	return c.json(ctx, http.StatusOK, sc)
 }
+
+func (c Controller) RemoveUserFromFollowers(ctx echo.Context, id uuid.UUID) error {
+	sc, err := c.userUsecase.RemoveUserFromFollowers(ctx.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, sc)
+}

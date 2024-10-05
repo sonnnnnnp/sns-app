@@ -219,6 +219,9 @@ type ClientInterface interface {
 	// GetUserFollowers request
 	GetUserFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// RemoveUserFromFollowers request
+	RemoveUserFromFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetUserFollowing request
 	GetUserFollowing(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -360,6 +363,18 @@ func (c *Client) FollowUser(ctx context.Context, userId openapi_types.UUID, reqE
 
 func (c *Client) GetUserFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetUserFollowersRequest(c.Server, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RemoveUserFromFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemoveUserFromFollowersRequest(c.Server, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -715,6 +730,40 @@ func NewGetUserFollowersRequest(server string, userId openapi_types.UUID) (*http
 	return req, nil
 }
 
+// NewRemoveUserFromFollowersRequest generates requests for RemoveUserFromFollowers
+func NewRemoveUserFromFollowersRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s/following", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetUserFollowingRequest generates requests for GetUserFollowing
 func NewGetUserFollowingRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
 	var err error
@@ -858,6 +907,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetUserFollowersWithResponse request
 	GetUserFollowersWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowersResponse, error)
+
+	// RemoveUserFromFollowersWithResponse request
+	RemoveUserFromFollowersWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*RemoveUserFromFollowersResponse, error)
 
 	// GetUserFollowingWithResponse request
 	GetUserFollowingWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowingResponse, error)
@@ -1127,6 +1179,35 @@ func (r GetUserFollowersResponse) StatusCode() int {
 	return 0
 }
 
+type RemoveUserFromFollowersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int           `json:"code"`
+		Data SocialContext `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r RemoveUserFromFollowersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RemoveUserFromFollowersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetUserFollowingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1288,6 +1369,15 @@ func (c *ClientWithResponses) GetUserFollowersWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseGetUserFollowersResponse(rsp)
+}
+
+// RemoveUserFromFollowersWithResponse request returning *RemoveUserFromFollowersResponse
+func (c *ClientWithResponses) RemoveUserFromFollowersWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*RemoveUserFromFollowersResponse, error) {
+	rsp, err := c.RemoveUserFromFollowers(ctx, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRemoveUserFromFollowersResponse(rsp)
 }
 
 // GetUserFollowingWithResponse request returning *GetUserFollowingResponse
@@ -1605,6 +1695,39 @@ func ParseGetUserFollowersResponse(rsp *http.Response) (*GetUserFollowersRespons
 	return response, nil
 }
 
+// ParseRemoveUserFromFollowersResponse parses an HTTP response from a RemoveUserFromFollowersWithResponse call
+func ParseRemoveUserFromFollowersResponse(rsp *http.Response) (*RemoveUserFromFollowersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RemoveUserFromFollowersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int           `json:"code"`
+			Data SocialContext `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetUserFollowingResponse parses an HTTP response from a GetUserFollowingWithResponse call
 func ParseGetUserFollowingResponse(rsp *http.Response) (*GetUserFollowingResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -1700,6 +1823,9 @@ type ServerInterface interface {
 	// ユーザーのフォロワーを取得する
 	// (GET /users/{user_id}/followers)
 	GetUserFollowers(ctx echo.Context, userId openapi_types.UUID) error
+	// ユーザーをフォロワーから削除する
+	// (DELETE /users/{user_id}/following)
+	RemoveUserFromFollowers(ctx echo.Context, userId openapi_types.UUID) error
 	// ユーザーのフォローを取得する
 	// (GET /users/{user_id}/following)
 	GetUserFollowing(ctx echo.Context, userId openapi_types.UUID) error
@@ -1840,6 +1966,24 @@ func (w *ServerInterfaceWrapper) GetUserFollowers(ctx echo.Context) error {
 	return err
 }
 
+// RemoveUserFromFollowers converts echo context to params.
+func (w *ServerInterfaceWrapper) RemoveUserFromFollowers(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "user_id" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.RemoveUserFromFollowers(ctx, userId)
+	return err
+}
+
 // GetUserFollowing converts echo context to params.
 func (w *ServerInterfaceWrapper) GetUserFollowing(ctx echo.Context) error {
 	var err error
@@ -1913,6 +2057,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.DELETE(baseURL+"/users/:user_id/follow", wrapper.UnfollowUser)
 	router.POST(baseURL+"/users/:user_id/follow", wrapper.FollowUser)
 	router.GET(baseURL+"/users/:user_id/followers", wrapper.GetUserFollowers)
+	router.DELETE(baseURL+"/users/:user_id/following", wrapper.RemoveUserFromFollowers)
 	router.GET(baseURL+"/users/:user_id/following", wrapper.GetUserFollowing)
 	router.GET(baseURL+"/users/:username", wrapper.GetUser)
 
@@ -1921,27 +2066,27 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+yZ327bthfHX+UH/napxul257utW4cAxTAsK3YRBAYtHcdsJFElqXReYGCSgDRZFjTI",
-	"kBZFN2xYi6bJ1rVA9icbuvVhWDvZWwwkZVuyZTttigH2cpMIJsVz+D0f8hxSq8imXkB98AVH5VXE7Tp4",
-	"WD++HYo6ZeQzLAj11Q8BowEwQUA3Y9sGziuCLoNuFY0AUBlxwYi/hJoWIrziw41MU5VSF7Cv2hjUGPD6",
-	"iLdDDqxCnII2/fr1kDBwUHmh29HKe9Rvo+vPotUZkFavgS2UsQ8pFwUz1AKopzcY1FAZ/b/UE6uUKlW6",
-	"yoGpMWzqC/BF4WRsBliAU8G6uUaZp56QgwVcEMQDZBXIp+fuALcZCUwI0Ny7x7sHrVu/Ias3SBjqyQ8K",
-	"GDgvabNPWKOp0SA3XG4+RXLOU5tg95IS5NMCXWvUdekNcCrVRjEdpoPyqaC5z8teXys3cJFfHxMPXOLD",
-	"oEsB5YZ/IsDj40KucWl2DWDGcGPAMTNkkRuamEHaVrDArBIytxChKqFLDAf1RjFgdAWGv/sq+DmEBy5u",
-	"VHzsQfHyPiOfXENSsXuUjJI8j9Qr4W32lM588o63trdaG1unWxLdUfpEsrIhzIYkG7yXW0iKFD6IStj5",
-	"+VS0djaokbSaIQd9UIECO2RENObVeMaBKmBmGNZG9Po0P3UHqAsRoKZ6n/g1qgkiwtXa+vwCDgJkoRVg",
-	"3Oh/cWZ2ZlY5SQPwcUBQGb01MztzEVkowKKujZZwmpCg1F3E6b6txNFpas5B5W7igk+IqF9RXdUoDHsg",
-	"tG4Lq4goo9dDYCoiBglkUwdQVhXBQrDSjFiUhxZVZx5QnxtV3pydVf8yiQAHgUts7VnpGjdZtDdePqja",
-	"/ACYMvlRxr/L5BuZHKqH+FAmz2Sy0ROa+AKWTIQdLPA4GvJZXSm+PGi1/fh+6+hIRj+0bj483l6T8c7x",
-	"L/GLP9ZkdEdG38poU0b7MlqT0WbPj2EbNF3Wi0Frqx0sgEz5nnMgBx4qLyxaiIeeh1kDldGVuQ/e+5+M",
-	"9mTyWMZPZfxAJof6hQwhafIfDslHpkNeDuM5cPEOdRpniOW48qZPonz3In2a56j9W6j1dreFxWaOu5OD",
-	"rZNHz2SyrnSJn2iZdtr3fm7ffmrw0ym/ZPb04eRd0u26hnhdvA2vPZvTAlOn5ppwhtpf7B4/ei7jnRd/",
-	"ft1e35bRXRlvGnpEpjpdggJw3gfRrWAnMYRd5yc/jDJ+rvPOdzLZNwlIxjutW7dbf93JhlRXVSVvZEjn",
-	"wa1NZDg7deWk7+o3D1rrayPCZwp2LXNYEMKrulmL8bq28zMdBauEiXrH49Odi0afHseeBLPHqmlNP1MC",
-	"u0we6uLlV/03LV4GkV9NL9WaJXOlYubsgiiQ+vjeUXtjU80y3pDRTzLZlfG+Ks2VhVhGX8n4Sxntnezd",
-	"//vuA2NKfh4jq38Z+cZUupCKzmvqJNg7rvXu/Yaf2MZcQkzmCW7gKmS6mJTx90qpLEYpn9aQgvryOTjn",
-	"4MQ7RcgM39LSG7RhVZmi6XK34zlWY1IjnzacconsiQFsWIHYj1b64WI8WuarxTla/2G0xnKlEGiOw+nU",
-	"FKUfKqb8jns6i/U+TJrNfwIAAP//HGUzhbwfAAA=",
+	"H4sIAAAAAAAC/+yZ327bthfHX+UH/napxul257utW4cAxTA0K3YRBAYtHcdsLFElqXRe4AtJQJo0CBoE",
+	"SItiGzZsRddk61og+9MN2fowrJPuLQaSsiXZkp02xQB7vkkEkyIPv+fDcw6pdWRT16ceeIKj6jridhNc",
+	"rB/fDUSTMvI5FoR66gefUR+YIKCbsW0D5zVBV0G3irYPqIq4YMRbQR0LEV7z4GamqU5pC7Cn2hg0GPDm",
+	"iLcDDqxGnII2/fqNgDBwUHWp39HKWzQ4R9+eZas3IK1fB1uoyT6mXBSsUAugnt5i0EBV9P9KKlYlUapy",
+	"jQNTY9jUE+CJwsXYDLAAp4Z1c4MyVz0hBwu4IIgLyCqQT6/dAW4z4hsXoIX3T/cPu3d+Q1Y6SBDoxQ8L",
+	"6DuvOOeAsEZTo0FuuNx6iuRcpDbBrUtKkM8KdG3QVoveBKdWbxfTYToomwqaB6xM+1q5gYvs+oS40CIe",
+	"DJvkU274JwJcPs7lGpdOfwLMGG4PGWaGLDJDEzNM2xoWmNUC1ipEqE7oCsN+s10MGF2D8ndfBz+HcL+F",
+	"2zUPu1C8vc/JJ9eQ1OyUklGS55F6LbxNTOmtJ294d3enu7Vzti3RH2VAJCvrwqxLss57tY2kSOHDqAS9",
+	"n89Eay9AjaTVDDlsg3IU2AEjor2oxjMG1AEzw7CeRO9P81N/gKYQPuqo94nXoJogIlpaW49fwL6PLLQG",
+	"jBv9L87Nz80rI6kPHvYJqqJ35ubnLiIL+Vg09aQVnCQkqPQ3cRK3lTg6TS04qNpPXPApEc0rqqsahWEX",
+	"hNZtaR0RNemNAJjyiEEC2dQBlFVFsACsJCMW5aFl1Zn71ONGlbfn59W/TCLAvt8itrascp2bLJqOl3eq",
+	"nn4ITBn/KKPfZfyVjI/UQ3Qk42MZb6VCE0/AivGwgwUeR0M+qyvFV4dnPXn8XffZMxn+0L318HR3Q0Z7",
+	"p79EL/7YkOE9GX4tw20ZHshwQ4bbqR1lAZqu6s2gtdUGFkCmbM8ZkAMPVZeWLcQD18WsjaroysJHH/xP",
+	"ht/L+LGMnsrogYyP9AsZQpLkXw7JVdMhL4exHLh4jzrtc/hyXHkzIFG+e5E+nRlq/xZqaXRbWu7kuHt5",
+	"uPPy0bGMN5Uu0RMt097JFz+f3H1q8NMpv2Jiejl5l3S7riHeFG/ltWdnWmDq1VwTztDJ7f3TR89ltPfi",
+	"zy9PNndleF9G24YekalOV6AAnA9B9CvYSXRh3/jJd6OMnuu8842MD0wCktFe987d7l/3si7VVVXFHenS",
+	"RWg1JtKdvbpy0qP6rcPu5sYI95mCXcscFLjwmm7WYrypcH6uo2CdMNHsWXy2c9Ho0+PYk2D2WDWt6WdK",
+	"YJfxQ128/Kr/JsXLMPLryaVap2KuVMyaW2CgGuDfM32SHVB00FJHuPSclV7YlR+1xtweTObRa+gOY7pg",
+	"ktG3Sql4X0YH6mgWH/fAskoq4cszcGbgRHtFyJTHouTqq6ycUjRd7necYTUmp/Fpwyn8KYPTEwNYWWU3",
+	"iFbyxaEs010Fl67pSu8yo+4MslnsysUuDVu4LaOt7tbtv+8/SLPf+Fhlvl/NMPoPx6qxgUoh0BmX+s5M",
+	"UfLJasq/dkznsW0Ak07nnwAAAP//kbFSXMYhAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

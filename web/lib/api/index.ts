@@ -34,13 +34,22 @@ const requestInterceptor: Middleware = {
       }
 
       const refreshResponse = await refreshAuthorization(refreshToken);
-      if (refreshResponse.ok) {
-        Cookie.setAccessToken(refreshResponse.access_token!);
-        Cookie.setRefreshToken(refreshResponse.refresh_token!);
+      if (!refreshResponse.ok) {
+        destroyAuthorization();
         return undefined;
       }
 
-      destroyAuthorization();
+      Cookie.setAccessToken(refreshResponse.access_token!);
+      Cookie.setRefreshToken(refreshResponse.refresh_token!);
+
+      // retry original request
+
+      request.headers.set(
+        "Authorization",
+        `Bearer ${refreshResponse.access_token!}`
+      );
+
+      return fetch(request);
     }
   },
 };

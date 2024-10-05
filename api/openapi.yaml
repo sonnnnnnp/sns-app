@@ -202,7 +202,7 @@ paths:
     delete:
       summary: ユーザーをアンフォローする
       deprecated: false
-      description: 相手からのフォローもこれで解除する。
+      description: ''
       operationId: unfollowUser
       tags: []
       parameters:
@@ -304,6 +304,42 @@ paths:
                   data: &ref_3
                     description: データ
                     $ref: '#/components/schemas/Users'
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security:
+        - bearer: []
+    delete:
+      summary: ユーザーをフォロワーから削除する
+      deprecated: false
+      description: ''
+      operationId: removeUserFromFollowers
+      tags: []
+      parameters:
+        - name: user_id
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: *ref_2
                 required:
                   - ok
                   - code
