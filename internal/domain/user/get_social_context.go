@@ -10,12 +10,12 @@ import (
 )
 
 func (ur *UserRepository) GetSocialContext(ctx context.Context, selfID uuid.UUID, target *ent.User) (*oapi.SocialContext, error) {
-	isFollowedBy, err := target.QueryFollowers().Where(user.IDEQ(selfID)).Exist(ctx)
+	isFollowedBy, err := target.QueryFollowing().Where(user.IDEQ(selfID)).Exist(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	isFollowing, err := target.QueryFollowing().Where(user.IDEQ(selfID)).Exist(ctx)
+	isFollowing, err := target.QueryFollowers().Where(user.IDEQ(selfID)).Exist(ctx)
 	if err != nil {
 		return nil, err
 	}

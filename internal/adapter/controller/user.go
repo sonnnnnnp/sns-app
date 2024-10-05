@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
@@ -79,4 +80,72 @@ func (c Controller) UpdateUser(ctx echo.Context) error {
 		UpdatedAt:   u.UpdatedAt,
 		CreatedAt:   u.CreatedAt,
 	})
+}
+
+func (c Controller) GetUserFollowing(ctx echo.Context, id uuid.UUID) error {
+	users, err := c.userUsecase.GetUserFollowing(ctx.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	oapiUsers := make([]oapi.User, len(users))
+	for i, u := range users {
+		oapiUsers[i] = oapi.User{
+			AvatarUrl:   u.AvatarURL,
+			Biography:   u.Biography,
+			CoverUrl:    u.CoverURL,
+			CreatedAt:   u.CreatedAt,
+			DisplayName: u.DisplayName,
+			Id:          u.ID,
+			UpdatedAt:   u.UpdatedAt,
+			Username:    u.Username,
+		}
+	}
+
+	return c.json(ctx, http.StatusOK, &oapi.Users{
+		Users: oapiUsers,
+	})
+}
+
+func (c Controller) GetUserFollowers(ctx echo.Context, id uuid.UUID) error {
+	users, err := c.userUsecase.GetUserFollowers(ctx.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	oapiUsers := make([]oapi.User, len(users))
+	for i, u := range users {
+		oapiUsers[i] = oapi.User{
+			AvatarUrl:   u.AvatarURL,
+			Biography:   u.Biography,
+			CoverUrl:    u.CoverURL,
+			CreatedAt:   u.CreatedAt,
+			DisplayName: u.DisplayName,
+			Id:          u.ID,
+			UpdatedAt:   u.UpdatedAt,
+			Username:    u.Username,
+		}
+	}
+
+	return c.json(ctx, http.StatusOK, &oapi.Users{
+		Users: oapiUsers,
+	})
+}
+
+func (c Controller) FollowUser(ctx echo.Context, id uuid.UUID) error {
+	sc, err := c.userUsecase.FollowUser(ctx.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, sc)
+}
+
+func (c Controller) UnfollowUser(ctx echo.Context, id uuid.UUID) error {
+	sc, err := c.userUsecase.UnfollowUser(ctx.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, sc)
 }

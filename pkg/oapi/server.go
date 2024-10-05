@@ -74,6 +74,11 @@ type User struct {
 	Username string `json:"username"`
 }
 
+// Users defines model for Users.
+type Users struct {
+	Users []User `json:"users"`
+}
+
 // AuthorizeWithLineParams defines parameters for AuthorizeWithLine.
 type AuthorizeWithLineParams struct {
 	Code string `form:"code" json:"code"`
@@ -205,6 +210,18 @@ type ClientInterface interface {
 
 	UpdateUser(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// UnfollowUser request
+	UnfollowUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// FollowUser request
+	FollowUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetUserFollowers request
+	GetUserFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetUserFollowing request
+	GetUserFollowing(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetUser request
 	GetUser(ctx context.Context, username string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
@@ -307,6 +324,54 @@ func (c *Client) UpdateUserWithBody(ctx context.Context, contentType string, bod
 
 func (c *Client) UpdateUser(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateUserRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnfollowUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnfollowUserRequest(c.Server, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) FollowUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFollowUserRequest(c.Server, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetUserFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserFollowersRequest(c.Server, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetUserFollowing(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserFollowingRequest(c.Server, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -548,6 +613,142 @@ func NewUpdateUserRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
+// NewUnfollowUserRequest generates requests for UnfollowUser
+func NewUnfollowUserRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s/follow", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewFollowUserRequest generates requests for FollowUser
+func NewFollowUserRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s/follow", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetUserFollowersRequest generates requests for GetUserFollowers
+func NewGetUserFollowersRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s/followers", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetUserFollowingRequest generates requests for GetUserFollowing
+func NewGetUserFollowingRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s/following", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetUserRequest generates requests for GetUser
 func NewGetUserRequest(server string, username string) (*http.Request, error) {
 	var err error
@@ -648,6 +849,18 @@ type ClientWithResponsesInterface interface {
 	UpdateUserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
 
 	UpdateUserWithResponse(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
+
+	// UnfollowUserWithResponse request
+	UnfollowUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfollowUserResponse, error)
+
+	// FollowUserWithResponse request
+	FollowUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FollowUserResponse, error)
+
+	// GetUserFollowersWithResponse request
+	GetUserFollowersWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowersResponse, error)
+
+	// GetUserFollowingWithResponse request
+	GetUserFollowingWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowingResponse, error)
 
 	// GetUserWithResponse request
 	GetUserWithResponse(ctx context.Context, username string, reqEditors ...RequestEditorFn) (*GetUserResponse, error)
@@ -827,6 +1040,122 @@ func (r UpdateUserResponse) StatusCode() int {
 	return 0
 }
 
+type UnfollowUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int           `json:"code"`
+		Data SocialContext `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r UnfollowUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UnfollowUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type FollowUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int           `json:"code"`
+		Data SocialContext `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r FollowUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r FollowUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetUserFollowersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int   `json:"code"`
+		Data Users `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetUserFollowersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUserFollowersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetUserFollowingResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int   `json:"code"`
+		Data Users `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetUserFollowingResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUserFollowingResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -932,6 +1261,42 @@ func (c *ClientWithResponses) UpdateUserWithResponse(ctx context.Context, body U
 		return nil, err
 	}
 	return ParseUpdateUserResponse(rsp)
+}
+
+// UnfollowUserWithResponse request returning *UnfollowUserResponse
+func (c *ClientWithResponses) UnfollowUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfollowUserResponse, error) {
+	rsp, err := c.UnfollowUser(ctx, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUnfollowUserResponse(rsp)
+}
+
+// FollowUserWithResponse request returning *FollowUserResponse
+func (c *ClientWithResponses) FollowUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FollowUserResponse, error) {
+	rsp, err := c.FollowUser(ctx, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFollowUserResponse(rsp)
+}
+
+// GetUserFollowersWithResponse request returning *GetUserFollowersResponse
+func (c *ClientWithResponses) GetUserFollowersWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowersResponse, error) {
+	rsp, err := c.GetUserFollowers(ctx, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserFollowersResponse(rsp)
+}
+
+// GetUserFollowingWithResponse request returning *GetUserFollowingResponse
+func (c *ClientWithResponses) GetUserFollowingWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowingResponse, error) {
+	rsp, err := c.GetUserFollowing(ctx, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserFollowingResponse(rsp)
 }
 
 // GetUserWithResponse request returning *GetUserResponse
@@ -1141,6 +1506,138 @@ func ParseUpdateUserResponse(rsp *http.Response) (*UpdateUserResponse, error) {
 	return response, nil
 }
 
+// ParseUnfollowUserResponse parses an HTTP response from a UnfollowUserWithResponse call
+func ParseUnfollowUserResponse(rsp *http.Response) (*UnfollowUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UnfollowUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int           `json:"code"`
+			Data SocialContext `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseFollowUserResponse parses an HTTP response from a FollowUserWithResponse call
+func ParseFollowUserResponse(rsp *http.Response) (*FollowUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &FollowUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int           `json:"code"`
+			Data SocialContext `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetUserFollowersResponse parses an HTTP response from a GetUserFollowersWithResponse call
+func ParseGetUserFollowersResponse(rsp *http.Response) (*GetUserFollowersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetUserFollowersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int   `json:"code"`
+			Data Users `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetUserFollowingResponse parses an HTTP response from a GetUserFollowingWithResponse call
+func ParseGetUserFollowingResponse(rsp *http.Response) (*GetUserFollowingResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetUserFollowingResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int   `json:"code"`
+			Data Users `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetUserResponse parses an HTTP response from a GetUserWithResponse call
 func ParseGetUserResponse(rsp *http.Response) (*GetUserResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -1194,6 +1691,18 @@ type ServerInterface interface {
 	// ユーザーを更新する
 	// (PUT /users/update)
 	UpdateUser(ctx echo.Context) error
+	// ユーザーをアンフォローする
+	// (DELETE /users/{user_id}/follow)
+	UnfollowUser(ctx echo.Context, userId openapi_types.UUID) error
+	// ユーザーをフォローする
+	// (POST /users/{user_id}/follow)
+	FollowUser(ctx echo.Context, userId openapi_types.UUID) error
+	// ユーザーのフォロワーを取得する
+	// (GET /users/{user_id}/followers)
+	GetUserFollowers(ctx echo.Context, userId openapi_types.UUID) error
+	// ユーザーのフォローを取得する
+	// (GET /users/{user_id}/following)
+	GetUserFollowing(ctx echo.Context, userId openapi_types.UUID) error
 	// ユーザーを取得する
 	// (GET /users/{username})
 	GetUser(ctx echo.Context, username string) error
@@ -1277,6 +1786,78 @@ func (w *ServerInterfaceWrapper) UpdateUser(ctx echo.Context) error {
 	return err
 }
 
+// UnfollowUser converts echo context to params.
+func (w *ServerInterfaceWrapper) UnfollowUser(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "user_id" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UnfollowUser(ctx, userId)
+	return err
+}
+
+// FollowUser converts echo context to params.
+func (w *ServerInterfaceWrapper) FollowUser(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "user_id" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.FollowUser(ctx, userId)
+	return err
+}
+
+// GetUserFollowers converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUserFollowers(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "user_id" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetUserFollowers(ctx, userId)
+	return err
+}
+
+// GetUserFollowing converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUserFollowing(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "user_id" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetUserFollowing(ctx, userId)
+	return err
+}
+
 // GetUser converts echo context to params.
 func (w *ServerInterfaceWrapper) GetUser(ctx echo.Context) error {
 	var err error
@@ -1329,6 +1910,10 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
 	router.GET(baseURL+"/users/me", wrapper.GetSelf)
 	router.PUT(baseURL+"/users/update", wrapper.UpdateUser)
+	router.DELETE(baseURL+"/users/:user_id/follow", wrapper.UnfollowUser)
+	router.POST(baseURL+"/users/:user_id/follow", wrapper.FollowUser)
+	router.GET(baseURL+"/users/:user_id/followers", wrapper.GetUserFollowers)
+	router.GET(baseURL+"/users/:user_id/following", wrapper.GetUserFollowing)
 	router.GET(baseURL+"/users/:username", wrapper.GetUser)
 
 }
@@ -1336,24 +1921,27 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+yXXW8bRRfHv8qjebjcxi7c+Q4KQpEqhAgVF1FkjXeP42l2d6Yzsykm8oV3pTQlihpF",
-	"aisECCRQaQMVlcJLQYV+mKmdfgw0M/a+2GOnbSokW9wkK8/MmTP/85tz5uwgn0aMxhBLgRo7SPgdiLD5",
-	"fDuRHcrJZ1gSGusfGKcMuCRghrHvgxBNSbfAjMouA9RAQnISb6Keh4hoxnC9NNSiNAQc6zEObQ6iM2d1",
-	"IoA3SeAYM8uvJYRDgBrr+USv6tHkHrk/G97YIG1dBV/qzT6kQjpOaATQX29waKMG+n+tEKs2Uqp2RQDX",
-	"NnwaS4il8zA+BywhaGIz3KY80l8owBIuSBIB8hzymbMHIHxOmA0BWn339Pbx4NbvyCuMJIk5/LSALHjJ",
-	"PSeEtZpaDSrmKudxyblGfYLDS1qQTx26tmkY0usQNFtdNx12gvbJMTzhZTHXqxh2+fUxiSAkMUy7xKiw",
-	"/BMJkTgr5AaXXr4B5hx3pxyzJl1uGGKmadvGEvNmwkMnQi1CNzlmna4bMLoNs9e+Cn4BESzE3WaMI3Bf",
-	"73PyKQwkTb+gZJ7kVaReCW+bU8bnqTo+ODwY3Dx4sSuRW5kQySuHsByScvBe5iJpkcBPOJHdNS2D5aQF",
-	"mFt+jDbmbtifcgMdKRnq6fUkblMTPSJDc65YXMCMIQ9tAxf27BdX6it1LQ9lEGNGUAO9tVJfuYg8xLDs",
-	"mE1reFQMoJZfoFHO1AybErEaoEZeNOATIjuX9VRtheMIJHCBGus7iOhNryXAtRo2HMinAaCy1pIn4I2q",
-	"kasGbOjJgtFYWFXerNf1v1ISxoyFxDee1a4KW8EKe9W7Z7afgkJlP6n0D5V9rbIT/ZGeqOyJym4WQpNY",
-	"wqZN/wGW+CyIqxVVK741vevw4XeDx49V/8fBjXunh7sqPTr9NX32567q31X9b1R/X/UfqP6u6u8XfsxK",
-	"jnTLgGi0NQ46INO+VxyogIca6xseEkkUYd5FDXR59YP3/qf6P6jsoUofqfR7lZ2YBSVCRoV3NiQf2QlV",
-	"OaznIOQ7NOieI5ZnPS0mJKpOd+nT+w+1fwu1Irutb/Qq3D0/Pnh+/4nK9rQu6c9GpqPhl78M7zyy+Jly",
-	"W7P5dDZ5l8y4qd+vi7fZ777essA0fu8sOEPDz2+f3n+q0qNnf3013DtU/S9Uum/pkaWX4SY4wHkfZP56",
-	"XMQQ5s4vfhhV+tTUnW9V9sAWIJUeDW7dGfx9txxS/UwTtWhuSNcgbC9kOMdN56Jn9RvHg73dOeGzj2Uj",
-	"c+II4RUzbMR4Xen8XG1Yi3DZGXv8Yj3J/M7tzC6s3NIsa/lZEthVds88Xn4zf0ePl2nkd8Yh7c3LXCPm",
-	"Xa2VbtqKzqrUrS55d7WcmExkxl7vnwAAAP//8VOx87IVAAA=",
+	"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",
+	"FKUfKqb8jns6i/U+TJrNfwIAAP//HGUzhbwfAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
