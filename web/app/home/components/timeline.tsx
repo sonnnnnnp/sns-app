@@ -23,11 +23,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import client from "@/lib/api";
 import { toast } from "sonner";
 
 import twitterText from "twitter-text";
+import { components } from "@/lib/api/client";
 
 export const iframeHeight = "938px";
 
@@ -37,6 +38,29 @@ export default function Timeline() {
   const [postDialogOpen, setPostDialogOpen] = useState(false);
   const [postContentValid, setPostContentValid] = useState(false);
   const [postContent, setPostContent] = useState("");
+
+  const [posts, setPosts] = useState<
+    components["schemas"]["Timeline"]["posts"]
+  >([]);
+
+  useEffect(() => {
+    const loadTimeline = async () => {
+      fetchTimeline("following");
+    };
+
+    loadTimeline();
+  }, []);
+
+  const fetchTimeline = async (value: string) => {
+    const { data } = await client.GET("/timeline");
+    if (!data?.ok) {
+      return console.error("error fetching timeline");
+    }
+
+    console.log(value);
+
+    setPosts(data?.data.posts ?? []);
+  };
 
   const onPostContentChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
     setPostContent(e.target.value);
@@ -63,12 +87,27 @@ export default function Timeline() {
         content: postContent,
       },
     });
+
+    if (!data?.ok) {
+      toast(`エラー: ${data?.code}`, {
+        description: "投稿に失敗しました",
+      });
+      return;
+    }
+
+    // 投稿内容を先頭に挿入
+    setPosts(() => {
+      const newPosts = [...posts];
+      newPosts.unshift(data?.data);
+      return newPosts;
+    });
+
     setPostDialogOpen(false);
   };
 
   return (
     <div className="max-w-[780px]">
-      <Tabs defaultValue="following">
+      <Tabs defaultValue="following" onValueChange={fetchTimeline}>
         <div className="flex items-center">
           <TabsList>
             <TabsTrigger value="following">フォロー中</TabsTrigger>
@@ -85,13 +124,13 @@ export default function Timeline() {
           </div>
         </div>
         <TabsContent value="following">
-          <PostList />
+          <PostList posts={posts} />
         </TabsContent>
         <TabsContent value="public">
-          <PostList />
+          <PostList posts={posts} />
         </TabsContent>
         <TabsContent value="live">
-          <PostList />
+          <PostList posts={posts} />
         </TabsContent>
       </Tabs>
       <div className="fixed bottom-[12%] right-[10%]">

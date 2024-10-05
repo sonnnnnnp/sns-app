@@ -1,29 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Post } from "./post";
-import client from "@/lib/api";
 import { components } from "@/lib/api/client";
 import { Card, CardContent } from "@/components/ui/card";
 
-export function PostList() {
-  const [posts, setPosts] = useState<
-    components["schemas"]["Timeline"]["posts"]
-  >([]);
+type Props = {
+  posts: components["schemas"]["Timeline"]["posts"];
+};
 
-  useEffect(() => {
-    const fetchTimeline = async () => {
-      const { data } = await client.GET("/timeline");
-      if (!data?.ok) {
-        return console.error("error fetching timeline");
-      }
-
-      setPosts(data?.data.posts ?? []);
-    };
-
-    fetchTimeline();
-  }, []);
-
+export function PostList({ posts }: Props) {
   return (
     <Card className="flex text-sm my-3 w-full dark:bg-black dark:border-slate-800 mb-16 sm:mb-0">
       <CardContent className="w-full p-0">
