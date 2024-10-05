@@ -20,11 +20,11 @@ func init() {
 	// postDescCreatedAt is the schema descriptor for created_at field.
 	postDescCreatedAt := postFields[3].Descriptor()
 	// post.DefaultCreatedAt holds the default value on creation for the created_at field.
-	post.DefaultCreatedAt = postDescCreatedAt.Default.(time.Time)
+	post.DefaultCreatedAt = postDescCreatedAt.Default.(func() time.Time)
 	// postDescUpdatedAt is the schema descriptor for updated_at field.
 	postDescUpdatedAt := postFields[4].Descriptor()
 	// post.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	post.DefaultUpdatedAt = postDescUpdatedAt.Default.(time.Time)
+	post.DefaultUpdatedAt = postDescUpdatedAt.Default.(func() time.Time)
 	// postDescID is the schema descriptor for id field.
 	postDescID := postFields[0].Descriptor()
 	// post.DefaultID holds the default value on creation for the id field.
@@ -38,11 +38,11 @@ func init() {
 	// userDescCreatedAt is the schema descriptor for created_at field.
 	userDescCreatedAt := userFields[8].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
-	user.DefaultCreatedAt = userDescCreatedAt.Default.(time.Time)
+	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescUpdatedAt is the schema descriptor for updated_at field.
 	userDescUpdatedAt := userFields[9].Descriptor()
 	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(time.Time)
+	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userFields[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

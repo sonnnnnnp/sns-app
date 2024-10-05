@@ -1,7 +1,7 @@
 "use client";
 import { FormEvent } from "react";
 import { Card } from "@/components/ui/card";
-import { client } from "@/lib/api";
+import client from "@/lib/api";
 
 export function PostForm() {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {

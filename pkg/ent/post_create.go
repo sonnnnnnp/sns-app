@@ -125,11 +125,11 @@ func (pc *PostCreate) ExecX(ctx context.Context) {
 // defaults sets the default values of the builder before save.
 func (pc *PostCreate) defaults() {
 	if _, ok := pc.mutation.CreatedAt(); !ok {
-		v := post.DefaultCreatedAt
+		v := post.DefaultCreatedAt()
 		pc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := pc.mutation.UpdatedAt(); !ok {
-		v := post.DefaultUpdatedAt
+		v := post.DefaultUpdatedAt()
 		pc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := pc.mutation.ID(); !ok {

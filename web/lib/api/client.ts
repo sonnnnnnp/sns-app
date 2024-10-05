@@ -38,7 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{user_id}": {
+    "/users/{username}": {
         parameters: {
             query?: never;
             header?: never;
@@ -46,7 +46,7 @@ export interface paths {
             cookie?: never;
         };
         /** ユーザーを取得する */
-        get: operations["getUserById"];
+        get: operations["getUser"];
         put?: never;
         post?: never;
         delete?: never;
@@ -55,16 +55,16 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{user_id}/update": {
+    "/users/update": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
+        get?: never;
         /** ユーザーを更新する */
-        get: operations["updateUser"];
-        put?: never;
+        put: operations["updateUser"];
         post?: never;
         delete?: never;
         options?: never;
@@ -81,6 +81,61 @@ export interface paths {
         };
         /** 自分を取得する */
         get: operations["getSelf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{user_id}/follow": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** ユーザーをフォローする */
+        post: operations["followUser"];
+        /**
+         * ユーザーをアンフォローする
+         * @description 相手からのフォローもこれで解除する。
+         */
+        delete: operations["unfollowUser"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{user_id}/following": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ユーザーのフォローを取得する */
+        get: operations["getUserFollowing"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/{user_id}/followers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ユーザーのフォロワーを取得する */
+        get: operations["getUserFollowers"];
         put?: never;
         post?: never;
         delete?: never;
@@ -139,12 +194,18 @@ export interface components {
             avatar_url: string;
             cover_url: string;
             biography: string;
-            /** Format: date-time */
-            birthdate: string;
+            social_context?: components["schemas"]["SocialContext"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
             created_at: string;
+        };
+        SocialContext: {
+            following: boolean;
+            followed_by: boolean;
+        };
+        Users: {
+            users: components["schemas"]["User"][];
         };
         Authorization: {
             user_id: string;
@@ -167,6 +228,9 @@ export interface components {
         };
         Timeline: {
             posts: components["schemas"]["Post"][];
+        };
+        SocialSetting: {
+            lineId: string | null;
         };
         Response: {
             /** @description 正常に処理を終了したかどうか */
@@ -245,12 +309,12 @@ export interface operations {
             };
         };
     };
-    getUserById: {
+    getUser: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                user_id: string;
+                username: string;
             };
             cookie?: never;
         };
@@ -276,9 +340,7 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                user_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: {
@@ -331,6 +393,116 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         data: components["schemas"]["User"];
+                    };
+                };
+            };
+        };
+    };
+    followUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["SocialContext"];
+                    };
+                };
+            };
+        };
+    };
+    unfollowUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["SocialContext"];
+                    };
+                };
+            };
+        };
+    };
+    getUserFollowing: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["Users"];
+                    };
+                };
+            };
+        };
+    };
+    getUserFollowers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["Users"];
                     };
                 };
             };

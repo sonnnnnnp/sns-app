@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="189px" height="189px" viewBox="0 0 189 189" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- Generator: Sketch 61 (89581) - https://sketch.com -->
+  <title>ic_profile_placeholder</title>
+  <desc>Created with Sketch.</desc>
+  <defs>
+    <circle id="path-1" cx="94.5" cy="94.5" r="94.5"></circle>
+  </defs>
+  <g id="Register" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Register-1" transform="translate(-467.000000, -778.000000)">
+      <g id="Pop" transform="translate(154.000000, 682.000000)">
+        <g id="User-icon" transform="translate(313.000000, 96.000000)">
+          <g id="ic_profile_placeholder">
+            <g>
+              <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+              </mask>
+              <use id="Mask" fill="#E5E5E5" xlink:href="#path-1"></use>
+              <path d="M94.8741345,128.555556 C131.04919,128.555556 160.770232,145.881902 162.984242,182.955556 C163.072442,184.432471 162.984242,189 157.308399,189 L32.4966835,189 L32.4966835,189 C30.6018252,189 26.8454001,184.913804 27.0049238,182.949553 C29.9335089,146.889231 59.2011155,128.555556 94.8741345,128.555556 Z M95,53 C111.691272,53 125.222222,66.5309498 125.222222,83.2222222 C125.222222,99.9134947 111.691272,113.444444 95,113.444444 C78.3087276,113.444444 64.7777778,99.9134947 64.7777778,83.2222222 C64.7777778,66.5309498 78.3087276,53 95,53 Z" id="ic_profile" fill-opacity="0.7" fill="#FFFFFF" mask="url(#mask-2)"></path>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

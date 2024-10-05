@@ -16,7 +16,6 @@ func (uu *UserUsecase) UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.
 	return &oapi.User{
 		AvatarUrl:   u.AvatarURL,
 		Biography:   u.Biography,
-		Birthdate:   u.Birthdate,
 		CoverUrl:    u.CoverURL,
 		CreatedAt:   u.CreatedAt,
 		DisplayName: u.DisplayName,

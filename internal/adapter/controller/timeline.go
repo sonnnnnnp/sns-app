@@ -21,7 +21,6 @@ func (c Controller) GetTimeline(ctx echo.Context) error {
 			Author: oapi.User{
 				AvatarUrl:   entPost.Edges.Author.AvatarURL,
 				Biography:   entPost.Edges.Author.Biography,
-				Birthdate:   entPost.Edges.Author.Birthdate,
 				CoverUrl:    entPost.Edges.Author.CoverURL,
 				CreatedAt:   entPost.Edges.Author.CreatedAt,
 				DisplayName: entPost.Edges.Author.DisplayName,

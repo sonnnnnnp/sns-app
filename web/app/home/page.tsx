@@ -1,7 +1,12 @@
-import Layout from "./layout";
+import Layout from "@/layouts/layout";
+import Timeline from "./components/timeline";
 
 const Page = () => {
-  return <Layout />;
+  return (
+    <Layout>
+      <Timeline />
+    </Layout>
+  );
 };
 
 export default Page;

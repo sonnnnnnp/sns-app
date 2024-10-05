@@ -2,7 +2,7 @@ import createClient, { Middleware } from "openapi-fetch";
 
 import type { paths } from "./client";
 import { destroyAuthorization, refreshAuthorization } from "./utils";
-import Cookie from "../cookies";
+import { Cookie } from "../cookies";
 
 interface responseBody {
   ok: boolean;
@@ -36,7 +36,7 @@ const requestInterceptor: Middleware = {
       const refreshResponse = await refreshAuthorization(refreshToken);
       if (refreshResponse.ok) {
         Cookie.setAccessToken(refreshResponse.access_token!);
-        Cookie.setAccessToken(refreshResponse.refresh_token!);
+        Cookie.setRefreshToken(refreshResponse.refresh_token!);
         return undefined;
       }
 
