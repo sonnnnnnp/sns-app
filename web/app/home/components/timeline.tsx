@@ -444,7 +444,7 @@ export default function Timeline() {
     <div className="max-w-[780px]">
       <Tabs defaultValue="following" onValueChange={onTabChange}>
         <TabsContent className="my-0" value={tabValue}>
-          <Card className="flex text-sm w-full rounded-none border-x-0 mb-16 sm:mb-0 sm:border-r-[1px] md:border-x-[1px] dark:bg-black dark:border-slate-800">
+          <Card className="flex text-sm w-full rounded-none border-0 mb-16 sm:mb-0 sm:border-r-[1px] md:border-x-[1px] dark:bg-black dark:border-slate-800">
             <CardContent className="w-full p-0">
               <TabsList className="sticky top-0 z-10 p-0 h-12 rounded-none w-full bg-transparent backdrop-blur border-b">
                 <CustomTabsTrigger value="following" label="フォロー中" />
