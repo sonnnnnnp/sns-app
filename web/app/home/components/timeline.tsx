@@ -1,6 +1,6 @@
 "use client";
 
-import { Filter, Images, Pencil, Type } from "lucide-react";
+import { Images, Pencil, Type } from "lucide-react";
 
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
@@ -29,12 +29,31 @@ import { toast } from "sonner";
 
 import twitterText from "twitter-text";
 import { components } from "@/lib/api/client";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const iframeHeight = "938px";
 
 export const containerClassName = "w-full h-full";
 
+const CustomTabsTrigger = ({
+  value,
+  label,
+}: {
+  value: string;
+  label: string;
+}) => {
+  return (
+    <TabsTrigger
+      className="w-[50%] data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none .data-\[state\=active\]\:shadow-none[data-state=active]"
+      value={value}
+    >
+      {label}
+    </TabsTrigger>
+  );
+};
+
 export default function Timeline() {
+  const [tabValue, setTabValue] = useState("following");
   const [postDialogOpen, setPostDialogOpen] = useState(false);
   const [postContentValid, setPostContentValid] = useState(false);
   const [postContent, setPostContent] = useState("");
@@ -45,13 +64,15 @@ export default function Timeline() {
 
   useEffect(() => {
     const loadTimeline = async () => {
-      fetchTimeline("following");
+      onTabChange("following");
     };
 
     loadTimeline();
   }, []);
 
-  const fetchTimeline = async (value: string) => {
+  const onTabChange = async (value: string) => {
+    setTabValue(value);
+
     const { data } = await client.GET("/timeline");
     if (!data?.ok) {
       return console.error("error fetching timeline");
@@ -106,27 +127,18 @@ export default function Timeline() {
   };
 
   return (
-    <div className="m-4 sm:mx-6 sm:my-0 max-w-[780px]">
-      <Tabs defaultValue="following" onValueChange={fetchTimeline}>
-        <div className="flex items-center">
-          <TabsList>
-            <TabsTrigger value="following">フォロー中</TabsTrigger>
-            <TabsTrigger value="public">オープン</TabsTrigger>
-          </TabsList>
-          <div className="ml-auto flex items-center">
-            <Button size="sm" className="h-8 gap-1">
-              <Filter className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                絞り込み
-              </span>
-            </Button>
-          </div>
-        </div>
-        <TabsContent value="following">
-          <PostList posts={posts} />
-        </TabsContent>
-        <TabsContent value="public">
-          <PostList posts={posts} />
+    <div className="max-w-[780px]">
+      <Tabs defaultValue="following" onValueChange={onTabChange}>
+        <TabsContent className="my-0" value={tabValue}>
+          <Card className="flex text-sm w-full rounded-none border-x-0 mb-16 sm:mb-0 sm:border-r-[1px] md:border-x-[1px] dark:bg-black dark:border-slate-800">
+            <CardContent className="w-full p-0">
+              <TabsList className="h-12 rounded-none w-full bg-transparent border-b">
+                <CustomTabsTrigger value="following" label="フォロー中" />
+                <CustomTabsTrigger value="public" label="オープン" />
+              </TabsList>
+              <PostList posts={posts} />
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
       <div className="fixed bottom-[12%] right-[10%]">
