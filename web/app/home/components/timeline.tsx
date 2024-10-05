@@ -106,13 +106,12 @@ export default function Timeline() {
   };
 
   return (
-    <div className="max-w-[780px]">
+    <div className="m-4 sm:mx-6 sm:my-0 max-w-[780px]">
       <Tabs defaultValue="following" onValueChange={fetchTimeline}>
         <div className="flex items-center">
           <TabsList>
             <TabsTrigger value="following">フォロー中</TabsTrigger>
             <TabsTrigger value="public">オープン</TabsTrigger>
-            <TabsTrigger value="live">配信</TabsTrigger>
           </TabsList>
           <div className="ml-auto flex items-center">
             <Button size="sm" className="h-8 gap-1">
@@ -127,9 +126,6 @@ export default function Timeline() {
           <PostList posts={posts} />
         </TabsContent>
         <TabsContent value="public">
-          <PostList posts={posts} />
-        </TabsContent>
-        <TabsContent value="live">
           <PostList posts={posts} />
         </TabsContent>
       </Tabs>

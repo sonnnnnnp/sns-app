@@ -10,18 +10,10 @@ import {
   Phone,
   Search,
   Settings,
+  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -74,14 +66,14 @@ export default function HeaderNavigation({ children }: Props) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href="/calls"
+                  href="/search"
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
-                  <Phone className="h-5 w-5" />
-                  <span className="sr-only">通話</span>
+                  <Search className="h-5 w-5" />
+                  <span className="sr-only">検索</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">通話</TooltipContent>
+              <TooltipContent side="right">検索</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
@@ -96,6 +88,20 @@ export default function HeaderNavigation({ children }: Props) {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">メッセージ</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/groups"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                >
+                  <Users className="h-5 w-5" />
+                  <span className="sr-only">グループ</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">グループ</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
@@ -126,6 +132,22 @@ export default function HeaderNavigation({ children }: Props) {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">設定</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/users/username"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src="/users/placeholder-profile.svg" />
+                  </Avatar>
+                  <span className="sr-only">ユーザー名</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">ユーザー名</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </nav>
@@ -188,39 +210,8 @@ export default function HeaderNavigation({ children }: Props) {
               </nav>
             </SheetContent>
           </Sheet>
-          <div className="relative mr-auto flex-1 md:grow-0">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-            />
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="overflow-hidden rounded-full"
-              >
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src="/users/placeholder-profile.svg" />
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <Link href={`/users/username`}>
-                <DropdownMenuLabel>{"未設定"}</DropdownMenuLabel>
-              </Link>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>通知</DropdownMenuItem>
-              <DropdownMenuItem>設定</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>ログアウト</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </header>
-        <main className="p-4 sm:px-6 sm:py-0">{children}</main>
+        <main>{children}</main>
       </div>
     </div>
   );
