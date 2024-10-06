@@ -18,10 +18,10 @@ type User struct {
 func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
-		field.String("username").NotEmpty().Unique(),
-		field.String("display_name").Optional(),
-		field.String("avatar_url").Optional(),
-		field.String("cover_url").Optional(),
+		field.String("name").NotEmpty().Unique(),
+		field.String("nickname").Optional(),
+		field.String("avatar_image_url").Optional(),
+		field.String("banner_image_url").Optional(),
 		field.String("biography").Optional(),
 		field.Time("birthdate").Optional(),
 		field.String("line_id").Optional(),

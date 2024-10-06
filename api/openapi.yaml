@@ -82,15 +82,15 @@ paths:
                   - data
           headers: {}
       security: []
-  /users/{username}:
+  /users/{name}:
     get:
       summary: ユーザーを取得する
       deprecated: false
       description: ''
-      operationId: getUser
+      operationId: getUserByName
       tags: []
       parameters:
-        - name: username
+        - name: name
           in: path
           description: ''
           required: true
@@ -133,13 +133,13 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                name:
                   type: string
-                display_name:
+                nickname:
                   type: string
-                avatar_url:
+                avatar_image_url:
                   type: string
-                cover_url:
+                banner_image_url:
                   type: string
                 biography:
                   type: string
@@ -430,7 +430,20 @@ paths:
       description: ''
       operationId: getTimeline
       tags: []
-      parameters: []
+      parameters:
+        - name: cursor
+          in: query
+          description: 次のページを取得するためのキー
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: integer
       responses:
         '200':
           description: ''
@@ -464,17 +477,20 @@ components:
           type: string
           description: ID番号
           format: uuid
-        username:
+        name:
           type: string
           description: 名前
-        display_name:
+        nickname:
           type: string
-        avatar_url:
+        avatar_image_url:
           type: string
-        cover_url:
+          nullable: true
+        banner_image_url:
           type: string
+          nullable: true
         biography:
           type: string
+          nullable: true
         social_context: *ref_2
         updated_at:
           type: string
@@ -484,10 +500,10 @@ components:
           format: date-time
       required:
         - id
-        - username
-        - display_name
-        - avatar_url
-        - cover_url
+        - name
+        - nickname
+        - avatar_image_url
+        - banner_image_url
         - biography
         - updated_at
         - created_at
@@ -533,8 +549,9 @@ components:
           description: ID番号
           format: uuid
         author: *ref_1
-        content:
+        text:
           type: string
+          nullable: true
         updated_at:
           type: string
           format: date-time
@@ -546,14 +563,20 @@ components:
         - author
         - updated_at
         - created_at
+        - text
     Timeline:
       type: object
       properties:
         posts:
           type: array
           items: *ref_4
+        next_cursor:
+          type: string
+          format: uuid
+          description: 次のページを取得するためのキー
       required:
         - posts
+        - next_cursor
     SocialSetting:
       type: object
       properties:

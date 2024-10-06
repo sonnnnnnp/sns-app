@@ -1,43 +1,42 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Post } from "./post";
-import client from "@/lib/api";
 import { components } from "@/lib/api/client";
-import { Card, CardContent } from "@/components/ui/card";
 
-export function PostList() {
-  const [posts, setPosts] = useState<
-    components["schemas"]["Timeline"]["posts"]
-  >([]);
+type Props = {
+  posts: components["schemas"]["Timeline"]["posts"];
+};
 
-  useEffect(() => {
-    const fetchTimeline = async () => {
-      const { data } = await client.GET("/timeline");
-      if (!data?.ok) {
-        return console.error("error fetching timeline");
-      }
-
-      setPosts(data?.data.posts ?? []);
-    };
-
-    fetchTimeline();
-  }, []);
-
+export function PostList({ posts }: Props) {
   return (
-    <Card className="flex text-sm my-3 w-full dark:bg-black dark:border-slate-800 mb-16 sm:mb-0">
-      <CardContent className="w-full p-0">
-        {posts.map((post, i) => (
-          <Post
-            key={i}
-            username={post.author.username}
-            display_name={post.author.display_name}
-            avatar_image_url={post.author.avatar_url}
-            content={post.content ?? ""}
-            created_at={post.created_at}
-          />
-        ))}
-      </CardContent>
-    </Card>
+    <div>
+      {posts.length === 0
+        ? Array.from({ length: 20 }).map((_, i) => (
+            <div key={i} className="flex border-b pl-4 pr-3 pt-4 pb-6">
+              <div className="mt-2 mr-2">
+                <Skeleton className="h-10 w-10 rounded-full" />
+              </div>
+              <div className="flex-1 grid gap-y-2">
+                <div className="flex items-center"></div>
+                <div className="grid gap-y-1 space-y-4">
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-[80%]" />
+                    <Skeleton className="h-4 w-[30%]" />
+                  </div>
+                  <Skeleton className="h-4 w-[80%]" />
+                </div>
+              </div>
+            </div>
+          ))
+        : posts.map((post, i) => (
+            <Post
+              key={i}
+              name={post.author.name}
+              nickname={post.author.nickname}
+              avatar_image_url={post.author.avatar_image_url}
+              text={post.text ?? ""}
+              created_at={post.created_at}
+            />
+          ))}
+    </div>
   );
 }

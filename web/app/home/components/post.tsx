@@ -7,16 +7,16 @@ import Link from "next/link";
 import { getTimeAgo } from "@/utils/date";
 
 export function Post(props: {
-  username: string;
-  display_name: string;
-  avatar_image_url: string;
-  content: string;
+  name: string;
+  nickname: string;
+  avatar_image_url: string | null;
+  text: string;
   created_at: string;
 }) {
   return (
     <div className="flex border-b pl-4 pr-3 py-1.5">
       <div className="mt-2 mr-2">
-        <Link href={`/users/${props.username}`}>
+        <Link href={`/users/${props.name}`}>
           <Avatar>
             {props.avatar_image_url ? (
               <AvatarImage src={props.avatar_image_url} />
@@ -30,10 +30,10 @@ export function Post(props: {
         <div className="flex items-center">
           <div className="flex items-center gap-1.5 px-2 text-sm">
             <span className="font-semibold dark:text-white">
-              {props.display_name}
+              {props.nickname}
             </span>
             <span className="text-muted-foreground dark:text-slate-400 hidden md:block">
-              {`@${props.username}`}
+              {`@${props.name}`}
             </span>
             <span className="text-xs text-muted-foreground dark:text-slate-400">
               {` ･ ${getTimeAgo(new Date(props.created_at))}`}
@@ -45,7 +45,7 @@ export function Post(props: {
         </div>
         <div className="grid gap-y-1">
           <p className="pl-2 pr-3 text-sm text-muted-foreground break-all dark:text-slate-300">
-            {props.content}
+            {props.text}
           </p>
           <div className="flex items-center justify-between">
             <Button

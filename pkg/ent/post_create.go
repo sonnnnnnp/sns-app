@@ -28,16 +28,16 @@ func (pc *PostCreate) SetAuthorID(u uuid.UUID) *PostCreate {
 	return pc
 }
 
-// SetContent sets the "content" field.
-func (pc *PostCreate) SetContent(s string) *PostCreate {
-	pc.mutation.SetContent(s)
+// SetText sets the "text" field.
+func (pc *PostCreate) SetText(s string) *PostCreate {
+	pc.mutation.SetText(s)
 	return pc
 }
 
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (pc *PostCreate) SetNillableContent(s *string) *PostCreate {
+// SetNillableText sets the "text" field if the given value is not nil.
+func (pc *PostCreate) SetNillableText(s *string) *PostCreate {
 	if s != nil {
-		pc.SetContent(*s)
+		pc.SetText(*s)
 	}
 	return pc
 }
@@ -187,9 +187,9 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := pc.mutation.Content(); ok {
-		_spec.SetField(post.FieldContent, field.TypeString, value)
-		_node.Content = value
+	if value, ok := pc.mutation.Text(); ok {
+		_spec.SetField(post.FieldText, field.TypeString, value)
+		_node.Text = value
 	}
 	if value, ok := pc.mutation.CreatedAt(); ok {
 		_spec.SetField(post.FieldCreatedAt, field.TypeTime, value)

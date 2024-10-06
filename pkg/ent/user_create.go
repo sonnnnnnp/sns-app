@@ -22,50 +22,50 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
-// SetUsername sets the "username" field.
-func (uc *UserCreate) SetUsername(s string) *UserCreate {
-	uc.mutation.SetUsername(s)
+// SetName sets the "name" field.
+func (uc *UserCreate) SetName(s string) *UserCreate {
+	uc.mutation.SetName(s)
 	return uc
 }
 
-// SetDisplayName sets the "display_name" field.
-func (uc *UserCreate) SetDisplayName(s string) *UserCreate {
-	uc.mutation.SetDisplayName(s)
+// SetNickname sets the "nickname" field.
+func (uc *UserCreate) SetNickname(s string) *UserCreate {
+	uc.mutation.SetNickname(s)
 	return uc
 }
 
-// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
-func (uc *UserCreate) SetNillableDisplayName(s *string) *UserCreate {
+// SetNillableNickname sets the "nickname" field if the given value is not nil.
+func (uc *UserCreate) SetNillableNickname(s *string) *UserCreate {
 	if s != nil {
-		uc.SetDisplayName(*s)
+		uc.SetNickname(*s)
 	}
 	return uc
 }
 
-// SetAvatarURL sets the "avatar_url" field.
-func (uc *UserCreate) SetAvatarURL(s string) *UserCreate {
-	uc.mutation.SetAvatarURL(s)
+// SetAvatarImageURL sets the "avatar_image_url" field.
+func (uc *UserCreate) SetAvatarImageURL(s string) *UserCreate {
+	uc.mutation.SetAvatarImageURL(s)
 	return uc
 }
 
-// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
-func (uc *UserCreate) SetNillableAvatarURL(s *string) *UserCreate {
+// SetNillableAvatarImageURL sets the "avatar_image_url" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAvatarImageURL(s *string) *UserCreate {
 	if s != nil {
-		uc.SetAvatarURL(*s)
+		uc.SetAvatarImageURL(*s)
 	}
 	return uc
 }
 
-// SetCoverURL sets the "cover_url" field.
-func (uc *UserCreate) SetCoverURL(s string) *UserCreate {
-	uc.mutation.SetCoverURL(s)
+// SetBannerImageURL sets the "banner_image_url" field.
+func (uc *UserCreate) SetBannerImageURL(s string) *UserCreate {
+	uc.mutation.SetBannerImageURL(s)
 	return uc
 }
 
-// SetNillableCoverURL sets the "cover_url" field if the given value is not nil.
-func (uc *UserCreate) SetNillableCoverURL(s *string) *UserCreate {
+// SetNillableBannerImageURL sets the "banner_image_url" field if the given value is not nil.
+func (uc *UserCreate) SetNillableBannerImageURL(s *string) *UserCreate {
 	if s != nil {
-		uc.SetCoverURL(*s)
+		uc.SetBannerImageURL(*s)
 	}
 	return uc
 }
@@ -250,12 +250,12 @@ func (uc *UserCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
-	if _, ok := uc.mutation.Username(); !ok {
-		return &ValidationError{Name: "username", err: errors.New(`ent: missing required field "User.username"`)}
+	if _, ok := uc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "User.name"`)}
 	}
-	if v, ok := uc.mutation.Username(); ok {
-		if err := user.UsernameValidator(v); err != nil {
-			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
+	if v, ok := uc.mutation.Name(); ok {
+		if err := user.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "User.name": %w`, err)}
 		}
 	}
 	if _, ok := uc.mutation.CreatedAt(); !ok {
@@ -299,21 +299,21 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := uc.mutation.Username(); ok {
-		_spec.SetField(user.FieldUsername, field.TypeString, value)
-		_node.Username = value
+	if value, ok := uc.mutation.Name(); ok {
+		_spec.SetField(user.FieldName, field.TypeString, value)
+		_node.Name = value
 	}
-	if value, ok := uc.mutation.DisplayName(); ok {
-		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
-		_node.DisplayName = value
+	if value, ok := uc.mutation.Nickname(); ok {
+		_spec.SetField(user.FieldNickname, field.TypeString, value)
+		_node.Nickname = value
 	}
-	if value, ok := uc.mutation.AvatarURL(); ok {
-		_spec.SetField(user.FieldAvatarURL, field.TypeString, value)
-		_node.AvatarURL = value
+	if value, ok := uc.mutation.AvatarImageURL(); ok {
+		_spec.SetField(user.FieldAvatarImageURL, field.TypeString, value)
+		_node.AvatarImageURL = value
 	}
-	if value, ok := uc.mutation.CoverURL(); ok {
-		_spec.SetField(user.FieldCoverURL, field.TypeString, value)
-		_node.CoverURL = value
+	if value, ok := uc.mutation.BannerImageURL(); ok {
+		_spec.SetField(user.FieldBannerImageURL, field.TypeString, value)
+		_node.BannerImageURL = value
 	}
 	if value, ok := uc.mutation.Biography(); ok {
 		_spec.SetField(user.FieldBiography, field.TypeString, value)

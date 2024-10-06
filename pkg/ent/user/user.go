@@ -15,14 +15,14 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldUsername holds the string denoting the username field in the database.
-	FieldUsername = "username"
-	// FieldDisplayName holds the string denoting the display_name field in the database.
-	FieldDisplayName = "display_name"
-	// FieldAvatarURL holds the string denoting the avatar_url field in the database.
-	FieldAvatarURL = "avatar_url"
-	// FieldCoverURL holds the string denoting the cover_url field in the database.
-	FieldCoverURL = "cover_url"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
+	// FieldNickname holds the string denoting the nickname field in the database.
+	FieldNickname = "nickname"
+	// FieldAvatarImageURL holds the string denoting the avatar_image_url field in the database.
+	FieldAvatarImageURL = "avatar_image_url"
+	// FieldBannerImageURL holds the string denoting the banner_image_url field in the database.
+	FieldBannerImageURL = "banner_image_url"
 	// FieldBiography holds the string denoting the biography field in the database.
 	FieldBiography = "biography"
 	// FieldBirthdate holds the string denoting the birthdate field in the database.
@@ -57,10 +57,10 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
-	FieldUsername,
-	FieldDisplayName,
-	FieldAvatarURL,
-	FieldCoverURL,
+	FieldName,
+	FieldNickname,
+	FieldAvatarImageURL,
+	FieldBannerImageURL,
 	FieldBiography,
 	FieldBirthdate,
 	FieldLineID,
@@ -88,8 +88,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
-	// UsernameValidator is a validator for the "username" field. It is called by the builders before save.
-	UsernameValidator func(string) error
+	// NameValidator is a validator for the "name" field. It is called by the builders before save.
+	NameValidator func(string) error
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -106,24 +106,24 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByUsername orders the results by the username field.
-func ByUsername(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUsername, opts...).ToFunc()
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
-// ByDisplayName orders the results by the display_name field.
-func ByDisplayName(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDisplayName, opts...).ToFunc()
+// ByNickname orders the results by the nickname field.
+func ByNickname(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNickname, opts...).ToFunc()
 }
 
-// ByAvatarURL orders the results by the avatar_url field.
-func ByAvatarURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAvatarURL, opts...).ToFunc()
+// ByAvatarImageURL orders the results by the avatar_image_url field.
+func ByAvatarImageURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAvatarImageURL, opts...).ToFunc()
 }
 
-// ByCoverURL orders the results by the cover_url field.
-func ByCoverURL(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCoverURL, opts...).ToFunc()
+// ByBannerImageURL orders the results by the banner_image_url field.
+func ByBannerImageURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBannerImageURL, opts...).ToFunc()
 }
 
 // ByBiography orders the results by the biography field.

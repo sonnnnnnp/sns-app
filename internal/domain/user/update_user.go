@@ -12,20 +12,20 @@ import (
 func (ur *UserRepository) UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*ent.User, error) {
 	query := ur.db.User.UpdateOneID(id)
 
-	if body.Username != nil {
-		query.SetUsername(*body.Username)
+	if body.Name != nil {
+		query.SetName(*body.Name)
 	}
-	if body.DisplayName != nil {
-		query.SetDisplayName(*body.DisplayName)
+	if body.Nickname != nil {
+		query.SetNickname(*body.Nickname)
 	}
 	if body.Biography != nil {
 		query.SetBiography(*body.Biography)
 	}
-	if body.AvatarUrl != nil {
-		query.SetAvatarURL(*body.AvatarUrl)
+	if body.AvatarImageUrl != nil {
+		query.SetAvatarImageURL(*body.AvatarImageUrl)
 	}
-	if body.CoverUrl != nil {
-		query.SetCoverURL(*body.CoverUrl)
+	if body.BannerImageUrl != nil {
+		query.SetBannerImageURL(*body.BannerImageUrl)
 	}
 	if body.Birthdate != nil {
 		query.SetBirthdate(*body.Birthdate)

@@ -2,6 +2,7 @@
 
 import { Bell, Home, MessagesSquare, Phone, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage } from "../ui/avatar";
 
 export default function FooterNavigation() {
   return (
@@ -25,7 +26,7 @@ export default function FooterNavigation() {
         size="icon"
         className="overflow-hidden rounded-full"
       >
-        <Phone className="h-6 w-6 text-muted-foreground" />
+        <MessagesSquare className="h-6 w-6 text-muted-foreground" />
       </Button>
       <Button
         variant="ghost"
@@ -42,11 +43,13 @@ export default function FooterNavigation() {
         <Bell className="h-6 w-6 text-muted-foreground" />
       </Button>
       <Button
-        variant="ghost"
+        variant="outline"
         size="icon"
         className="overflow-hidden rounded-full"
       >
-        <MessagesSquare className="h-6 w-6 text-muted-foreground" />
+        <Avatar className="h-9 w-9">
+          <AvatarImage src="/users/placeholder-profile.svg" />
+        </Avatar>
       </Button>
     </div>
   );

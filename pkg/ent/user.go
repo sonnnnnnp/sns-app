@@ -18,14 +18,14 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
-	// Username holds the value of the "username" field.
-	Username string `json:"username,omitempty"`
-	// DisplayName holds the value of the "display_name" field.
-	DisplayName string `json:"display_name,omitempty"`
-	// AvatarURL holds the value of the "avatar_url" field.
-	AvatarURL string `json:"avatar_url,omitempty"`
-	// CoverURL holds the value of the "cover_url" field.
-	CoverURL string `json:"cover_url,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
+	// Nickname holds the value of the "nickname" field.
+	Nickname string `json:"nickname,omitempty"`
+	// AvatarImageURL holds the value of the "avatar_image_url" field.
+	AvatarImageURL string `json:"avatar_image_url,omitempty"`
+	// BannerImageURL holds the value of the "banner_image_url" field.
+	BannerImageURL string `json:"banner_image_url,omitempty"`
 	// Biography holds the value of the "biography" field.
 	Biography string `json:"biography,omitempty"`
 	// Birthdate holds the value of the "birthdate" field.
@@ -87,7 +87,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldUsername, user.FieldDisplayName, user.FieldAvatarURL, user.FieldCoverURL, user.FieldBiography, user.FieldLineID:
+		case user.FieldName, user.FieldNickname, user.FieldAvatarImageURL, user.FieldBannerImageURL, user.FieldBiography, user.FieldLineID:
 			values[i] = new(sql.NullString)
 		case user.FieldBirthdate, user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -114,29 +114,29 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				u.ID = *value
 			}
-		case user.FieldUsername:
+		case user.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field username", values[i])
+				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				u.Username = value.String
+				u.Name = value.String
 			}
-		case user.FieldDisplayName:
+		case user.FieldNickname:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field display_name", values[i])
+				return fmt.Errorf("unexpected type %T for field nickname", values[i])
 			} else if value.Valid {
-				u.DisplayName = value.String
+				u.Nickname = value.String
 			}
-		case user.FieldAvatarURL:
+		case user.FieldAvatarImageURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field avatar_url", values[i])
+				return fmt.Errorf("unexpected type %T for field avatar_image_url", values[i])
 			} else if value.Valid {
-				u.AvatarURL = value.String
+				u.AvatarImageURL = value.String
 			}
-		case user.FieldCoverURL:
+		case user.FieldBannerImageURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field cover_url", values[i])
+				return fmt.Errorf("unexpected type %T for field banner_image_url", values[i])
 			} else if value.Valid {
-				u.CoverURL = value.String
+				u.BannerImageURL = value.String
 			}
 		case user.FieldBiography:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -219,17 +219,17 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
-	builder.WriteString("username=")
-	builder.WriteString(u.Username)
+	builder.WriteString("name=")
+	builder.WriteString(u.Name)
 	builder.WriteString(", ")
-	builder.WriteString("display_name=")
-	builder.WriteString(u.DisplayName)
+	builder.WriteString("nickname=")
+	builder.WriteString(u.Nickname)
 	builder.WriteString(", ")
-	builder.WriteString("avatar_url=")
-	builder.WriteString(u.AvatarURL)
+	builder.WriteString("avatar_image_url=")
+	builder.WriteString(u.AvatarImageURL)
 	builder.WriteString(", ")
-	builder.WriteString("cover_url=")
-	builder.WriteString(u.CoverURL)
+	builder.WriteString("banner_image_url=")
+	builder.WriteString(u.BannerImageURL)
 	builder.WriteString(", ")
 	builder.WriteString("biography=")
 	builder.WriteString(u.Biography)

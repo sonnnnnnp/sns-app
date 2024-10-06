@@ -11,7 +11,7 @@ var (
 	// PostsColumns holds the columns for the "posts" table.
 	PostsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "content", Type: field.TypeString, Nullable: true},
+		{Name: "text", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "author_id", Type: field.TypeUUID},
@@ -33,10 +33,10 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
-		{Name: "username", Type: field.TypeString, Unique: true},
-		{Name: "display_name", Type: field.TypeString, Nullable: true},
-		{Name: "avatar_url", Type: field.TypeString, Nullable: true},
-		{Name: "cover_url", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "nickname", Type: field.TypeString, Nullable: true},
+		{Name: "avatar_image_url", Type: field.TypeString, Nullable: true},
+		{Name: "banner_image_url", Type: field.TypeString, Nullable: true},
 		{Name: "biography", Type: field.TypeString, Nullable: true},
 		{Name: "birthdate", Type: field.TypeTime, Nullable: true},
 		{Name: "line_id", Type: field.TypeString, Nullable: true},

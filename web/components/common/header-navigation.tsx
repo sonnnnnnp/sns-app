@@ -6,28 +6,12 @@ import {
   Home,
   LoaderPinwheel,
   MessagesSquare,
-  PanelLeft,
-  Phone,
   Search,
   Settings,
+  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import {
   Tooltip,
   TooltipContent,
@@ -35,6 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Avatar, AvatarImage } from "../ui/avatar";
+import { Badge } from "../ui/badge";
 
 export const iframeHeight = "938px";
 
@@ -47,6 +32,75 @@ type Props = {
 export default function HeaderNavigation({ children }: Props) {
   return (
     <div>
+      <div className="fixed inset-y-0 z-10 w-64 flex-col hidden md:block">
+        <div className="flex h-full max-h-screen flex-col gap-2">
+          <div className="flex h-12 items-center px-6">
+            <Link href="/" className="flex items-center gap-2 font-semibold">
+              <LoaderPinwheel className="h-6 w-6" />
+              <span className="">sns-app</span>
+            </Link>
+            <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+              <Bell className="h-4 w-4" />
+              <span className="sr-only">Toggle notifications</span>
+            </Button>
+          </div>
+          <div className="flex-1">
+            <nav className="grid gap-y-3 items-start mt-3 px-4 text-sm font-medium">
+              <Link
+                href="/home"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Home className="h-5 w-5" />
+                ホーム
+              </Link>
+              <Link
+                href="/search"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Search className="h-5 w-5" />
+                検索
+              </Link>
+              <Link
+                href="/messages"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <MessagesSquare className="h-5 w-5" />
+                メッセージ
+                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                  6
+                </Badge>
+              </Link>
+              <Link
+                href="/groups"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Users className="h-5 w-5" />
+                グループ
+              </Link>
+              <Link
+                href="/settings"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Settings className="h-5 w-5" />
+                設定
+              </Link>
+            </nav>
+          </div>
+          {/* <div className="mt-auto p-4">
+            <Card x-chunk="dashboard-02-chunk-0">
+              <CardHeader className="p-2 pt-0 md:p-4">
+                <CardTitle>Ver. 0.10</CardTitle>
+                <CardDescription>アップデート情報</CardDescription>
+              </CardHeader>
+              <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
+                <Button size="sm" className="w-full">
+                  もっとみる
+                </Button>
+              </CardContent>
+            </Card>
+          </div> */}
+        </div>
+      </div>
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex md:hidden">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
@@ -74,14 +128,14 @@ export default function HeaderNavigation({ children }: Props) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href="/calls"
+                  href="/search"
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
-                  <Phone className="h-5 w-5" />
-                  <span className="sr-only">通話</span>
+                  <Search className="h-5 w-5" />
+                  <span className="sr-only">検索</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">通話</TooltipContent>
+              <TooltipContent side="right">検索</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
@@ -96,6 +150,20 @@ export default function HeaderNavigation({ children }: Props) {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">メッセージ</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/groups"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                >
+                  <Users className="h-5 w-5" />
+                  <span className="sr-only">グループ</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">グループ</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>
@@ -128,99 +196,26 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipContent side="right">設定</TooltipContent>
             </Tooltip>
           </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/users/username"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src="/users/placeholder-profile.svg" />
+                  </Avatar>
+                  <span className="sr-only">ユーザー名</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">ユーザー名</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </nav>
       </aside>
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button size="icon" variant="outline" className="sm:hidden">
-                <PanelLeft className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="sm:max-w-xs">
-              <nav className="grid gap-6 text-lg font-medium">
-                <SheetTitle>
-                  <Link
-                    href="/home"
-                    className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
-                  >
-                    <LoaderPinwheel className="h-5 w-5 transition-all group-hover:scale-110" />
-                    <span className="sr-only">sns-app</span>
-                  </Link>
-                </SheetTitle>
-                <Link
-                  href="/home"
-                  className="flex items-center gap-4 px-2.5 text-foreground"
-                >
-                  <Home className="h-5 w-5" />
-                  ホーム
-                </Link>
-                <Link
-                  href="/calls"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <Phone className="h-5 w-5" />
-                  通話
-                </Link>
-                <Link
-                  href="/messages"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <MessagesSquare className="h-5 w-5" />
-                  メッセージ
-                </Link>
-                <Link
-                  href="/notifications"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <Bell className="h-5 w-5" />
-                  通知
-                </Link>
-                <Link
-                  href="/settings"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <Settings className="h-5 w-5" />
-                  設定
-                </Link>
-              </nav>
-            </SheetContent>
-          </Sheet>
-          <div className="relative mr-auto flex-1 md:grow-0">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-            />
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="overflow-hidden rounded-full"
-              >
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src="/users/placeholder-profile.svg" />
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <Link href={`/users/username`}>
-                <DropdownMenuLabel>{"未設定"}</DropdownMenuLabel>
-              </Link>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>通知</DropdownMenuItem>
-              <DropdownMenuItem>設定</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>ログアウト</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </header>
-        <main className="p-4 sm:px-6 sm:py-0">{children}</main>
+      <div className="flex flex-col sm:gap-4 sm:pl-14 md:pl-64">
+        <main>{children}</main>
       </div>
     </div>
   );

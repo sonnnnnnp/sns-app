@@ -30,77 +30,77 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
-// SetUsername sets the "username" field.
-func (uu *UserUpdate) SetUsername(s string) *UserUpdate {
-	uu.mutation.SetUsername(s)
+// SetName sets the "name" field.
+func (uu *UserUpdate) SetName(s string) *UserUpdate {
+	uu.mutation.SetName(s)
 	return uu
 }
 
-// SetNillableUsername sets the "username" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableUsername(s *string) *UserUpdate {
+// SetNillableName sets the "name" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableName(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetUsername(*s)
+		uu.SetName(*s)
 	}
 	return uu
 }
 
-// SetDisplayName sets the "display_name" field.
-func (uu *UserUpdate) SetDisplayName(s string) *UserUpdate {
-	uu.mutation.SetDisplayName(s)
+// SetNickname sets the "nickname" field.
+func (uu *UserUpdate) SetNickname(s string) *UserUpdate {
+	uu.mutation.SetNickname(s)
 	return uu
 }
 
-// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableDisplayName(s *string) *UserUpdate {
+// SetNillableNickname sets the "nickname" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableNickname(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetDisplayName(*s)
+		uu.SetNickname(*s)
 	}
 	return uu
 }
 
-// ClearDisplayName clears the value of the "display_name" field.
-func (uu *UserUpdate) ClearDisplayName() *UserUpdate {
-	uu.mutation.ClearDisplayName()
+// ClearNickname clears the value of the "nickname" field.
+func (uu *UserUpdate) ClearNickname() *UserUpdate {
+	uu.mutation.ClearNickname()
 	return uu
 }
 
-// SetAvatarURL sets the "avatar_url" field.
-func (uu *UserUpdate) SetAvatarURL(s string) *UserUpdate {
-	uu.mutation.SetAvatarURL(s)
+// SetAvatarImageURL sets the "avatar_image_url" field.
+func (uu *UserUpdate) SetAvatarImageURL(s string) *UserUpdate {
+	uu.mutation.SetAvatarImageURL(s)
 	return uu
 }
 
-// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableAvatarURL(s *string) *UserUpdate {
+// SetNillableAvatarImageURL sets the "avatar_image_url" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAvatarImageURL(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetAvatarURL(*s)
+		uu.SetAvatarImageURL(*s)
 	}
 	return uu
 }
 
-// ClearAvatarURL clears the value of the "avatar_url" field.
-func (uu *UserUpdate) ClearAvatarURL() *UserUpdate {
-	uu.mutation.ClearAvatarURL()
+// ClearAvatarImageURL clears the value of the "avatar_image_url" field.
+func (uu *UserUpdate) ClearAvatarImageURL() *UserUpdate {
+	uu.mutation.ClearAvatarImageURL()
 	return uu
 }
 
-// SetCoverURL sets the "cover_url" field.
-func (uu *UserUpdate) SetCoverURL(s string) *UserUpdate {
-	uu.mutation.SetCoverURL(s)
+// SetBannerImageURL sets the "banner_image_url" field.
+func (uu *UserUpdate) SetBannerImageURL(s string) *UserUpdate {
+	uu.mutation.SetBannerImageURL(s)
 	return uu
 }
 
-// SetNillableCoverURL sets the "cover_url" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableCoverURL(s *string) *UserUpdate {
+// SetNillableBannerImageURL sets the "banner_image_url" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableBannerImageURL(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetCoverURL(*s)
+		uu.SetBannerImageURL(*s)
 	}
 	return uu
 }
 
-// ClearCoverURL clears the value of the "cover_url" field.
-func (uu *UserUpdate) ClearCoverURL() *UserUpdate {
-	uu.mutation.ClearCoverURL()
+// ClearBannerImageURL clears the value of the "banner_image_url" field.
+func (uu *UserUpdate) ClearBannerImageURL() *UserUpdate {
+	uu.mutation.ClearBannerImageURL()
 	return uu
 }
 
@@ -334,9 +334,9 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uu *UserUpdate) check() error {
-	if v, ok := uu.mutation.Username(); ok {
-		if err := user.UsernameValidator(v); err != nil {
-			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
+	if v, ok := uu.mutation.Name(); ok {
+		if err := user.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "User.name": %w`, err)}
 		}
 	}
 	return nil
@@ -354,26 +354,26 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := uu.mutation.Username(); ok {
-		_spec.SetField(user.FieldUsername, field.TypeString, value)
+	if value, ok := uu.mutation.Name(); ok {
+		_spec.SetField(user.FieldName, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.DisplayName(); ok {
-		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
+	if value, ok := uu.mutation.Nickname(); ok {
+		_spec.SetField(user.FieldNickname, field.TypeString, value)
 	}
-	if uu.mutation.DisplayNameCleared() {
-		_spec.ClearField(user.FieldDisplayName, field.TypeString)
+	if uu.mutation.NicknameCleared() {
+		_spec.ClearField(user.FieldNickname, field.TypeString)
 	}
-	if value, ok := uu.mutation.AvatarURL(); ok {
-		_spec.SetField(user.FieldAvatarURL, field.TypeString, value)
+	if value, ok := uu.mutation.AvatarImageURL(); ok {
+		_spec.SetField(user.FieldAvatarImageURL, field.TypeString, value)
 	}
-	if uu.mutation.AvatarURLCleared() {
-		_spec.ClearField(user.FieldAvatarURL, field.TypeString)
+	if uu.mutation.AvatarImageURLCleared() {
+		_spec.ClearField(user.FieldAvatarImageURL, field.TypeString)
 	}
-	if value, ok := uu.mutation.CoverURL(); ok {
-		_spec.SetField(user.FieldCoverURL, field.TypeString, value)
+	if value, ok := uu.mutation.BannerImageURL(); ok {
+		_spec.SetField(user.FieldBannerImageURL, field.TypeString, value)
 	}
-	if uu.mutation.CoverURLCleared() {
-		_spec.ClearField(user.FieldCoverURL, field.TypeString)
+	if uu.mutation.BannerImageURLCleared() {
+		_spec.ClearField(user.FieldBannerImageURL, field.TypeString)
 	}
 	if value, ok := uu.mutation.Biography(); ok {
 		_spec.SetField(user.FieldBiography, field.TypeString, value)
@@ -554,77 +554,77 @@ type UserUpdateOne struct {
 	mutation *UserMutation
 }
 
-// SetUsername sets the "username" field.
-func (uuo *UserUpdateOne) SetUsername(s string) *UserUpdateOne {
-	uuo.mutation.SetUsername(s)
+// SetName sets the "name" field.
+func (uuo *UserUpdateOne) SetName(s string) *UserUpdateOne {
+	uuo.mutation.SetName(s)
 	return uuo
 }
 
-// SetNillableUsername sets the "username" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUsername(s *string) *UserUpdateOne {
+// SetNillableName sets the "name" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableName(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetUsername(*s)
+		uuo.SetName(*s)
 	}
 	return uuo
 }
 
-// SetDisplayName sets the "display_name" field.
-func (uuo *UserUpdateOne) SetDisplayName(s string) *UserUpdateOne {
-	uuo.mutation.SetDisplayName(s)
+// SetNickname sets the "nickname" field.
+func (uuo *UserUpdateOne) SetNickname(s string) *UserUpdateOne {
+	uuo.mutation.SetNickname(s)
 	return uuo
 }
 
-// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableDisplayName(s *string) *UserUpdateOne {
+// SetNillableNickname sets the "nickname" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableNickname(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetDisplayName(*s)
+		uuo.SetNickname(*s)
 	}
 	return uuo
 }
 
-// ClearDisplayName clears the value of the "display_name" field.
-func (uuo *UserUpdateOne) ClearDisplayName() *UserUpdateOne {
-	uuo.mutation.ClearDisplayName()
+// ClearNickname clears the value of the "nickname" field.
+func (uuo *UserUpdateOne) ClearNickname() *UserUpdateOne {
+	uuo.mutation.ClearNickname()
 	return uuo
 }
 
-// SetAvatarURL sets the "avatar_url" field.
-func (uuo *UserUpdateOne) SetAvatarURL(s string) *UserUpdateOne {
-	uuo.mutation.SetAvatarURL(s)
+// SetAvatarImageURL sets the "avatar_image_url" field.
+func (uuo *UserUpdateOne) SetAvatarImageURL(s string) *UserUpdateOne {
+	uuo.mutation.SetAvatarImageURL(s)
 	return uuo
 }
 
-// SetNillableAvatarURL sets the "avatar_url" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableAvatarURL(s *string) *UserUpdateOne {
+// SetNillableAvatarImageURL sets the "avatar_image_url" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAvatarImageURL(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetAvatarURL(*s)
+		uuo.SetAvatarImageURL(*s)
 	}
 	return uuo
 }
 
-// ClearAvatarURL clears the value of the "avatar_url" field.
-func (uuo *UserUpdateOne) ClearAvatarURL() *UserUpdateOne {
-	uuo.mutation.ClearAvatarURL()
+// ClearAvatarImageURL clears the value of the "avatar_image_url" field.
+func (uuo *UserUpdateOne) ClearAvatarImageURL() *UserUpdateOne {
+	uuo.mutation.ClearAvatarImageURL()
 	return uuo
 }
 
-// SetCoverURL sets the "cover_url" field.
-func (uuo *UserUpdateOne) SetCoverURL(s string) *UserUpdateOne {
-	uuo.mutation.SetCoverURL(s)
+// SetBannerImageURL sets the "banner_image_url" field.
+func (uuo *UserUpdateOne) SetBannerImageURL(s string) *UserUpdateOne {
+	uuo.mutation.SetBannerImageURL(s)
 	return uuo
 }
 
-// SetNillableCoverURL sets the "cover_url" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableCoverURL(s *string) *UserUpdateOne {
+// SetNillableBannerImageURL sets the "banner_image_url" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableBannerImageURL(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetCoverURL(*s)
+		uuo.SetBannerImageURL(*s)
 	}
 	return uuo
 }
 
-// ClearCoverURL clears the value of the "cover_url" field.
-func (uuo *UserUpdateOne) ClearCoverURL() *UserUpdateOne {
-	uuo.mutation.ClearCoverURL()
+// ClearBannerImageURL clears the value of the "banner_image_url" field.
+func (uuo *UserUpdateOne) ClearBannerImageURL() *UserUpdateOne {
+	uuo.mutation.ClearBannerImageURL()
 	return uuo
 }
 
@@ -871,9 +871,9 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uuo *UserUpdateOne) check() error {
-	if v, ok := uuo.mutation.Username(); ok {
-		if err := user.UsernameValidator(v); err != nil {
-			return &ValidationError{Name: "username", err: fmt.Errorf(`ent: validator failed for field "User.username": %w`, err)}
+	if v, ok := uuo.mutation.Name(); ok {
+		if err := user.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "User.name": %w`, err)}
 		}
 	}
 	return nil
@@ -908,26 +908,26 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
-	if value, ok := uuo.mutation.Username(); ok {
-		_spec.SetField(user.FieldUsername, field.TypeString, value)
+	if value, ok := uuo.mutation.Name(); ok {
+		_spec.SetField(user.FieldName, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.DisplayName(); ok {
-		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
+	if value, ok := uuo.mutation.Nickname(); ok {
+		_spec.SetField(user.FieldNickname, field.TypeString, value)
 	}
-	if uuo.mutation.DisplayNameCleared() {
-		_spec.ClearField(user.FieldDisplayName, field.TypeString)
+	if uuo.mutation.NicknameCleared() {
+		_spec.ClearField(user.FieldNickname, field.TypeString)
 	}
-	if value, ok := uuo.mutation.AvatarURL(); ok {
-		_spec.SetField(user.FieldAvatarURL, field.TypeString, value)
+	if value, ok := uuo.mutation.AvatarImageURL(); ok {
+		_spec.SetField(user.FieldAvatarImageURL, field.TypeString, value)
 	}
-	if uuo.mutation.AvatarURLCleared() {
-		_spec.ClearField(user.FieldAvatarURL, field.TypeString)
+	if uuo.mutation.AvatarImageURLCleared() {
+		_spec.ClearField(user.FieldAvatarImageURL, field.TypeString)
 	}
-	if value, ok := uuo.mutation.CoverURL(); ok {
-		_spec.SetField(user.FieldCoverURL, field.TypeString, value)
+	if value, ok := uuo.mutation.BannerImageURL(); ok {
+		_spec.SetField(user.FieldBannerImageURL, field.TypeString, value)
 	}
-	if uuo.mutation.CoverURLCleared() {
-		_spec.ClearField(user.FieldCoverURL, field.TypeString)
+	if uuo.mutation.BannerImageURLCleared() {
+		_spec.ClearField(user.FieldBannerImageURL, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Biography(); ok {
 		_spec.SetField(user.FieldBiography, field.TypeString, value)

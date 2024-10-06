@@ -8,10 +8,10 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uu *UserUsecase) GetUserByUsername(ctx context.Context, username string) (*ent.User, *oapi.SocialContext, error) {
+func (uu *UserUsecase) GetUserByName(ctx context.Context, name string) (*ent.User, *oapi.SocialContext, error) {
 	uID := ctxhelper.GetUserID(ctx)
 
-	u, err := uu.userRepo.GetUserByUsername(ctx, username)
+	u, err := uu.userRepo.GetUserByName(ctx, name)
 	if err != nil {
 		return nil, nil, err
 	}

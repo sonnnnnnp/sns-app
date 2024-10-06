@@ -7,8 +7,8 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (c Controller) GetTimeline(ctx echo.Context) error {
-	entPosts, err := c.timelineUsecase.GetTimeline(ctx.Request().Context())
+func (c Controller) GetTimeline(ctx echo.Context, params oapi.GetTimelineParams) error {
+	entPosts, nextCursor, err := c.timelineUsecase.GetTimeline(ctx.Request().Context(), &params)
 	if err != nil {
 		return err
 	}
@@ -19,22 +19,23 @@ func (c Controller) GetTimeline(ctx echo.Context) error {
 		oapiPosts[i] = oapi.Post{
 			Id: entPost.ID,
 			Author: oapi.User{
-				AvatarUrl:   entPost.Edges.Author.AvatarURL,
-				Biography:   entPost.Edges.Author.Biography,
-				CoverUrl:    entPost.Edges.Author.CoverURL,
-				CreatedAt:   entPost.Edges.Author.CreatedAt,
-				DisplayName: entPost.Edges.Author.DisplayName,
-				Id:          entPost.Edges.Author.ID,
-				UpdatedAt:   entPost.Edges.Author.UpdatedAt,
-				Username:    entPost.Edges.Author.Username,
+				AvatarImageUrl: &entPost.Edges.Author.AvatarImageURL,
+				Biography:      &entPost.Edges.Author.Biography,
+				BannerImageUrl: &entPost.Edges.Author.BannerImageURL,
+				CreatedAt:      entPost.Edges.Author.CreatedAt,
+				Nickname:       entPost.Edges.Author.Nickname,
+				Id:             entPost.Edges.Author.ID,
+				UpdatedAt:      entPost.Edges.Author.UpdatedAt,
+				Name:           entPost.Edges.Author.Name,
 			},
-			Content:   &entPost.Content,
+			Text:      &entPost.Text,
 			UpdatedAt: entPost.UpdatedAt,
 			CreatedAt: entPost.CreatedAt,
 		}
 	}
 
 	return c.json(ctx, http.StatusOK, &oapi.Timeline{
-		Posts: oapiPosts,
+		Posts:      oapiPosts,
+		NextCursor: nextCursor,
 	})
 }

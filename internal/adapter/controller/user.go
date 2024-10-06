@@ -22,19 +22,19 @@ func (c Controller) GetSelf(ctx echo.Context) error {
 	}
 
 	return c.json(ctx, http.StatusOK, &oapi.User{
-		Id:          u.ID,
-		Username:    u.Username,
-		DisplayName: u.DisplayName,
-		AvatarUrl:   u.AvatarURL,
-		CoverUrl:    u.CoverURL,
-		Biography:   u.Biography,
-		UpdatedAt:   u.UpdatedAt,
-		CreatedAt:   u.CreatedAt,
+		Id:             u.ID,
+		Name:           u.Name,
+		Nickname:       u.Nickname,
+		AvatarImageUrl: &u.AvatarImageURL,
+		BannerImageUrl: &u.BannerImageURL,
+		Biography:      &u.Biography,
+		UpdatedAt:      u.UpdatedAt,
+		CreatedAt:      u.CreatedAt,
 	})
 }
 
-func (c Controller) GetUser(ctx echo.Context, username string) error {
-	u, sc, err := c.userUsecase.GetUserByUsername(ctx.Request().Context(), username)
+func (c Controller) GetUserByName(ctx echo.Context, name string) error {
+	u, sc, err := c.userUsecase.GetUserByName(ctx.Request().Context(), name)
 	if err != nil {
 		return err
 	}
@@ -44,15 +44,15 @@ func (c Controller) GetUser(ctx echo.Context, username string) error {
 	}
 
 	return c.json(ctx, http.StatusOK, &oapi.User{
-		Id:            u.ID,
-		Username:      u.Username,
-		DisplayName:   u.DisplayName,
-		AvatarUrl:     u.AvatarURL,
-		CoverUrl:      u.CoverURL,
-		Biography:     u.Biography,
-		SocialContext: sc,
-		UpdatedAt:     u.UpdatedAt,
-		CreatedAt:     u.CreatedAt,
+		Id:             u.ID,
+		Name:           u.Name,
+		Nickname:       u.Nickname,
+		AvatarImageUrl: &u.AvatarImageURL,
+		BannerImageUrl: &u.BannerImageURL,
+		Biography:      &u.Biography,
+		SocialContext:  sc,
+		UpdatedAt:      u.UpdatedAt,
+		CreatedAt:      u.CreatedAt,
 	})
 }
 
@@ -71,14 +71,14 @@ func (c Controller) UpdateUser(ctx echo.Context) error {
 	}
 
 	return c.json(ctx, http.StatusOK, &oapi.User{
-		Id:          u.Id,
-		Username:    u.Username,
-		DisplayName: u.DisplayName,
-		AvatarUrl:   u.AvatarUrl,
-		CoverUrl:    u.CoverUrl,
-		Biography:   u.Biography,
-		UpdatedAt:   u.UpdatedAt,
-		CreatedAt:   u.CreatedAt,
+		Id:             u.Id,
+		Name:           u.Name,
+		Nickname:       u.Nickname,
+		AvatarImageUrl: u.AvatarImageUrl,
+		BannerImageUrl: u.BannerImageUrl,
+		Biography:      u.Biography,
+		UpdatedAt:      u.UpdatedAt,
+		CreatedAt:      u.CreatedAt,
 	})
 }
 
@@ -91,14 +91,14 @@ func (c Controller) GetUserFollowing(ctx echo.Context, id uuid.UUID) error {
 	oapiUsers := make([]oapi.User, len(users))
 	for i, u := range users {
 		oapiUsers[i] = oapi.User{
-			AvatarUrl:   u.AvatarURL,
-			Biography:   u.Biography,
-			CoverUrl:    u.CoverURL,
-			CreatedAt:   u.CreatedAt,
-			DisplayName: u.DisplayName,
-			Id:          u.ID,
-			UpdatedAt:   u.UpdatedAt,
-			Username:    u.Username,
+			AvatarImageUrl: &u.AvatarImageURL,
+			Biography:      &u.Biography,
+			BannerImageUrl: &u.BannerImageURL,
+			CreatedAt:      u.CreatedAt,
+			Nickname:       u.Nickname,
+			Id:             u.ID,
+			UpdatedAt:      u.UpdatedAt,
+			Name:           u.Name,
 		}
 	}
 
@@ -116,14 +116,14 @@ func (c Controller) GetUserFollowers(ctx echo.Context, id uuid.UUID) error {
 	oapiUsers := make([]oapi.User, len(users))
 	for i, u := range users {
 		oapiUsers[i] = oapi.User{
-			AvatarUrl:   u.AvatarURL,
-			Biography:   u.Biography,
-			CoverUrl:    u.CoverURL,
-			CreatedAt:   u.CreatedAt,
-			DisplayName: u.DisplayName,
-			Id:          u.ID,
-			UpdatedAt:   u.UpdatedAt,
-			Username:    u.Username,
+			AvatarImageUrl: &u.AvatarImageURL,
+			Biography:      &u.Biography,
+			BannerImageUrl: &u.BannerImageURL,
+			CreatedAt:      u.CreatedAt,
+			Nickname:       u.Nickname,
+			Id:             u.ID,
+			UpdatedAt:      u.UpdatedAt,
+			Name:           u.Name,
 		}
 	}
 

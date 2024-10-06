@@ -38,7 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{username}": {
+    "/users/{name}": {
         parameters: {
             query?: never;
             header?: never;
@@ -46,7 +46,7 @@ export interface paths {
             cookie?: never;
         };
         /** ユーザーを取得する */
-        get: operations["getUser"];
+        get: operations["getUserByName"];
         put?: never;
         post?: never;
         delete?: never;
@@ -187,11 +187,11 @@ export interface components {
              */
             id: string;
             /** @description 名前 */
-            username: string;
-            display_name: string;
-            avatar_url: string;
-            cover_url: string;
-            biography: string;
+            name: string;
+            nickname: string;
+            avatar_image_url: string | null;
+            banner_image_url: string | null;
+            biography: string | null;
             social_context?: components["schemas"]["SocialContext"];
             /** Format: date-time */
             updated_at: string;
@@ -218,7 +218,7 @@ export interface components {
              */
             id: string;
             author: components["schemas"]["User"];
-            content?: string;
+            text: string | null;
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
@@ -226,6 +226,11 @@ export interface components {
         };
         Timeline: {
             posts: components["schemas"]["Post"][];
+            /**
+             * Format: uuid
+             * @description 次のページを取得するためのキー
+             */
+            next_cursor: string;
         };
         SocialSetting: {
             lineId: string | null;
@@ -307,12 +312,12 @@ export interface operations {
             };
         };
     };
-    getUser: {
+    getUserByName: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                username: string;
+                name: string;
             };
             cookie?: never;
         };
@@ -344,10 +349,10 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": {
-                    username?: string;
-                    display_name?: string;
-                    avatar_url?: string;
-                    cover_url?: string;
+                    name?: string;
+                    nickname?: string;
+                    avatar_image_url?: string;
+                    banner_image_url?: string;
                     biography?: string;
                     /** Format: date-time */
                     birthdate?: string;
@@ -566,7 +571,11 @@ export interface operations {
     };
     getTimeline: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description 次のページを取得するためのキー */
+                cursor?: string;
+                limit?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;

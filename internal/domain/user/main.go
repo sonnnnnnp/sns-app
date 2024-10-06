@@ -14,7 +14,7 @@ type IUserRepository interface {
 	GetSocialContext(ctx context.Context, selfID uuid.UUID, target *ent.User) (*oapi.SocialContext, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error)
 	GetUserByLineID(ctx context.Context, lineID string) (*ent.User, error)
-	GetUserByUsername(ctx context.Context, username string) (*ent.User, error)
+	GetUserByName(ctx context.Context, name string) (*ent.User, error)
 	GetUserFollowers(ctx context.Context, user *ent.User) ([]*ent.User, error)
 	GetUserFollowing(ctx context.Context, user *ent.User) ([]*ent.User, error)
 	UnfollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error

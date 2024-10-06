@@ -14,12 +14,12 @@ func (uu *UserUsecase) UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.
 	}
 
 	return &oapi.User{
-		AvatarUrl:   u.AvatarURL,
-		Biography:   u.Biography,
-		CoverUrl:    u.CoverURL,
-		CreatedAt:   u.CreatedAt,
-		DisplayName: u.DisplayName,
-		Id:          u.ID,
-		UpdatedAt:   u.UpdatedAt,
+		AvatarImageUrl: &u.AvatarImageURL,
+		BannerImageUrl: &u.BannerImageURL,
+		Biography:      &u.Biography,
+		CreatedAt:      u.CreatedAt,
+		Nickname:       u.Nickname,
+		Id:             u.ID,
+		UpdatedAt:      u.UpdatedAt,
 	}, nil
 }

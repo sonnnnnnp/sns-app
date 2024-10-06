@@ -17,8 +17,8 @@ const (
 	FieldID = "id"
 	// FieldAuthorID holds the string denoting the author_id field in the database.
 	FieldAuthorID = "author_id"
-	// FieldContent holds the string denoting the content field in the database.
-	FieldContent = "content"
+	// FieldText holds the string denoting the text field in the database.
+	FieldText = "text"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -40,7 +40,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldAuthorID,
-	FieldContent,
+	FieldText,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 }
@@ -77,9 +77,9 @@ func ByAuthorID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthorID, opts...).ToFunc()
 }
 
-// ByContent orders the results by the content field.
-func ByContent(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldContent, opts...).ToFunc()
+// ByText orders the results by the text field.
+func ByText(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldText, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

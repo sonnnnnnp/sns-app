@@ -36,27 +36,27 @@ func main() {
 func seed(ctx context.Context, db *ent.Client) error {
 	users := []ent.User{
 		{
-			Username:    "tekitou342",
-			DisplayName: "テキトウ342",
-			Biography:   "テキトウ342です。",
-			AvatarURL:   "https://i.pinimg.com/564x/b5/af/9e/b5af9e4469bfbe8c23b1e43b8dfa0062.jpg",
-			CoverURL:    "https://i.pinimg.com/564x/0d/14/6b/0d146b3876e366e49297a316af513fee.jpg",
+			Name:           "tekitou342",
+			Nickname:       "テキトウ342",
+			Biography:      "テキトウ342です。",
+			AvatarImageURL: "https://i.pinimg.com/564x/b5/af/9e/b5af9e4469bfbe8c23b1e43b8dfa0062.jpg",
+			BannerImageURL: "https://i.pinimg.com/564x/0d/14/6b/0d146b3876e366e49297a316af513fee.jpg",
 		},
 	}
 
 	for _, u := range users {
 		user, err := db.User.Create().
-			SetUsername(u.Username).
-			SetDisplayName(u.DisplayName).
+			SetName(u.Name).
+			SetNickname(u.Nickname).
 			SetBiography(u.Biography).
-			SetAvatarURL(u.AvatarURL).
-			SetCoverURL(u.CoverURL).
+			SetAvatarImageURL(u.AvatarImageURL).
+			SetBannerImageURL(u.BannerImageURL).
 			Save(ctx)
 		if err != nil {
 			return err
 		}
 
-		if _, err := db.Post.Create().SetAuthor(user).SetContent("シードされましたよ？").Save(ctx); err != nil {
+		if _, err := db.Post.Create().SetAuthor(user).SetText("シードされましたよ？").Save(ctx); err != nil {
 			return err
 		}
 	}
