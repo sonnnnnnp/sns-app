@@ -61,9 +61,9 @@ func AuthorID(v uuid.UUID) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldAuthorID, v))
 }
 
-// Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
-func Content(v string) predicate.Post {
-	return predicate.Post(sql.FieldEQ(FieldContent, v))
+// Text applies equality check predicate on the "text" field. It's identical to TextEQ.
+func Text(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldText, v))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
@@ -96,79 +96,79 @@ func AuthorIDNotIn(vs ...uuid.UUID) predicate.Post {
 	return predicate.Post(sql.FieldNotIn(FieldAuthorID, vs...))
 }
 
-// ContentEQ applies the EQ predicate on the "content" field.
-func ContentEQ(v string) predicate.Post {
-	return predicate.Post(sql.FieldEQ(FieldContent, v))
+// TextEQ applies the EQ predicate on the "text" field.
+func TextEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldEQ(FieldText, v))
 }
 
-// ContentNEQ applies the NEQ predicate on the "content" field.
-func ContentNEQ(v string) predicate.Post {
-	return predicate.Post(sql.FieldNEQ(FieldContent, v))
+// TextNEQ applies the NEQ predicate on the "text" field.
+func TextNEQ(v string) predicate.Post {
+	return predicate.Post(sql.FieldNEQ(FieldText, v))
 }
 
-// ContentIn applies the In predicate on the "content" field.
-func ContentIn(vs ...string) predicate.Post {
-	return predicate.Post(sql.FieldIn(FieldContent, vs...))
+// TextIn applies the In predicate on the "text" field.
+func TextIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldIn(FieldText, vs...))
 }
 
-// ContentNotIn applies the NotIn predicate on the "content" field.
-func ContentNotIn(vs ...string) predicate.Post {
-	return predicate.Post(sql.FieldNotIn(FieldContent, vs...))
+// TextNotIn applies the NotIn predicate on the "text" field.
+func TextNotIn(vs ...string) predicate.Post {
+	return predicate.Post(sql.FieldNotIn(FieldText, vs...))
 }
 
-// ContentGT applies the GT predicate on the "content" field.
-func ContentGT(v string) predicate.Post {
-	return predicate.Post(sql.FieldGT(FieldContent, v))
+// TextGT applies the GT predicate on the "text" field.
+func TextGT(v string) predicate.Post {
+	return predicate.Post(sql.FieldGT(FieldText, v))
 }
 
-// ContentGTE applies the GTE predicate on the "content" field.
-func ContentGTE(v string) predicate.Post {
-	return predicate.Post(sql.FieldGTE(FieldContent, v))
+// TextGTE applies the GTE predicate on the "text" field.
+func TextGTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldGTE(FieldText, v))
 }
 
-// ContentLT applies the LT predicate on the "content" field.
-func ContentLT(v string) predicate.Post {
-	return predicate.Post(sql.FieldLT(FieldContent, v))
+// TextLT applies the LT predicate on the "text" field.
+func TextLT(v string) predicate.Post {
+	return predicate.Post(sql.FieldLT(FieldText, v))
 }
 
-// ContentLTE applies the LTE predicate on the "content" field.
-func ContentLTE(v string) predicate.Post {
-	return predicate.Post(sql.FieldLTE(FieldContent, v))
+// TextLTE applies the LTE predicate on the "text" field.
+func TextLTE(v string) predicate.Post {
+	return predicate.Post(sql.FieldLTE(FieldText, v))
 }
 
-// ContentContains applies the Contains predicate on the "content" field.
-func ContentContains(v string) predicate.Post {
-	return predicate.Post(sql.FieldContains(FieldContent, v))
+// TextContains applies the Contains predicate on the "text" field.
+func TextContains(v string) predicate.Post {
+	return predicate.Post(sql.FieldContains(FieldText, v))
 }
 
-// ContentHasPrefix applies the HasPrefix predicate on the "content" field.
-func ContentHasPrefix(v string) predicate.Post {
-	return predicate.Post(sql.FieldHasPrefix(FieldContent, v))
+// TextHasPrefix applies the HasPrefix predicate on the "text" field.
+func TextHasPrefix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasPrefix(FieldText, v))
 }
 
-// ContentHasSuffix applies the HasSuffix predicate on the "content" field.
-func ContentHasSuffix(v string) predicate.Post {
-	return predicate.Post(sql.FieldHasSuffix(FieldContent, v))
+// TextHasSuffix applies the HasSuffix predicate on the "text" field.
+func TextHasSuffix(v string) predicate.Post {
+	return predicate.Post(sql.FieldHasSuffix(FieldText, v))
 }
 
-// ContentIsNil applies the IsNil predicate on the "content" field.
-func ContentIsNil() predicate.Post {
-	return predicate.Post(sql.FieldIsNull(FieldContent))
+// TextIsNil applies the IsNil predicate on the "text" field.
+func TextIsNil() predicate.Post {
+	return predicate.Post(sql.FieldIsNull(FieldText))
 }
 
-// ContentNotNil applies the NotNil predicate on the "content" field.
-func ContentNotNil() predicate.Post {
-	return predicate.Post(sql.FieldNotNull(FieldContent))
+// TextNotNil applies the NotNil predicate on the "text" field.
+func TextNotNil() predicate.Post {
+	return predicate.Post(sql.FieldNotNull(FieldText))
 }
 
-// ContentEqualFold applies the EqualFold predicate on the "content" field.
-func ContentEqualFold(v string) predicate.Post {
-	return predicate.Post(sql.FieldEqualFold(FieldContent, v))
+// TextEqualFold applies the EqualFold predicate on the "text" field.
+func TextEqualFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldEqualFold(FieldText, v))
 }
 
-// ContentContainsFold applies the ContainsFold predicate on the "content" field.
-func ContentContainsFold(v string) predicate.Post {
-	return predicate.Post(sql.FieldContainsFold(FieldContent, v))
+// TextContainsFold applies the ContainsFold predicate on the "text" field.
+func TextContainsFold(v string) predicate.Post {
+	return predicate.Post(sql.FieldContainsFold(FieldText, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

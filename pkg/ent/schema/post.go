@@ -19,7 +19,7 @@ func (Post) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
 		field.UUID("author_id", uuid.UUID{}),
-		field.String("content").Optional(),
+		field.String("text").Optional(),
 		field.Time("created_at").Default(func() time.Time {
 			return time.Now().Truncate(time.Millisecond)
 		}),

@@ -7,8 +7,8 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
 )
 
-func (ur *UserRepository) GetUserByUsername(ctx context.Context, username string) (*ent.User, error) {
-	u, err := ur.db.User.Query().Where(user.Username(username)).First(ctx)
+func (ur *UserRepository) GetUserByName(ctx context.Context, name string) (*ent.User, error) {
+	u, err := ur.db.User.Query().Where(user.Name(name)).First(ctx)
 	if err != nil {
 		switch {
 		case ent.IsNotFound(err):

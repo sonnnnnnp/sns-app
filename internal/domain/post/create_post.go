@@ -13,7 +13,7 @@ func (pr *PostRepository) CreatePost(ctx context.Context, uID uuid.UUID, body *o
 	query := pr.db.Post.Create().SetAuthorID(uID)
 
 	if body.Content != nil {
-		query.SetContent(*body.Content)
+		query.SetText(*body.Content)
 	}
 
 	sp, err := query.Save(ctx)

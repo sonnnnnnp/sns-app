@@ -44,23 +44,23 @@ func (pu *PostUpdate) SetNillableAuthorID(u *uuid.UUID) *PostUpdate {
 	return pu
 }
 
-// SetContent sets the "content" field.
-func (pu *PostUpdate) SetContent(s string) *PostUpdate {
-	pu.mutation.SetContent(s)
+// SetText sets the "text" field.
+func (pu *PostUpdate) SetText(s string) *PostUpdate {
+	pu.mutation.SetText(s)
 	return pu
 }
 
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (pu *PostUpdate) SetNillableContent(s *string) *PostUpdate {
+// SetNillableText sets the "text" field if the given value is not nil.
+func (pu *PostUpdate) SetNillableText(s *string) *PostUpdate {
 	if s != nil {
-		pu.SetContent(*s)
+		pu.SetText(*s)
 	}
 	return pu
 }
 
-// ClearContent clears the value of the "content" field.
-func (pu *PostUpdate) ClearContent() *PostUpdate {
-	pu.mutation.ClearContent()
+// ClearText clears the value of the "text" field.
+func (pu *PostUpdate) ClearText() *PostUpdate {
+	pu.mutation.ClearText()
 	return pu
 }
 
@@ -155,11 +155,11 @@ func (pu *PostUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := pu.mutation.Content(); ok {
-		_spec.SetField(post.FieldContent, field.TypeString, value)
+	if value, ok := pu.mutation.Text(); ok {
+		_spec.SetField(post.FieldText, field.TypeString, value)
 	}
-	if pu.mutation.ContentCleared() {
-		_spec.ClearField(post.FieldContent, field.TypeString)
+	if pu.mutation.TextCleared() {
+		_spec.ClearField(post.FieldText, field.TypeString)
 	}
 	if value, ok := pu.mutation.CreatedAt(); ok {
 		_spec.SetField(post.FieldCreatedAt, field.TypeTime, value)
@@ -230,23 +230,23 @@ func (puo *PostUpdateOne) SetNillableAuthorID(u *uuid.UUID) *PostUpdateOne {
 	return puo
 }
 
-// SetContent sets the "content" field.
-func (puo *PostUpdateOne) SetContent(s string) *PostUpdateOne {
-	puo.mutation.SetContent(s)
+// SetText sets the "text" field.
+func (puo *PostUpdateOne) SetText(s string) *PostUpdateOne {
+	puo.mutation.SetText(s)
 	return puo
 }
 
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (puo *PostUpdateOne) SetNillableContent(s *string) *PostUpdateOne {
+// SetNillableText sets the "text" field if the given value is not nil.
+func (puo *PostUpdateOne) SetNillableText(s *string) *PostUpdateOne {
 	if s != nil {
-		puo.SetContent(*s)
+		puo.SetText(*s)
 	}
 	return puo
 }
 
-// ClearContent clears the value of the "content" field.
-func (puo *PostUpdateOne) ClearContent() *PostUpdateOne {
-	puo.mutation.ClearContent()
+// ClearText clears the value of the "text" field.
+func (puo *PostUpdateOne) ClearText() *PostUpdateOne {
+	puo.mutation.ClearText()
 	return puo
 }
 
@@ -371,11 +371,11 @@ func (puo *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) 
 			}
 		}
 	}
-	if value, ok := puo.mutation.Content(); ok {
-		_spec.SetField(post.FieldContent, field.TypeString, value)
+	if value, ok := puo.mutation.Text(); ok {
+		_spec.SetField(post.FieldText, field.TypeString, value)
 	}
-	if puo.mutation.ContentCleared() {
-		_spec.ClearField(post.FieldContent, field.TypeString)
+	if puo.mutation.TextCleared() {
+		_spec.ClearField(post.FieldText, field.TypeString)
 	}
 	if value, ok := puo.mutation.CreatedAt(); ok {
 		_spec.SetField(post.FieldCreatedAt, field.TypeTime, value)

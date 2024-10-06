@@ -30,10 +30,10 @@ export function PostList({ posts }: Props) {
         : posts.map((post, i) => (
             <Post
               key={i}
-              username={post.author.username}
-              display_name={post.author.display_name}
-              avatar_image_url={post.author.avatar_url}
-              content={post.content ?? ""}
+              name={post.author.name}
+              nickname={post.author.nickname}
+              avatar_image_url={post.author.avatar_image_url}
+              text={post.text ?? ""}
               created_at={post.created_at}
             />
           ))}
