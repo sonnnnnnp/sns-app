@@ -430,7 +430,20 @@ paths:
       description: ''
       operationId: getTimeline
       tags: []
-      parameters: []
+      parameters:
+        - name: cursor
+          in: query
+          description: 次のページを取得するためのキー
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          description: ''
+          required: false
+          schema:
+            type: integer
       responses:
         '200':
           description: ''
@@ -552,8 +565,13 @@ components:
         posts:
           type: array
           items: *ref_4
+        next_cursor:
+          type: string
+          format: uuid
+          description: 次のページを取得するためのキー
       required:
         - posts
+        - next_cursor
     SocialSetting:
       type: object
       properties:

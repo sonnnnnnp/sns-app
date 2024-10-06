@@ -54,7 +54,9 @@ type SocialContext struct {
 
 // Timeline defines model for Timeline.
 type Timeline struct {
-	Posts []Post `json:"posts"`
+	// NextCursor 次のページを取得するためのキー
+	NextCursor openapi_types.UUID `json:"next_cursor"`
+	Posts      []Post             `json:"posts"`
 }
 
 // User defines model for User.
@@ -92,6 +94,13 @@ type RefreshAuthorizationJSONBody struct {
 // CreatePostJSONBody defines parameters for CreatePost.
 type CreatePostJSONBody struct {
 	Content *string `json:"content,omitempty"`
+}
+
+// GetTimelineParams defines parameters for GetTimeline.
+type GetTimelineParams struct {
+	// Cursor 次のページを取得するためのキー
+	Cursor *openapi_types.UUID `form:"cursor,omitempty" json:"cursor,omitempty"`
+	Limit  *int                `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // UpdateUserJSONBody defines parameters for UpdateUser.
@@ -200,7 +209,7 @@ type ClientInterface interface {
 	CreatePost(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTimeline request
-	GetTimeline(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetSelf request
 	GetSelf(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -289,8 +298,8 @@ func (c *Client) CreatePost(ctx context.Context, body CreatePostJSONRequestBody,
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetTimeline(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetTimelineRequest(c.Server)
+func (c *Client) GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTimelineRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -535,7 +544,7 @@ func NewCreatePostRequestWithBody(server string, contentType string, body io.Rea
 }
 
 // NewGetTimelineRequest generates requests for GetTimeline
-func NewGetTimelineRequest(server string) (*http.Request, error) {
+func NewGetTimelineRequest(server string, params *GetTimelineParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -551,6 +560,44 @@ func NewGetTimelineRequest(server string) (*http.Request, error) {
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Cursor != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "cursor", runtime.ParamLocationQuery, *params.Cursor); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -889,7 +936,7 @@ type ClientWithResponsesInterface interface {
 	CreatePostWithResponse(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
 
 	// GetTimelineWithResponse request
-	GetTimelineWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
+	GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
 
 	// GetSelfWithResponse request
 	GetSelfWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSelfResponse, error)
@@ -1310,8 +1357,8 @@ func (c *ClientWithResponses) CreatePostWithResponse(ctx context.Context, body C
 }
 
 // GetTimelineWithResponse request returning *GetTimelineResponse
-func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error) {
-	rsp, err := c.GetTimeline(ctx, reqEditors...)
+func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error) {
+	rsp, err := c.GetTimeline(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -1807,7 +1854,7 @@ type ServerInterface interface {
 	CreatePost(ctx echo.Context) error
 	// タイムラインを取得する
 	// (GET /timeline)
-	GetTimeline(ctx echo.Context) error
+	GetTimeline(ctx echo.Context, params GetTimelineParams) error
 	// 自分を取得する
 	// (GET /users/me)
 	GetSelf(ctx echo.Context) error
@@ -1885,8 +1932,24 @@ func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
 
 	ctx.Set(BearerScopes, []string{})
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetTimelineParams
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "cursor", ctx.QueryParams(), &params.Cursor)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter cursor: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetTimeline(ctx)
+	err = w.Handler.GetTimeline(ctx, params)
 	return err
 }
 
@@ -2066,27 +2129,28 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+yZ327bthfHX+UH/napxul257utW4cAxTA0K3YRBAYtHcdsLFElqXRe4AtJQJo0CBoE",
-	"SItiGzZsRddk61og+9MN2fowrJPuLQaSsiXZkp02xQB7vkkEkyIPv+fDcw6pdWRT16ceeIKj6jridhNc",
-	"rB/fDUSTMvI5FoR66gefUR+YIKCbsW0D5zVBV0G3irYPqIq4YMRbQR0LEV7z4GamqU5pC7Cn2hg0GPDm",
-	"iLcDDqxGnII2/fqNgDBwUHWp39HKWzQ4R9+eZas3IK1fB1uoyT6mXBSsUAugnt5i0EBV9P9KKlYlUapy",
-	"jQNTY9jUE+CJwsXYDLAAp4Z1c4MyVz0hBwu4IIgLyCqQT6/dAW4z4hsXoIX3T/cPu3d+Q1Y6SBDoxQ8L",
-	"6DuvOOeAsEZTo0FuuNx6iuRcpDbBrUtKkM8KdG3QVoveBKdWbxfTYToomwqaB6xM+1q5gYvs+oS40CIe",
-	"DJvkU274JwJcPs7lGpdOfwLMGG4PGWaGLDJDEzNM2xoWmNUC1ipEqE7oCsN+s10MGF2D8ndfBz+HcL+F",
-	"2zUPu1C8vc/JJ9eQ1OyUklGS55F6LbxNTOmtJ294d3enu7Vzti3RH2VAJCvrwqxLss57tY2kSOHDqAS9",
-	"n89Eay9AjaTVDDlsg3IU2AEjor2oxjMG1AEzw7CeRO9P81N/gKYQPuqo94nXoJogIlpaW49fwL6PLLQG",
-	"jBv9L87Nz80rI6kPHvYJqqJ35ubnLiIL+Vg09aQVnCQkqPQ3cRK3lTg6TS04qNpPXPApEc0rqqsahWEX",
-	"hNZtaR0RNemNAJjyiEEC2dQBlFVFsACsJCMW5aFl1Zn71ONGlbfn59W/TCLAvt8itrascp2bLJqOl3eq",
-	"nn4ITBn/KKPfZfyVjI/UQ3Qk42MZb6VCE0/AivGwgwUeR0M+qyvFV4dnPXn8XffZMxn+0L318HR3Q0Z7",
-	"p79EL/7YkOE9GX4tw20ZHshwQ4bbqR1lAZqu6s2gtdUGFkCmbM8ZkAMPVZeWLcQD18WsjaroysJHH/xP",
-	"ht/L+LGMnsrogYyP9AsZQpLkXw7JVdMhL4exHLh4jzrtc/hyXHkzIFG+e5E+nRlq/xZqaXRbWu7kuHt5",
-	"uPPy0bGMN5Uu0RMt097JFz+f3H1q8NMpv2Jiejl5l3S7riHeFG/ltWdnWmDq1VwTztDJ7f3TR89ltPfi",
-	"zy9PNndleF9G24YekalOV6AAnA9B9CvYSXRh3/jJd6OMnuu8842MD0wCktFe987d7l/3si7VVVXFHenS",
-	"RWg1JtKdvbpy0qP6rcPu5sYI95mCXcscFLjwmm7WYrypcH6uo2CdMNHsWXy2c9Ho0+PYk2D2WDWt6WdK",
-	"YJfxQ128/Kr/JsXLMPLryaVap2KuVMyaW2CgGuDfM32SHVB00FJHuPSclV7YlR+1xtweTObRa+gOY7pg",
-	"ktG3Sql4X0YH6mgWH/fAskoq4cszcGbgRHtFyJTHouTqq6ycUjRd7necYTUmp/Fpwyn8KYPTEwNYWWU3",
-	"iFbyxaEs010Fl67pSu8yo+4MslnsysUuDVu4LaOt7tbtv+8/SLPf+Fhlvl/NMPoPx6qxgUoh0BmX+s5M",
-	"UfLJasq/dkznsW0Ak07nnwAAAP//kbFSXMYhAAA=",
+	"H4sIAAAAAAAC/+yZXW/bNhfHv8oDPrtU43S7893WrUOBYhjaFbsIAoOWjmO2kqiSVFov8IUkIG0aBA0C",
+	"pEX3gr0VXZM1a4HsJRuy9cOwTrpvMZC0Zcum7bQpBtjzTWKYFHX4Pz+d/6G8glwaRDSEUHBUXkHcrUOA",
+	"9cd3Y1GnjHyGBaGh+iJiNAImCOhh7LrAeUXQa6BHRSMCVEZcMBIuoaaDCK+EcKNnqEqpDzhUYwxqDHh9",
+	"xNUxB1YhnmVMX349Jgw8VF7IJzrFiPrvkcez6HQWpNWr4Ap1s48pF5YdagHUp7cY1FAZ/b/UFavUVqp0",
+	"hQNTa7g0FBAK62ZcBliAV8F6uEZZoD4hDws4I0gAyLHIp/fuAXcZiUwK0IX3j7d3W3d/Q053kTjWmx8U",
+	"MPJe8Z59whpNjQaF5Qr7scl5mboE++eUIDctutao79Mb4FWqDTsdZoKKyTLcF2V3rlNY2BbXJyQAn4Qw",
+	"GFIIN0XFjRk3+S6qfvTkW5n8JLPPZXYo0wOZbrXu3mv9dV8mD2S6LpOvZZqoCemezA5PkpqIcvO0EQEB",
+	"HweYhrOZL4MZw40BGcySTmEjNgk0rYOkL2OBWSVmvhXfKqFLDEf1hh1uugzDr30d9D3CIx83KiEOwF5a",
+	"TvlscA1oxe0SOioBRZxf69Ey9ayzn2Lgrc2N1trGyR7HfJU+kZzeFPampDd5r/YQK1L4ICpx5+sTsdsp",
+	"jiPZNUsOxqASBW7MiGhcVuuZAKqAmWFY30TXBvNVvkBdiAg11fUkrFFNEBG+1jbkZ3AUIQctA+NG/7Nz",
+	"83PzKkgaQYgjgsronbn5ubPIQREWdX3TEm6bIZTyAtL2DCWOtsgLHirnpgmfElG/qKaqVRgOQGjdFlYQ",
+	"UTe9HgNTGTFIIJd6gHpVESwGp+3GNg9cVJN5RENuVHl7fl796zEhHEU+cXVkpavcOHh3vWJS9e0HwJTZ",
+	"E5n+LrOvZLavPqT7qgBma12hSShgyWTYwwKPo6HYUSjFr1mq7d73rYMDmfzYuvXoeHNVplvHv6Qv/liV",
+	"yX1VapN1mezIZFUm6904hpkDvaYfBq2tDtACmYq9EEABPFReWHQQj4MAswYqo4sXPvrgfzL5QWZ7Mn0m",
+	"04cy29cX9BDSbjyGQ3LJTCjKYSIHLt6jXuMUuRzXWvVJVJxu06c5Q+3fQq1b3RYWmwXuXu5uvHx8KLPb",
+	"ugd5qmXaOvri56N7zwx+ugEomZo+nLxzelx3FG+Kt+F9b3NaYOp0YBPO0NGd7ePHz2W69eLPL49ub5r2",
+	"1dAjejrjJbCA8yGIvHsecLTTtctWPzQdbK8Djmnqmo7dWX0SEIEsVpozMJlemmdj8rmU6XNtpN/IbMc4",
+	"ah8zhlHdJpaCkYxeBr+GJjGdnUZ50m3q1m7r9uqI9JkTiJY5tqTwih7WYrwpfzrV2bZKmKh3Ij7ZQW/0",
+	"cXjs0bb3nDitfjolsMvskba4X/Xfdjc2iPxK+w1ls2TeT5k9+2Cg6uM/NHPaT4Dt5KjOpF176779HH52",
+	"HOecE+l/Ay9lpgsmmX6nlMq2ZbqjzprZYQcsZ0hrf34GzgycdMuGzPBa1H6XN6ydUjSdzyfOsBrjaXza",
+	"cFLHuBynpwawYZ1dP1rtn2+GOd0lCOiy7vTOMxrMIJvVrkLt0rAl6zJda63d+fvBw677ja9V5sfAGUb/",
+	"4Vo1tlApBJrjrO/EFLV/g5vyn2+m89jWh0mz+U8AAAD//7m92nATIwAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

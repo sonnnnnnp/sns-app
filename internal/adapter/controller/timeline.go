@@ -7,8 +7,8 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (c Controller) GetTimeline(ctx echo.Context) error {
-	entPosts, err := c.timelineUsecase.GetTimeline(ctx.Request().Context())
+func (c Controller) GetTimeline(ctx echo.Context, params oapi.GetTimelineParams) error {
+	entPosts, nextCursor, err := c.timelineUsecase.GetTimeline(ctx.Request().Context(), &params)
 	if err != nil {
 		return err
 	}
@@ -35,6 +35,7 @@ func (c Controller) GetTimeline(ctx echo.Context) error {
 	}
 
 	return c.json(ctx, http.StatusOK, &oapi.Timeline{
-		Posts: oapiPosts,
+		Posts:      oapiPosts,
+		NextCursor: nextCursor,
 	})
 }

@@ -226,6 +226,11 @@ export interface components {
         };
         Timeline: {
             posts: components["schemas"]["Post"][];
+            /**
+             * Format: uuid
+             * @description 次のページを取得するためのキー
+             */
+            next_cursor: string;
         };
         SocialSetting: {
             lineId: string | null;
@@ -566,7 +571,11 @@ export interface operations {
     };
     getTimeline: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description 次のページを取得するためのキー */
+                cursor?: string;
+                limit?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
