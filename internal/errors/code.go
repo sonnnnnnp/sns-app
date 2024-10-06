@@ -10,6 +10,8 @@ var errorCodeMap = map[error]int{
 	ErrInvalidToken: -1001,
 	ErrTokenExpired: -1002,
 	ErrInvalidTokenScope: -1003,
+
+	ErrUserNotFound: -2000,
 }
 
 func getErrorCode(err error) int {

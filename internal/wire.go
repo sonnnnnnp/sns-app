@@ -25,7 +25,7 @@ func Wire(db *ent.Client) *controller.Controller {
 	userRepository := user.New(db)
 	authorizeUsecase := authorize.New(client, userRepository)
 	postRepository := post.New(db)
-	postUsecase := post2.New(postRepository)
+	postUsecase := post2.New(postRepository, userRepository)
 	timelineUsecase := timeline.New(postRepository)
 	userUsecase := user2.New(userRepository)
 	controllerController := controller.New(authorizeUsecase, postUsecase, timelineUsecase, userUsecase)
