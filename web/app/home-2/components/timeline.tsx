@@ -10,10 +10,10 @@ export function Timeline() {
           <TabsTrigger value="recommendations">おすすめ</TabsTrigger>
         </TabsList>
         <TabsContent value="following">
-          <PostList />
+          <PostList posts={[]} />
         </TabsContent>
         <TabsContent value="recommendations">
-          <PostList />
+          <PostList posts={[]} />
         </TabsContent>
       </div>
     </Tabs>

@@ -32,9 +32,9 @@ type Props = {
 export default function HeaderNavigation({ children }: Props) {
   return (
     <div>
-      <div className="fixed inset-y-0 left-0 z-10 w-64 flex-col hidden bg-muted/40 md:block">
+      <div className="fixed inset-y-0 z-10 w-64 flex-col hidden md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-12 items-center border-b px-6">
+          <div className="flex h-12 items-center px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <LoaderPinwheel className="h-6 w-6" />
               <span className="">sns-app</span>
