@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/pkg/ent/favorite"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/post"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
 )
@@ -199,6 +200,21 @@ func (uc *UserCreate) AddFollowing(u ...*User) *UserCreate {
 	return uc.AddFollowingIDs(ids...)
 }
 
+// AddFavoriteIDs adds the "favorites" edge to the Favorite entity by IDs.
+func (uc *UserCreate) AddFavoriteIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddFavoriteIDs(ids...)
+	return uc
+}
+
+// AddFavorites adds the "favorites" edges to the Favorite entity.
+func (uc *UserCreate) AddFavorites(f ...*Favorite) *UserCreate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uc.AddFavoriteIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -376,6 +392,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.FavoritesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FavoritesTable,
+			Columns: []string{user.FavoritesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

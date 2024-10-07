@@ -82,6 +82,57 @@ paths:
                   - data
           headers: {}
       security: []
+  /posts/{post_id}/favorite:
+    post:
+      summary: 投稿にいいねする
+      deprecated: false
+      description: ""
+      operationId: favoritePost
+      tags: []
+      parameters:
+        - name: post_id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema: &ref_1
+                $ref: "#/components/schemas/Response"
+                required:
+                  - data
+          headers: {}
+      security:
+        - bearer: []
+  /posts/{post_id}/unfavorite:
+    post:
+      summary: 投稿のいいねを解除する
+      deprecated: false
+      description: ""
+      operationId: unfavoritePost
+      tags: []
+      parameters:
+        - name: post_id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema: *ref_1
+          headers: {}
+      security:
+        - bearer: []
   /posts/create:
     post:
       summary: 投稿を作成する
@@ -112,7 +163,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: &ref_4
+                  data: &ref_5
                     $ref: "#/components/schemas/Post"
                 required:
                   - ok
@@ -150,7 +201,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: &ref_1
+                  data: &ref_2
                     $ref: "#/components/schemas/SocialContext"
                 required:
                   - ok
@@ -187,7 +238,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: *ref_1
+                  data: *ref_2
                 required:
                   - ok
                   - code
@@ -224,7 +275,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: &ref_2
+                  data: &ref_3
                     description: データ
                     $ref: "#/components/schemas/Users"
                 required:
@@ -262,7 +313,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: *ref_1
+                  data: *ref_2
                 required:
                   - ok
                   - code
@@ -299,7 +350,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: *ref_2
+                  data: *ref_3
                 required:
                   - ok
                   - code
@@ -335,7 +386,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: &ref_3
+                  data: &ref_4
                     $ref: "#/components/schemas/User"
                 required:
                   - ok
@@ -385,7 +436,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: *ref_3
+                  data: *ref_4
                 required:
                   - ok
                   - code
@@ -415,7 +466,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: *ref_3
+                  data: *ref_4
                 required:
                   - ok
                   - code
@@ -498,7 +549,7 @@ components:
         biography:
           type: string
           nullable: true
-        social_context: *ref_1
+        social_context: *ref_2
         updated_at:
           type: string
           format: date-time
@@ -529,7 +580,7 @@ components:
       properties:
         users:
           type: array
-          items: *ref_3
+          items: *ref_4
       required:
         - users
     Authorization:
@@ -555,10 +606,12 @@ components:
           type: string
           description: ID番号
           format: uuid
-        author: *ref_3
+        author: *ref_4
         text:
           type: string
           nullable: true
+        favorites_count:
+          type: integer
         updated_at:
           type: string
           format: date-time
@@ -571,12 +624,13 @@ components:
         - updated_at
         - created_at
         - text
+        - favorites_count
     Timeline:
       type: object
       properties:
         posts:
           type: array
-          items: *ref_4
+          items: *ref_5
         next_cursor:
           type: string
           format: uuid

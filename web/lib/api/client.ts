@@ -38,6 +38,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/posts/{post_id}/favorite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** 投稿にいいねする */
+        post: operations["favoritePost"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/posts/{post_id}/unfavorite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** 投稿のいいねを解除する */
+        post: operations["unfavoritePost"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/posts/create": {
         parameters: {
             query?: never;
@@ -219,6 +253,7 @@ export interface components {
             id: string;
             author: components["schemas"]["User"];
             text: string | null;
+            favorites_count: number;
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
@@ -308,6 +343,48 @@ export interface operations {
                         /** @description データ */
                         data: components["schemas"]["Authorization"];
                     };
+                };
+            };
+        };
+    };
+    favoritePost: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Response"];
+                };
+            };
+        };
+    };
+    unfavoritePost: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Response"];
                 };
             };
         };

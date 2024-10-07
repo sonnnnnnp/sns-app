@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/pkg/ent/favorite"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/post"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/predicate"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
@@ -97,6 +98,21 @@ func (pu *PostUpdate) SetAuthor(u *User) *PostUpdate {
 	return pu.SetAuthorID(u.ID)
 }
 
+// AddFavoriteIDs adds the "favorites" edge to the Favorite entity by IDs.
+func (pu *PostUpdate) AddFavoriteIDs(ids ...uuid.UUID) *PostUpdate {
+	pu.mutation.AddFavoriteIDs(ids...)
+	return pu
+}
+
+// AddFavorites adds the "favorites" edges to the Favorite entity.
+func (pu *PostUpdate) AddFavorites(f ...*Favorite) *PostUpdate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return pu.AddFavoriteIDs(ids...)
+}
+
 // Mutation returns the PostMutation object of the builder.
 func (pu *PostUpdate) Mutation() *PostMutation {
 	return pu.mutation
@@ -106,6 +122,27 @@ func (pu *PostUpdate) Mutation() *PostMutation {
 func (pu *PostUpdate) ClearAuthor() *PostUpdate {
 	pu.mutation.ClearAuthor()
 	return pu
+}
+
+// ClearFavorites clears all "favorites" edges to the Favorite entity.
+func (pu *PostUpdate) ClearFavorites() *PostUpdate {
+	pu.mutation.ClearFavorites()
+	return pu
+}
+
+// RemoveFavoriteIDs removes the "favorites" edge to Favorite entities by IDs.
+func (pu *PostUpdate) RemoveFavoriteIDs(ids ...uuid.UUID) *PostUpdate {
+	pu.mutation.RemoveFavoriteIDs(ids...)
+	return pu
+}
+
+// RemoveFavorites removes "favorites" edges to Favorite entities.
+func (pu *PostUpdate) RemoveFavorites(f ...*Favorite) *PostUpdate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return pu.RemoveFavoriteIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -189,6 +226,51 @@ func (pu *PostUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pu.mutation.FavoritesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   post.FavoritesTable,
+			Columns: []string{post.FavoritesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.RemovedFavoritesIDs(); len(nodes) > 0 && !pu.mutation.FavoritesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   post.FavoritesTable,
+			Columns: []string{post.FavoritesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.FavoritesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   post.FavoritesTable,
+			Columns: []string{post.FavoritesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -283,6 +365,21 @@ func (puo *PostUpdateOne) SetAuthor(u *User) *PostUpdateOne {
 	return puo.SetAuthorID(u.ID)
 }
 
+// AddFavoriteIDs adds the "favorites" edge to the Favorite entity by IDs.
+func (puo *PostUpdateOne) AddFavoriteIDs(ids ...uuid.UUID) *PostUpdateOne {
+	puo.mutation.AddFavoriteIDs(ids...)
+	return puo
+}
+
+// AddFavorites adds the "favorites" edges to the Favorite entity.
+func (puo *PostUpdateOne) AddFavorites(f ...*Favorite) *PostUpdateOne {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return puo.AddFavoriteIDs(ids...)
+}
+
 // Mutation returns the PostMutation object of the builder.
 func (puo *PostUpdateOne) Mutation() *PostMutation {
 	return puo.mutation
@@ -292,6 +389,27 @@ func (puo *PostUpdateOne) Mutation() *PostMutation {
 func (puo *PostUpdateOne) ClearAuthor() *PostUpdateOne {
 	puo.mutation.ClearAuthor()
 	return puo
+}
+
+// ClearFavorites clears all "favorites" edges to the Favorite entity.
+func (puo *PostUpdateOne) ClearFavorites() *PostUpdateOne {
+	puo.mutation.ClearFavorites()
+	return puo
+}
+
+// RemoveFavoriteIDs removes the "favorites" edge to Favorite entities by IDs.
+func (puo *PostUpdateOne) RemoveFavoriteIDs(ids ...uuid.UUID) *PostUpdateOne {
+	puo.mutation.RemoveFavoriteIDs(ids...)
+	return puo
+}
+
+// RemoveFavorites removes "favorites" edges to Favorite entities.
+func (puo *PostUpdateOne) RemoveFavorites(f ...*Favorite) *PostUpdateOne {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return puo.RemoveFavoriteIDs(ids...)
 }
 
 // Where appends a list predicates to the PostUpdate builder.
@@ -405,6 +523,51 @@ func (puo *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if puo.mutation.FavoritesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   post.FavoritesTable,
+			Columns: []string{post.FavoritesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.RemovedFavoritesIDs(); len(nodes) > 0 && !puo.mutation.FavoritesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   post.FavoritesTable,
+			Columns: []string{post.FavoritesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.FavoritesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   post.FavoritesTable,
+			Columns: []string{post.FavoritesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

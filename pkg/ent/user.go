@@ -50,9 +50,11 @@ type UserEdges struct {
 	Followers []*User `json:"followers,omitempty"`
 	// Following holds the value of the following edge.
 	Following []*User `json:"following,omitempty"`
+	// Favorites holds the value of the favorites edge.
+	Favorites []*Favorite `json:"favorites,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // PostsOrErr returns the Posts value or an error if the edge
@@ -80,6 +82,15 @@ func (e UserEdges) FollowingOrErr() ([]*User, error) {
 		return e.Following, nil
 	}
 	return nil, &NotLoadedError{edge: "following"}
+}
+
+// FavoritesOrErr returns the Favorites value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) FavoritesOrErr() ([]*Favorite, error) {
+	if e.loadedTypes[3] {
+		return e.Favorites, nil
+	}
+	return nil, &NotLoadedError{edge: "favorites"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -194,6 +205,11 @@ func (u *User) QueryFollowers() *UserQuery {
 // QueryFollowing queries the "following" edge of the User entity.
 func (u *User) QueryFollowing() *UserQuery {
 	return NewUserClient(u.config).QueryFollowing(u)
+}
+
+// QueryFavorites queries the "favorites" edge of the User entity.
+func (u *User) QueryFavorites() *FavoriteQuery {
+	return NewUserClient(u.config).QueryFavorites(u)
 }
 
 // Update returns a builder for updating this User.

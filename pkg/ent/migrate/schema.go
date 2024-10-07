@@ -8,6 +8,40 @@ import (
 )
 
 var (
+	// FavoritesColumns holds the columns for the "favorites" table.
+	FavoritesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "post_id", Type: field.TypeUUID},
+		{Name: "user_id", Type: field.TypeUUID},
+	}
+	// FavoritesTable holds the schema information for the "favorites" table.
+	FavoritesTable = &schema.Table{
+		Name:       "favorites",
+		Columns:    FavoritesColumns,
+		PrimaryKey: []*schema.Column{FavoritesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "favorites_posts_favorites",
+				Columns:    []*schema.Column{FavoritesColumns[2]},
+				RefColumns: []*schema.Column{PostsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "favorites_users_favorites",
+				Columns:    []*schema.Column{FavoritesColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "favorite_user_id_post_id",
+				Unique:  true,
+				Columns: []*schema.Column{FavoritesColumns[3], FavoritesColumns[2]},
+			},
+		},
+	}
 	// PostsColumns holds the columns for the "posts" table.
 	PostsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
@@ -76,6 +110,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		FavoritesTable,
 		PostsTable,
 		UsersTable,
 		UserFollowingTable,
@@ -83,6 +118,8 @@ var (
 )
 
 func init() {
+	FavoritesTable.ForeignKeys[0].RefTable = PostsTable
+	FavoritesTable.ForeignKeys[1].RefTable = UsersTable
 	PostsTable.ForeignKeys[0].RefTable = UsersTable
 	UserFollowingTable.ForeignKeys[0].RefTable = UsersTable
 	UserFollowingTable.ForeignKeys[1].RefTable = UsersTable

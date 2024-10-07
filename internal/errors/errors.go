@@ -9,4 +9,6 @@ var (
 	ErrInvalidTokenScope = errors.New("invalid token scope")
 
 	ErrUserNotFound = errors.New("user not found")
+
+	ErrPostAreadlyFavorited = errors.New("post already favorited")
 )

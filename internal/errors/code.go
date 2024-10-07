@@ -12,6 +12,8 @@ var errorCodeMap = map[error]int{
 	ErrInvalidTokenScope: -1003,
 
 	ErrUserNotFound: -2000,
+
+	ErrPostAreadlyFavorited: -3001,
 }
 
 func getErrorCode(err error) int {

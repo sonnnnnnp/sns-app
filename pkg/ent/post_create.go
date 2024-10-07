@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/pkg/ent/favorite"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/post"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
 )
@@ -87,6 +88,21 @@ func (pc *PostCreate) SetNillableID(u *uuid.UUID) *PostCreate {
 // SetAuthor sets the "author" edge to the User entity.
 func (pc *PostCreate) SetAuthor(u *User) *PostCreate {
 	return pc.SetAuthorID(u.ID)
+}
+
+// AddFavoriteIDs adds the "favorites" edge to the Favorite entity by IDs.
+func (pc *PostCreate) AddFavoriteIDs(ids ...uuid.UUID) *PostCreate {
+	pc.mutation.AddFavoriteIDs(ids...)
+	return pc
+}
+
+// AddFavorites adds the "favorites" edges to the Favorite entity.
+func (pc *PostCreate) AddFavorites(f ...*Favorite) *PostCreate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return pc.AddFavoriteIDs(ids...)
 }
 
 // Mutation returns the PostMutation object of the builder.
@@ -214,6 +230,22 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.AuthorID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.FavoritesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   post.FavoritesTable,
+			Columns: []string{post.FavoritesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

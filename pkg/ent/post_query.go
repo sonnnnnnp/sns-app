@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -12,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/pkg/ent/favorite"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/post"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/predicate"
 	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
@@ -20,11 +22,12 @@ import (
 // PostQuery is the builder for querying Post entities.
 type PostQuery struct {
 	config
-	ctx        *QueryContext
-	order      []post.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Post
-	withAuthor *UserQuery
+	ctx           *QueryContext
+	order         []post.OrderOption
+	inters        []Interceptor
+	predicates    []predicate.Post
+	withAuthor    *UserQuery
+	withFavorites *FavoriteQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -76,6 +79,28 @@ func (pq *PostQuery) QueryAuthor() *UserQuery {
 			sqlgraph.From(post.Table, post.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, post.AuthorTable, post.AuthorColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFavorites chains the current query on the "favorites" edge.
+func (pq *PostQuery) QueryFavorites() *FavoriteQuery {
+	query := (&FavoriteClient{config: pq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(post.Table, post.FieldID, selector),
+			sqlgraph.To(favorite.Table, favorite.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, post.FavoritesTable, post.FavoritesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -270,12 +295,13 @@ func (pq *PostQuery) Clone() *PostQuery {
 		return nil
 	}
 	return &PostQuery{
-		config:     pq.config,
-		ctx:        pq.ctx.Clone(),
-		order:      append([]post.OrderOption{}, pq.order...),
-		inters:     append([]Interceptor{}, pq.inters...),
-		predicates: append([]predicate.Post{}, pq.predicates...),
-		withAuthor: pq.withAuthor.Clone(),
+		config:        pq.config,
+		ctx:           pq.ctx.Clone(),
+		order:         append([]post.OrderOption{}, pq.order...),
+		inters:        append([]Interceptor{}, pq.inters...),
+		predicates:    append([]predicate.Post{}, pq.predicates...),
+		withAuthor:    pq.withAuthor.Clone(),
+		withFavorites: pq.withFavorites.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,
@@ -290,6 +316,17 @@ func (pq *PostQuery) WithAuthor(opts ...func(*UserQuery)) *PostQuery {
 		opt(query)
 	}
 	pq.withAuthor = query
+	return pq
+}
+
+// WithFavorites tells the query-builder to eager-load the nodes that are connected to
+// the "favorites" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *PostQuery) WithFavorites(opts ...func(*FavoriteQuery)) *PostQuery {
+	query := (&FavoriteClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withFavorites = query
 	return pq
 }
 
@@ -371,8 +408,9 @@ func (pq *PostQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Post, e
 	var (
 		nodes       = []*Post{}
 		_spec       = pq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			pq.withAuthor != nil,
+			pq.withFavorites != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -396,6 +434,13 @@ func (pq *PostQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Post, e
 	if query := pq.withAuthor; query != nil {
 		if err := pq.loadAuthor(ctx, query, nodes, nil,
 			func(n *Post, e *User) { n.Edges.Author = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := pq.withFavorites; query != nil {
+		if err := pq.loadFavorites(ctx, query, nodes,
+			func(n *Post) { n.Edges.Favorites = []*Favorite{} },
+			func(n *Post, e *Favorite) { n.Edges.Favorites = append(n.Edges.Favorites, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -428,6 +473,36 @@ func (pq *PostQuery) loadAuthor(ctx context.Context, query *UserQuery, nodes []*
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (pq *PostQuery) loadFavorites(ctx context.Context, query *FavoriteQuery, nodes []*Post, init func(*Post), assign func(*Post, *Favorite)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Post)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(favorite.FieldPostID)
+	}
+	query.Where(predicate.Favorite(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(post.FavoritesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.PostID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "post_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

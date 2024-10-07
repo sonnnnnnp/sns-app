@@ -37,9 +37,11 @@ type Post struct {
 type PostEdges struct {
 	// Author holds the value of the author edge.
 	Author *User `json:"author,omitempty"`
+	// Favorites holds the value of the favorites edge.
+	Favorites []*Favorite `json:"favorites,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // AuthorOrErr returns the Author value or an error if the edge
@@ -51,6 +53,15 @@ func (e PostEdges) AuthorOrErr() (*User, error) {
 		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "author"}
+}
+
+// FavoritesOrErr returns the Favorites value or an error if the edge
+// was not loaded in eager-loading.
+func (e PostEdges) FavoritesOrErr() ([]*Favorite, error) {
+	if e.loadedTypes[1] {
+		return e.Favorites, nil
+	}
+	return nil, &NotLoadedError{edge: "favorites"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -125,6 +136,11 @@ func (po *Post) Value(name string) (ent.Value, error) {
 // QueryAuthor queries the "author" edge of the Post entity.
 func (po *Post) QueryAuthor() *UserQuery {
 	return NewPostClient(po.config).QueryAuthor(po)
+}
+
+// QueryFavorites queries the "favorites" edge of the Post entity.
+func (po *Post) QueryFavorites() *FavoriteQuery {
+	return NewPostClient(po.config).QueryFavorites(po)
 }
 
 // Update returns a builder for updating this Post.
