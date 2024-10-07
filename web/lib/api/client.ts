@@ -38,24 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{name}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** ユーザーを取得する */
-        get: operations["getUserByName"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/users/update": {
+    "/posts/{post_id}/favorite": {
         parameters: {
             query?: never;
             header?: never;
@@ -63,26 +46,43 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** ユーザーを更新する */
-        put: operations["updateUser"];
-        post?: never;
+        put?: never;
+        /** 投稿にいいねする */
+        post: operations["favoritePost"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/users/me": {
+    "/posts/{post_id}/unfavorite": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** 自分を取得する */
-        get: operations["getSelf"];
+        get?: never;
         put?: never;
-        post?: never;
+        /** 投稿のいいねを解除する */
+        post: operations["unfavoritePost"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/posts/create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** 投稿を作成する */
+        post: operations["createPost"];
         delete?: never;
         options?: never;
         head?: never;
@@ -142,7 +142,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/posts/create": {
+    "/users/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ユーザーを取得する */
+        get: operations["getUserByName"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/update": {
         parameters: {
             query?: never;
             header?: never;
@@ -150,9 +167,26 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
+        /** ユーザーを更新する */
+        put: operations["updateUser"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 自分を取得する */
+        get: operations["getSelf"];
         put?: never;
-        /** 投稿を作成する */
-        post: operations["createPost"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -219,6 +253,7 @@ export interface components {
             id: string;
             author: components["schemas"]["User"];
             text: string | null;
+            favorites_count: number;
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
@@ -312,12 +347,12 @@ export interface operations {
             };
         };
     };
-    getUserByName: {
+    favoritePost: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                name: string;
+                post_id: string;
             };
             cookie?: never;
         };
@@ -328,18 +363,33 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @description 正常に処理を終了したかどうか */
-                        ok: boolean;
-                        /** @description レスポンスコード */
-                        code: number;
-                        data: components["schemas"]["User"];
-                    };
+                    "application/json": components["schemas"]["Response"];
                 };
             };
         };
     };
-    updateUser: {
+    unfavoritePost: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Response"];
+                };
+            };
+        };
+    };
+    createPost: {
         parameters: {
             query?: never;
             header?: never;
@@ -349,13 +399,7 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": {
-                    name?: string;
-                    nickname?: string;
-                    avatar_image_url?: string;
-                    banner_image_url?: string;
-                    biography?: string;
-                    /** Format: date-time */
-                    birthdate?: string;
+                    content?: string;
                 };
             };
         };
@@ -370,32 +414,7 @@ export interface operations {
                         ok: boolean;
                         /** @description レスポンスコード */
                         code: number;
-                        data: components["schemas"]["User"];
-                    };
-                };
-            };
-        };
-    };
-    getSelf: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @description 正常に処理を終了したかどうか */
-                        ok: boolean;
-                        /** @description レスポンスコード */
-                        code: number;
-                        data: components["schemas"]["User"];
+                        data: components["schemas"]["Post"];
                     };
                 };
             };
@@ -538,7 +557,34 @@ export interface operations {
             };
         };
     };
-    createPost: {
+    getUserByName: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["User"];
+                    };
+                };
+            };
+        };
+    };
+    updateUser: {
         parameters: {
             query?: never;
             header?: never;
@@ -548,7 +594,13 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": {
-                    content?: string;
+                    name?: string;
+                    nickname?: string;
+                    avatar_image_url?: string;
+                    banner_image_url?: string;
+                    biography?: string;
+                    /** Format: date-time */
+                    birthdate?: string;
                 };
             };
         };
@@ -563,7 +615,32 @@ export interface operations {
                         ok: boolean;
                         /** @description レスポンスコード */
                         code: number;
-                        data: components["schemas"]["Post"];
+                        data: components["schemas"]["User"];
+                    };
+                };
+            };
+        };
+    };
+    getSelf: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["User"];
                     };
                 };
             };
@@ -575,6 +652,7 @@ export interface operations {
                 /** @description 次のページを取得するためのキー */
                 cursor?: string;
                 limit?: number;
+                user_id?: string;
             };
             header?: never;
             path?: never;

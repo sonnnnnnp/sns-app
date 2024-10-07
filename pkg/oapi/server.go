@@ -37,13 +37,26 @@ type Authorization struct {
 
 // Post defines model for Post.
 type Post struct {
-	Author    User      `json:"author"`
-	CreatedAt time.Time `json:"created_at"`
+	Author         User      `json:"author"`
+	CreatedAt      time.Time `json:"created_at"`
+	FavoritesCount int       `json:"favorites_count"`
 
 	// Id ID番号
 	Id        openapi_types.UUID `json:"id"`
 	Text      *string            `json:"text"`
 	UpdatedAt time.Time          `json:"updated_at"`
+}
+
+// Response defines model for Response.
+type Response struct {
+	// Code レスポンスコード
+	Code int `json:"code"`
+
+	// Data データ
+	Data map[string]interface{} `json:"data"`
+
+	// Ok 正常に処理を終了したかどうか
+	Ok bool `json:"ok"`
 }
 
 // SocialContext defines model for SocialContext.
@@ -101,6 +114,7 @@ type GetTimelineParams struct {
 	// Cursor 次のページを取得するためのキー
 	Cursor *openapi_types.UUID `form:"cursor,omitempty" json:"cursor,omitempty"`
 	Limit  *int                `form:"limit,omitempty" json:"limit,omitempty"`
+	UserId *openapi_types.UUID `form:"user_id,omitempty" json:"user_id,omitempty"`
 }
 
 // UpdateUserJSONBody defines parameters for UpdateUser.
@@ -208,6 +222,12 @@ type ClientInterface interface {
 
 	CreatePost(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// FavoritePost request
+	FavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UnfavoritePost request
+	UnfavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetTimeline request
 	GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -288,6 +308,30 @@ func (c *Client) CreatePostWithBody(ctx context.Context, contentType string, bod
 
 func (c *Client) CreatePost(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreatePostRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) FavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFavoritePostRequest(c.Server, postId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnfavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnfavoritePostRequest(c.Server, postId)
 	if err != nil {
 		return nil, err
 	}
@@ -543,6 +587,74 @@ func NewCreatePostRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
+// NewFavoritePostRequest generates requests for FavoritePost
+func NewFavoritePostRequest(server string, postId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "post_id", runtime.ParamLocationPath, postId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/posts/%s/favorite", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUnfavoritePostRequest generates requests for UnfavoritePost
+func NewUnfavoritePostRequest(server string, postId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "post_id", runtime.ParamLocationPath, postId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/posts/%s/unfavorite", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetTimelineRequest generates requests for GetTimeline
 func NewGetTimelineRequest(server string, params *GetTimelineParams) (*http.Request, error) {
 	var err error
@@ -584,6 +696,22 @@ func NewGetTimelineRequest(server string, params *GetTimelineParams) (*http.Requ
 		if params.Limit != nil {
 
 			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.UserId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "user_id", runtime.ParamLocationQuery, *params.UserId); err != nil {
 				return nil, err
 			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 				return nil, err
@@ -935,6 +1063,12 @@ type ClientWithResponsesInterface interface {
 
 	CreatePostWithResponse(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
 
+	// FavoritePostWithResponse request
+	FavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error)
+
+	// UnfavoritePostWithResponse request
+	UnfavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
+
 	// GetTimelineWithResponse request
 	GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
 
@@ -1046,6 +1180,50 @@ func (r CreatePostResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreatePostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type FavoritePostResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Response
+}
+
+// Status returns HTTPResponse.Status
+func (r FavoritePostResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r FavoritePostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UnfavoritePostResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Response
+}
+
+// Status returns HTTPResponse.Status
+func (r UnfavoritePostResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UnfavoritePostResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1356,6 +1534,24 @@ func (c *ClientWithResponses) CreatePostWithResponse(ctx context.Context, body C
 	return ParseCreatePostResponse(rsp)
 }
 
+// FavoritePostWithResponse request returning *FavoritePostResponse
+func (c *ClientWithResponses) FavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error) {
+	rsp, err := c.FavoritePost(ctx, postId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFavoritePostResponse(rsp)
+}
+
+// UnfavoritePostWithResponse request returning *UnfavoritePostResponse
+func (c *ClientWithResponses) UnfavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error) {
+	rsp, err := c.UnfavoritePost(ctx, postId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUnfavoritePostResponse(rsp)
+}
+
 // GetTimelineWithResponse request returning *GetTimelineResponse
 func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error) {
 	rsp, err := c.GetTimeline(ctx, params, reqEditors...)
@@ -1534,6 +1730,58 @@ func ParseCreatePostResponse(rsp *http.Response) (*CreatePostResponse, error) {
 			// Ok 正常に処理を終了したかどうか
 			Ok bool `json:"ok"`
 		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseFavoritePostResponse parses an HTTP response from a FavoritePostWithResponse call
+func ParseFavoritePostResponse(rsp *http.Response) (*FavoritePostResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &FavoritePostResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Response
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUnfavoritePostResponse parses an HTTP response from a UnfavoritePostWithResponse call
+func ParseUnfavoritePostResponse(rsp *http.Response) (*UnfavoritePostResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UnfavoritePostResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Response
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1852,6 +2100,12 @@ type ServerInterface interface {
 	// 投稿を作成する
 	// (POST /posts/create)
 	CreatePost(ctx echo.Context) error
+	// 投稿にいいねする
+	// (POST /posts/{post_id}/favorite)
+	FavoritePost(ctx echo.Context, postId openapi_types.UUID) error
+	// 投稿のいいねを解除する
+	// (POST /posts/{post_id}/unfavorite)
+	UnfavoritePost(ctx echo.Context, postId openapi_types.UUID) error
 	// タイムラインを取得する
 	// (GET /timeline)
 	GetTimeline(ctx echo.Context, params GetTimelineParams) error
@@ -1926,6 +2180,42 @@ func (w *ServerInterfaceWrapper) CreatePost(ctx echo.Context) error {
 	return err
 }
 
+// FavoritePost converts echo context to params.
+func (w *ServerInterfaceWrapper) FavoritePost(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "post_id" -------------
+	var postId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "post_id", ctx.Param("post_id"), &postId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter post_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.FavoritePost(ctx, postId)
+	return err
+}
+
+// UnfavoritePost converts echo context to params.
+func (w *ServerInterfaceWrapper) UnfavoritePost(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "post_id" -------------
+	var postId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "post_id", ctx.Param("post_id"), &postId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter post_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UnfavoritePost(ctx, postId)
+	return err
+}
+
 // GetTimeline converts echo context to params.
 func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
 	var err error
@@ -1946,6 +2236,13 @@ func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
 	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// ------------- Optional query parameter "user_id" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "user_id", ctx.QueryParams(), &params.UserId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
@@ -2114,6 +2411,8 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/authorize/line", wrapper.AuthorizeWithLine)
 	router.POST(baseURL+"/authorize/refresh", wrapper.RefreshAuthorization)
 	router.POST(baseURL+"/posts/create", wrapper.CreatePost)
+	router.POST(baseURL+"/posts/:post_id/favorite", wrapper.FavoritePost)
+	router.POST(baseURL+"/posts/:post_id/unfavorite", wrapper.UnfavoritePost)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
 	router.GET(baseURL+"/users/me", wrapper.GetSelf)
 	router.PUT(baseURL+"/users/update", wrapper.UpdateUser)
@@ -2129,28 +2428,30 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

@@ -7,4 +7,8 @@ var (
 	ErrInvalidToken      = errors.New("invalid token")
 	ErrTokenExpired      = errors.New("token expired")
 	ErrInvalidTokenScope = errors.New("invalid token scope")
+
+	ErrUserNotFound = errors.New("user not found")
+
+	ErrPostAreadlyFavorited = errors.New("post already favorited")
 )

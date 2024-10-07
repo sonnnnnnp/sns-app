@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
+	"github.com/sonnnnnnp/sns-app/internal/domain/user"
 	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
@@ -22,11 +22,11 @@ type IUserUsecase interface {
 }
 
 type UserUsecase struct {
-	userRepo *user_repository.UserRepository
+	userRepo *user.UserRepository
 }
 
 func New(
-	userRepo *user_repository.UserRepository,
+	userRepo *user.UserRepository,
 ) *UserUsecase {
 	return &UserUsecase{
 		userRepo: userRepo,

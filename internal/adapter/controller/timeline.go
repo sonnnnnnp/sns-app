@@ -8,14 +8,14 @@ import (
 )
 
 func (c Controller) GetTimeline(ctx echo.Context, params oapi.GetTimelineParams) error {
-	entPosts, nextCursor, err := c.timelineUsecase.GetTimeline(ctx.Request().Context(), &params)
+	posts, nextCursor, err := c.timelineUsecase.GetTimeline(ctx.Request().Context(), &params)
 	if err != nil {
 		return err
 	}
 
 	// DTO などの変換専用のロジックが必要かもしれない
-	oapiPosts := make([]oapi.Post, len(entPosts))
-	for i, entPost := range entPosts {
+	oapiPosts := make([]oapi.Post, len(posts))
+	for i, entPost := range posts {
 		oapiPosts[i] = oapi.Post{
 			Id: entPost.ID,
 			Author: oapi.User{
@@ -28,9 +28,10 @@ func (c Controller) GetTimeline(ctx echo.Context, params oapi.GetTimelineParams)
 				UpdatedAt:      entPost.Edges.Author.UpdatedAt,
 				Name:           entPost.Edges.Author.Name,
 			},
-			Text:      &entPost.Text,
-			UpdatedAt: entPost.UpdatedAt,
-			CreatedAt: entPost.CreatedAt,
+			Text:           &entPost.Text,
+			FavoritesCount: entPost.FavoriteCount,
+			UpdatedAt:      entPost.UpdatedAt,
+			CreatedAt:      entPost.CreatedAt,
 		}
 	}
 
