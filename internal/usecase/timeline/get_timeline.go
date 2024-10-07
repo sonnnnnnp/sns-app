@@ -9,7 +9,7 @@ import (
 )
 
 func (tu *TimelineUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimelineParams) (posts []*ent.Post, nextCursor uuid.UUID, err error) {
-	posts, nextCursor, err = tu.postRepo.GetPosts(ctx, params.Limit, params.Cursor)
+	posts, nextCursor, err = tu.postRepo.GetPosts(ctx, params.Limit, params.Cursor, params.UserId)
 	if err != nil {
 		return nil, uuid.Nil, err
 	}

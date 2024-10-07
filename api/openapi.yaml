@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: sns-app
-  description: ''
+  description: ""
   version: 1.0.0
 tags: []
 paths:
@@ -9,7 +9,7 @@ paths:
     post:
       summary: 認証トークンを更新
       deprecated: false
-      description: ''
+      description: ""
       operationId: refreshAuthorization
       tags: []
       parameters: []
@@ -24,8 +24,8 @@ paths:
               required:
                 - refresh_token
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -39,7 +39,7 @@ paths:
                     description: レスポンスコード
                   data: &ref_0
                     description: データ
-                    $ref: '#/components/schemas/Authorization'
+                    $ref: "#/components/schemas/Authorization"
                 required:
                   - ok
                   - code
@@ -51,19 +51,19 @@ paths:
     post:
       summary: LINE でログイン
       deprecated: false
-      description: ''
+      description: ""
       operationId: authorizeWithLine
       tags: []
       parameters:
         - name: code
           in: query
-          description: ''
+          description: ""
           required: true
           schema:
             type: string
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -82,23 +82,63 @@ paths:
                   - data
           headers: {}
       security: []
-  /users/{name}:
-    get:
-      summary: ユーザーを取得する
+  /posts/create:
+    post:
+      summary: 投稿を作成する
       deprecated: false
-      description: ''
-      operationId: getUserByName
+      description: ""
+      operationId: createPost
+      tags: []
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: &ref_4
+                    $ref: "#/components/schemas/Post"
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security:
+        - bearer: []
+  /users/{user_id}/follow:
+    delete:
+      summary: ユーザーをアンフォローする
+      deprecated: false
+      description: ""
+      operationId: unfollowUser
       tags: []
       parameters:
-        - name: name
+        - name: user_id
           in: path
-          description: ''
+          description: ""
           required: true
           schema:
             type: string
+            format: uuid
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -111,7 +151,192 @@ paths:
                     type: integer
                     description: レスポンスコード
                   data: &ref_1
-                    $ref: '#/components/schemas/User'
+                    $ref: "#/components/schemas/SocialContext"
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security:
+        - bearer: []
+    post:
+      summary: ユーザーをフォローする
+      deprecated: false
+      description: ""
+      operationId: followUser
+      tags: []
+      parameters:
+        - name: user_id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: *ref_1
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security:
+        - bearer: []
+  /users/{user_id}/following:
+    get:
+      summary: ユーザーのフォローを取得する
+      deprecated: false
+      description: ""
+      operationId: getUserFollowing
+      tags: []
+      parameters:
+        - name: user_id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: &ref_2
+                    description: データ
+                    $ref: "#/components/schemas/Users"
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security:
+        - bearer: []
+    delete:
+      summary: ユーザーをフォロワーから削除する
+      deprecated: false
+      description: ""
+      operationId: removeUserFromFollowers
+      tags: []
+      parameters:
+        - name: user_id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: *ref_1
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security:
+        - bearer: []
+  /users/{user_id}/followers:
+    get:
+      summary: ユーザーのフォロワーを取得する
+      deprecated: false
+      description: ""
+      operationId: getUserFollowers
+      tags: []
+      parameters:
+        - name: user_id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: *ref_2
+                required:
+                  - ok
+                  - code
+                  - data
+          headers: {}
+      security:
+        - bearer: []
+  /users/{name}:
+    get:
+      summary: ユーザーを取得する
+      deprecated: false
+      description: ""
+      operationId: getUserByName
+      tags: []
+      parameters:
+        - name: name
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 正常に処理を終了したかどうか
+                  code:
+                    type: integer
+                    description: レスポンスコード
+                  data: &ref_3
+                    $ref: "#/components/schemas/User"
                 required:
                   - ok
                   - code
@@ -123,7 +348,7 @@ paths:
     put:
       summary: ユーザーを更新する
       deprecated: false
-      description: ''
+      description: ""
       operationId: updateUser
       tags: []
       parameters: []
@@ -147,224 +372,8 @@ paths:
                   type: string
                   format: date-time
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                    description: 正常に処理を終了したかどうか
-                  code:
-                    type: integer
-                    description: レスポンスコード
-                  data: *ref_1
-                required:
-                  - ok
-                  - code
-                  - data
-          headers: {}
-      security:
-        - bearer: []
-  /users/me:
-    get:
-      summary: 自分を取得する
-      deprecated: false
-      description: ''
-      operationId: getSelf
-      tags: []
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                    description: 正常に処理を終了したかどうか
-                  code:
-                    type: integer
-                    description: レスポンスコード
-                  data: *ref_1
-                required:
-                  - ok
-                  - code
-                  - data
-          headers: {}
-      security:
-        - bearer: []
-  /users/{user_id}/follow:
-    delete:
-      summary: ユーザーをアンフォローする
-      deprecated: false
-      description: ''
-      operationId: unfollowUser
-      tags: []
-      parameters:
-        - name: user_id
-          in: path
-          description: ''
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                    description: 正常に処理を終了したかどうか
-                  code:
-                    type: integer
-                    description: レスポンスコード
-                  data: &ref_2
-                    $ref: '#/components/schemas/SocialContext'
-                required:
-                  - ok
-                  - code
-                  - data
-          headers: {}
-      security:
-        - bearer: []
-    post:
-      summary: ユーザーをフォローする
-      deprecated: false
-      description: ''
-      operationId: followUser
-      tags: []
-      parameters:
-        - name: user_id
-          in: path
-          description: ''
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                    description: 正常に処理を終了したかどうか
-                  code:
-                    type: integer
-                    description: レスポンスコード
-                  data: *ref_2
-                required:
-                  - ok
-                  - code
-                  - data
-          headers: {}
-      security:
-        - bearer: []
-  /users/{user_id}/following:
-    get:
-      summary: ユーザーのフォローを取得する
-      deprecated: false
-      description: ''
-      operationId: getUserFollowing
-      tags: []
-      parameters:
-        - name: user_id
-          in: path
-          description: ''
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                    description: 正常に処理を終了したかどうか
-                  code:
-                    type: integer
-                    description: レスポンスコード
-                  data: &ref_3
-                    description: データ
-                    $ref: '#/components/schemas/Users'
-                required:
-                  - ok
-                  - code
-                  - data
-          headers: {}
-      security:
-        - bearer: []
-    delete:
-      summary: ユーザーをフォロワーから削除する
-      deprecated: false
-      description: ''
-      operationId: removeUserFromFollowers
-      tags: []
-      parameters:
-        - name: user_id
-          in: path
-          description: ''
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                    description: 正常に処理を終了したかどうか
-                  code:
-                    type: integer
-                    description: レスポンスコード
-                  data: *ref_2
-                required:
-                  - ok
-                  - code
-                  - data
-          headers: {}
-      security:
-        - bearer: []
-  /users/{user_id}/followers:
-    get:
-      summary: ユーザーのフォロワーを取得する
-      deprecated: false
-      description: ''
-      operationId: getUserFollowers
-      tags: []
-      parameters:
-        - name: user_id
-          in: path
-          description: ''
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -384,25 +393,17 @@ paths:
           headers: {}
       security:
         - bearer: []
-  /posts/create:
-    post:
-      summary: 投稿を作成する
+  /users/me:
+    get:
+      summary: 自分を取得する
       deprecated: false
-      description: ''
-      operationId: createPost
+      description: ""
+      operationId: getSelf
       tags: []
       parameters: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                content:
-                  type: string
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -414,8 +415,7 @@ paths:
                   code:
                     type: integer
                     description: レスポンスコード
-                  data: &ref_4
-                    $ref: '#/components/schemas/Post'
+                  data: *ref_3
                 required:
                   - ok
                   - code
@@ -427,7 +427,7 @@ paths:
     get:
       summary: タイムラインを取得する
       deprecated: false
-      description: ''
+      description: ""
       operationId: getTimeline
       tags: []
       parameters:
@@ -440,13 +440,20 @@ paths:
             format: uuid
         - name: limit
           in: query
-          description: ''
+          description: ""
           required: false
           schema:
             type: integer
+        - name: user_id
+          in: query
+          description: ""
+          required: false
+          schema:
+            type: string
+            format: uuid
       responses:
-        '200':
-          description: ''
+        "200":
+          description: ""
           content:
             application/json:
               schema:
@@ -460,7 +467,7 @@ paths:
                     description: レスポンスコード
                   data:
                     description: データ
-                    $ref: '#/components/schemas/Timeline'
+                    $ref: "#/components/schemas/Timeline"
                 required:
                   - ok
                   - code
@@ -491,7 +498,7 @@ components:
         biography:
           type: string
           nullable: true
-        social_context: *ref_2
+        social_context: *ref_1
         updated_at:
           type: string
           format: date-time
@@ -522,7 +529,7 @@ components:
       properties:
         users:
           type: array
-          items: *ref_1
+          items: *ref_3
       required:
         - users
     Authorization:
@@ -548,7 +555,7 @@ components:
           type: string
           description: ID番号
           format: uuid
-        author: *ref_1
+        author: *ref_3
         text:
           type: string
           nullable: true
@@ -586,7 +593,7 @@ components:
       required:
         - lineId
     Response:
-      title: ''
+      title: ""
       type: object
       properties:
         ok:

@@ -9,7 +9,7 @@ import (
 )
 
 type IPostRepository interface {
-	GetPosts(ctx context.Context, limit *int, fromCursor *uuid.UUID) (posts []*ent.Post, nextCursor uuid.UUID, err error)
+	GetPosts(ctx context.Context, limit *int, fromCursor *uuid.UUID, uID *uuid.UUID) (posts []*ent.Post, nextCursor uuid.UUID, err error)
 	CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (*ent.Post, error)
 }
 
