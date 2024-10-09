@@ -1,7 +1,7 @@
 import Layout from "@/layouts/layout";
 import Timeline from "./components/timeline";
 
-const Page = () => {
+const HomePage = () => {
   return (
     <Layout>
       <Timeline />
@@ -9,4 +9,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default HomePage;
