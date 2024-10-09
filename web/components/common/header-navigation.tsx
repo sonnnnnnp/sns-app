@@ -32,7 +32,7 @@ type Props = {
 export default function HeaderNavigation({ children }: Props) {
   return (
     <div>
-      <div className="fixed inset-y-0 z-10 w-64 flex-col hidden md:block">
+      <div className="fixed inset-y-0 z-10 w-64 flex-col hidden lg:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-12 items-center px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
@@ -101,7 +101,7 @@ export default function HeaderNavigation({ children }: Props) {
           </div> */}
         </div>
       </div>
-      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex md:hidden">
+      <aside className="fixed inset-y-0 z-10 hidden w-16 flex-col border-r sm:flex md:border-r-0 lg:hidden">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
             href="/home"
@@ -214,7 +214,7 @@ export default function HeaderNavigation({ children }: Props) {
           </TooltipProvider>
         </nav>
       </aside>
-      <div className="flex flex-col sm:gap-4 sm:pl-14 md:pl-64">
+      <div className="flex flex-col sm:gap-4 sm:pl-16 lg:pl-64">
         <main>{children}</main>
       </div>
     </div>

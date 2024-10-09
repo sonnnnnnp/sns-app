@@ -441,7 +441,7 @@ export default function Timeline() {
   };
 
   return (
-    <div className="max-w-[780px]">
+    <div className="max-w-[680px]">
       <Tabs defaultValue="following" onValueChange={onTabChange}>
         <TabsContent className="my-0" value={tabValue}>
           <Card className="flex text-sm w-full rounded-none border-0 mb-16 sm:mb-0 sm:border-r-[1px] md:border-x-[1px] dark:bg-black dark:border-slate-800">

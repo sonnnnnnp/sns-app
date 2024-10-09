@@ -7,7 +7,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="md:flex md:justify-center bg-muted/40">
+    <div className="md:flex justify-center bg-muted/40">
       <div>
         <div className="flex min-h-screen w-full flex-col">
           <HeaderNavigation>{children}</HeaderNavigation>
