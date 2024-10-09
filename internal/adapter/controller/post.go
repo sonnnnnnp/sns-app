@@ -19,22 +19,7 @@ func (c Controller) CreatePost(ctx echo.Context) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &oapi.Post{
-		Id: p.ID,
-		Author: oapi.User{
-			AvatarImageUrl: &p.Edges.Author.AvatarImageURL,
-			Biography:      &p.Edges.Author.Biography,
-			BannerImageUrl: &p.Edges.Author.BannerImageURL,
-			CreatedAt:      p.Edges.Author.CreatedAt,
-			Nickname:       p.Edges.Author.Nickname,
-			Id:             p.Edges.Author.ID,
-			UpdatedAt:      p.Edges.Author.UpdatedAt,
-			Name:           p.Edges.Author.Name,
-		},
-		Text:      &p.Text,
-		CreatedAt: p.CreatedAt,
-		UpdatedAt: p.UpdatedAt,
-	})
+	return c.json(ctx, http.StatusOK, p)
 }
 
 func (c Controller) FavoritePost(ctx echo.Context, pID uuid.UUID) error {

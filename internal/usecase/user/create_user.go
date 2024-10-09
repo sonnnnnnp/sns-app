@@ -7,10 +7,5 @@ import (
 )
 
 func (uu *UserUsecase) CreateUser(ctx context.Context) (*ent.User, error) {
-	u, err := uu.userRepo.CreateUser(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return u, nil
+	return uu.userRepo.CreateUser(ctx)
 }

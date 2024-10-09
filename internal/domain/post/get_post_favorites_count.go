@@ -8,6 +8,5 @@ import (
 )
 
 func (pr *PostRepository) GetPostFavoritesCount(ctx context.Context, pID uuid.UUID) (int, error) {
-	count, err := pr.db.Favorite.Query().Where(favorite.PostIDEQ(pID)).Count(ctx)
-	return count, err
+	return pr.db.Favorite.Query().Where(favorite.PostID(pID)).Count(ctx)
 }

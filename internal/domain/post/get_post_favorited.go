@@ -10,8 +10,8 @@ import (
 func (pr *PostRepository) GetPostFavorited(ctx context.Context, uID uuid.UUID, pID uuid.UUID) (bool, error) {
 	count, err := pr.db.Favorite.Query().Where(
 		favorite.And(
-			favorite.UserIDEQ(uID),
-			favorite.PostIDEQ(pID),
+			favorite.UserID(uID),
+			favorite.PostID(pID),
 		),
 	).Count(ctx)
 	return count > 0, err

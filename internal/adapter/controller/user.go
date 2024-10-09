@@ -17,43 +17,16 @@ func (c Controller) GetSelf(ctx echo.Context) error {
 		return err
 	}
 
-	if u == nil {
-		return echo.NewHTTPError(http.StatusNotFound, "user not found")
-	}
-
-	return c.json(ctx, http.StatusOK, &oapi.User{
-		Id:             u.ID,
-		Name:           u.Name,
-		Nickname:       u.Nickname,
-		AvatarImageUrl: &u.AvatarImageURL,
-		BannerImageUrl: &u.BannerImageURL,
-		Biography:      &u.Biography,
-		UpdatedAt:      u.UpdatedAt,
-		CreatedAt:      u.CreatedAt,
-	})
+	return c.json(ctx, http.StatusOK, u)
 }
 
 func (c Controller) GetUserByName(ctx echo.Context, name string) error {
-	u, sc, err := c.userUsecase.GetUserByName(ctx.Request().Context(), name)
+	u, err := c.userUsecase.GetUserByName(ctx.Request().Context(), name)
 	if err != nil {
 		return err
 	}
 
-	if u == nil {
-		return echo.NewHTTPError(http.StatusNotFound, "user not found")
-	}
-
-	return c.json(ctx, http.StatusOK, &oapi.User{
-		Id:             u.ID,
-		Name:           u.Name,
-		Nickname:       u.Nickname,
-		AvatarImageUrl: &u.AvatarImageURL,
-		BannerImageUrl: &u.BannerImageURL,
-		Biography:      &u.Biography,
-		SocialContext:  sc,
-		UpdatedAt:      u.UpdatedAt,
-		CreatedAt:      u.CreatedAt,
-	})
+	return c.json(ctx, http.StatusOK, u)
 }
 
 func (c Controller) UpdateUser(ctx echo.Context) error {
@@ -61,25 +34,15 @@ func (c Controller) UpdateUser(ctx echo.Context) error {
 
 	var body oapi.UpdateUserJSONBody
 	if err := ctx.Bind(&body); err != nil {
-		// return errors.ValidationFailed.Wrap(errors.WithStack(err), err.Error())
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return err
 	}
 
 	u, err := c.userUsecase.UpdateUser(ctx.Request().Context(), uID, &body)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "failed to update a user")
+		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &oapi.User{
-		Id:             u.Id,
-		Name:           u.Name,
-		Nickname:       u.Nickname,
-		AvatarImageUrl: u.AvatarImageUrl,
-		BannerImageUrl: u.BannerImageUrl,
-		Biography:      u.Biography,
-		UpdatedAt:      u.UpdatedAt,
-		CreatedAt:      u.CreatedAt,
-	})
+	return c.json(ctx, http.StatusOK, u)
 }
 
 func (c Controller) GetUserFollowing(ctx echo.Context, id uuid.UUID) error {
@@ -88,22 +51,8 @@ func (c Controller) GetUserFollowing(ctx echo.Context, id uuid.UUID) error {
 		return err
 	}
 
-	oapiUsers := make([]oapi.User, len(users))
-	for i, u := range users {
-		oapiUsers[i] = oapi.User{
-			AvatarImageUrl: &u.AvatarImageURL,
-			Biography:      &u.Biography,
-			BannerImageUrl: &u.BannerImageURL,
-			CreatedAt:      u.CreatedAt,
-			Nickname:       u.Nickname,
-			Id:             u.ID,
-			UpdatedAt:      u.UpdatedAt,
-			Name:           u.Name,
-		}
-	}
-
 	return c.json(ctx, http.StatusOK, &oapi.Users{
-		Users: oapiUsers,
+		Users: users,
 	})
 }
 
@@ -113,22 +62,8 @@ func (c Controller) GetUserFollowers(ctx echo.Context, id uuid.UUID) error {
 		return err
 	}
 
-	oapiUsers := make([]oapi.User, len(users))
-	for i, u := range users {
-		oapiUsers[i] = oapi.User{
-			AvatarImageUrl: &u.AvatarImageURL,
-			Biography:      &u.Biography,
-			BannerImageUrl: &u.BannerImageURL,
-			CreatedAt:      u.CreatedAt,
-			Nickname:       u.Nickname,
-			Id:             u.ID,
-			UpdatedAt:      u.UpdatedAt,
-			Name:           u.Name,
-		}
-	}
-
 	return c.json(ctx, http.StatusOK, &oapi.Users{
-		Users: oapiUsers,
+		Users: users,
 	})
 }
 

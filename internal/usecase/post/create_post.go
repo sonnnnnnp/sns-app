@@ -5,19 +5,18 @@ import (
 
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*ent.Post, error) {
+func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*oapi.Post, error) {
 	uID := ctxhelper.GetUserID(ctx)
 
-	u, err := pu.userRepo.GetUserByID(ctx, uID)
+	exists, err := pu.userRepo.GetUserExistence(ctx, uID)
 	if err != nil {
 		return nil, err
 	}
 
-	if u == nil {
+	if !exists {
 		return nil, errors.ErrUserNotFound
 	}
 
@@ -26,5 +25,20 @@ func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSON
 		return nil, err
 	}
 
-	return p, nil
+	return &oapi.Post{
+		Id: p.ID,
+		Author: oapi.User{
+			AvatarImageUrl: &p.Edges.Author.AvatarImageURL,
+			Biography:      &p.Edges.Author.Biography,
+			BannerImageUrl: &p.Edges.Author.BannerImageURL,
+			CreatedAt:      p.Edges.Author.CreatedAt,
+			Nickname:       p.Edges.Author.Nickname,
+			Id:             p.Edges.Author.ID,
+			UpdatedAt:      p.Edges.Author.UpdatedAt,
+			Name:           p.Edges.Author.Name,
+		},
+		Text:      &p.Text,
+		CreatedAt: p.CreatedAt,
+		UpdatedAt: p.UpdatedAt,
+	}, nil
 }

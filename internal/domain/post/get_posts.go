@@ -20,7 +20,7 @@ func (pr *PostRepository) GetPosts(ctx context.Context, limit *int, fromCursor *
 		limit = &maxLimit
 	}
 
-	query := pr.db.Post.Query().WithAuthor().Order(ent.Desc(post.FieldCreatedAt)).Limit(*limit)
+	query := pr.db.Debug().Post.Query().WithAuthor().Order(ent.Desc(post.FieldCreatedAt)).Limit(*limit)
 
 	if uID != nil {
 		query = query.Where(post.HasAuthorWith(user.ID(*uID)))
