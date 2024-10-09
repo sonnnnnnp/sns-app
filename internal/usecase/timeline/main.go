@@ -9,7 +9,7 @@ import (
 )
 
 type ITimelineUsecase interface {
-	GetTimeline(ctx context.Context, params *oapi.GetTimelineParams) (posts []*post.PostWithFavoriteCount, nextCursor uuid.UUID, err error)
+	GetTimeline(ctx context.Context, params *oapi.GetTimelineParams) (posts []oapi.Post, nextCursor uuid.UUID, err error)
 }
 
 type TimelineUsecase struct {

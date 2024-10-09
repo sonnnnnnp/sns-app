@@ -6,12 +6,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/domain/post"
 	"github.com/sonnnnnnp/sns-app/internal/domain/user"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type IPostUsecase interface {
-	CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*ent.Post, error)
+	CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*oapi.Post, error)
 	FavoritePost(ctx context.Context, pID uuid.UUID) error
 	UnavoritePost(ctx context.Context, pID uuid.UUID) error
 }

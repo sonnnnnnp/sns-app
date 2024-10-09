@@ -49,24 +49,8 @@ export interface paths {
         put?: never;
         /** 投稿にいいねする */
         post: operations["favoritePost"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/posts/{post_id}/unfavorite": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
         /** 投稿のいいねを解除する */
-        post: operations["unfavoritePost"];
-        delete?: never;
+        delete: operations["unfavoritePost"];
         options?: never;
         head?: never;
         patch?: never;
@@ -253,6 +237,7 @@ export interface components {
             id: string;
             author: components["schemas"]["User"];
             text: string | null;
+            favorited: boolean;
             favorites_count: number;
             /** Format: date-time */
             updated_at: string;

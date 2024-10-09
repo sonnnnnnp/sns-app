@@ -3,10 +3,11 @@ package user
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/pkg/ent"
+	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
 )
 
-func (ur *UserRepository) GetUserFollowers(ctx context.Context, u *ent.User) ([]*ent.User, error) {
-	followers := u.QueryFollowers().AllX(ctx)
-	return followers, nil
+func (ur *UserRepository) GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]*ent.User, error) {
+	return ur.db.User.Query().Where(user.ID(uID)).QueryFollowers().All(ctx)
 }

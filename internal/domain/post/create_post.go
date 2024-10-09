@@ -21,10 +21,5 @@ func (pr *PostRepository) CreatePost(ctx context.Context, uID uuid.UUID, body *o
 		return nil, err
 	}
 
-	p, err := pr.db.Post.Query().Where(post.IDEQ(sp.ID)).WithAuthor().Only(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return p, nil
+	return pr.db.Post.Query().Where(post.ID(sp.ID)).WithAuthor().Only(ctx)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/pkg/ent"
 )
 
@@ -12,7 +13,7 @@ func (ur *UserRepository) GetUserByID(ctx context.Context, id uuid.UUID) (*ent.U
 	if err != nil {
 		switch {
 		case ent.IsNotFound(err):
-			return nil, nil
+			return nil, errors.ErrUserNotFound
 		default:
 			return nil, err
 		}

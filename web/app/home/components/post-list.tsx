@@ -27,16 +27,7 @@ export function PostList({ posts }: Props) {
               </div>
             </div>
           ))
-        : posts.map((post, i) => (
-            <Post
-              key={i}
-              name={post.author.name}
-              nickname={post.author.nickname}
-              avatar_image_url={post.author.avatar_image_url}
-              text={post.text ?? ""}
-              created_at={post.created_at}
-            />
-          ))}
+        : posts.map((post, i) => <Post key={i} post={post} />)}
     </div>
   );
 }
