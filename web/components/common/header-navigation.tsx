@@ -3,12 +3,12 @@
 import Link from "next/link";
 import {
   Bell,
+  Blocks,
   Home,
   LoaderPinwheel,
   MessagesSquare,
   Search,
   Settings,
-  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -64,6 +64,13 @@ export default function HeaderNavigation({ children }: Props) {
                 検索
               </Link>
               <Link
+                href="/groups"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Blocks className="h-5 w-5" />
+                グループ
+              </Link>
+              <Link
                 href="/messages"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
               >
@@ -72,13 +79,6 @@ export default function HeaderNavigation({ children }: Props) {
                 <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                   6
                 </Badge>
-              </Link>
-              <Link
-                href="/groups"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Users className="h-5 w-5" />
-                グループ
               </Link>
               <Link
                 href="/settings"
@@ -145,6 +145,20 @@ export default function HeaderNavigation({ children }: Props) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
+                  href="/groups"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
+                >
+                  <Blocks className="h-5 w-5" />
+                  <span className="sr-only">グループ</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">グループ</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
                   href="/messages"
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
                 >
@@ -153,20 +167,6 @@ export default function HeaderNavigation({ children }: Props) {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">メッセージ</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/groups"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
-                >
-                  <Users className="h-5 w-5" />
-                  <span className="sr-only">グループ</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">グループ</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider>

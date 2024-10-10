@@ -1,6 +1,6 @@
 "use client";
 
-import { Images, Pencil, Type } from "lucide-react";
+import { Images, Pencil, Search, SlidersHorizontal, Type } from "lucide-react";
 
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
@@ -31,6 +31,7 @@ import twitterText from "twitter-text";
 import { components } from "@/lib/api/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { CallData, CallList } from "./call-list";
+import Link from "next/link";
 
 export const iframeHeight = "938px";
 
@@ -441,15 +442,23 @@ export default function Timeline() {
   };
 
   return (
-    <div className="max-w-[680px]">
+    <div className="md:max-w-[680px]">
       <Tabs defaultValue="following" onValueChange={onTabChange}>
         <TabsContent className="my-0" value={tabValue}>
           <Card className="flex text-sm w-full rounded-none border-0 mb-16 sm:mb-0 sm:border-r-[1px] md:border-x-[1px] dark:bg-black dark:border-slate-800">
             <CardContent className="w-full p-0">
-              <TabsList className="sticky top-0 z-10 p-0 h-12 rounded-none w-full bg-transparent backdrop-blur border-b">
-                <CustomTabsTrigger value="following" label="フォロー中" />
-                <CustomTabsTrigger value="public" label="オープン" />
-              </TabsList>
+              <div className="sticky top-0 z-10 rounded-none w-full bg-transparent backdrop-blur border-b">
+                <div className="flex justify-between items-end h-12 px-6 pb-1 text-muted-foreground sm:hidden">
+                  <Link href="/search">
+                    <Search className="h-5 w-5" />
+                  </Link>
+                  <SlidersHorizontal className="h-5 w-5 cursor-pointer" />
+                </div>
+                <TabsList className="h-12 rounded-none w-full bg-transparent backdrop-blur">
+                  <CustomTabsTrigger value="following" label="フォロー中" />
+                  <CustomTabsTrigger value="public" label="オープン" />
+                </TabsList>
+              </div>
               <CallList calls={calls} />
               <PostList posts={posts} />
             </CardContent>

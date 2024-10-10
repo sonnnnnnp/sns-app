@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Home, MessagesSquare, Phone, Search, Users } from "lucide-react";
+import { Bell, Blocks, Home, MessagesSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage } from "../ui/avatar";
 
@@ -19,7 +19,7 @@ export default function FooterNavigation() {
         size="icon"
         className="overflow-hidden rounded-full"
       >
-        <Search className="h-6 w-6 text-muted-foreground" />
+        <Blocks className="h-6 w-6 text-muted-foreground" />
       </Button>
       <Button
         variant="ghost"
@@ -27,13 +27,6 @@ export default function FooterNavigation() {
         className="overflow-hidden rounded-full"
       >
         <MessagesSquare className="h-6 w-6 text-muted-foreground" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="overflow-hidden rounded-full"
-      >
-        <Users className="h-6 w-6 text-muted-foreground" />
       </Button>
       <Button
         variant="ghost"
