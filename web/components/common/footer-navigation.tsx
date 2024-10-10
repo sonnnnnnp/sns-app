@@ -12,7 +12,7 @@ export default function FooterNavigation() {
         size="icon"
         className="overflow-hidden rounded-full"
       >
-        <Home className="h-6 w-6 text-muted-foreground" />
+        <Home className="h-6 w-6 text-primary" />
       </Button>
       <Button
         variant="ghost"

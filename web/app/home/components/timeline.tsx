@@ -358,7 +358,7 @@ const CustomTabsTrigger = ({
 }) => {
   return (
     <TabsTrigger
-      className="w-[50%] data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none .data-\[state\=active\]\:shadow-none[data-state=active]"
+      className="w-[50%] data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none .data-\[state\=active\]\:shadow-none[data-state=active]"
       value={value}
     >
       {label}
@@ -456,7 +456,7 @@ export default function Timeline() {
           </Card>
         </TabsContent>
       </Tabs>
-      <div className="fixed bottom-[12%] right-[10%]">
+      <div className="fixed bottom-[14%] right-[10%]">
         <Button
           size="icon"
           className="h-14 w-14 overflow-hidden rounded-full"
@@ -464,7 +464,7 @@ export default function Timeline() {
             setPostDialogOpen(true);
           }}
         >
-          <Pencil className=" h-6 w-6" />
+          <Pencil className="h-6 w-6" strokeWidth={1.5} />
         </Button>
         <Dialog open={postDialogOpen}>
           <DialogContent

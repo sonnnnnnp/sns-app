@@ -35,7 +35,10 @@ export default function HeaderNavigation({ children }: Props) {
       <div className="fixed inset-y-0 z-10 w-64 flex-col hidden lg:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-12 items-center px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
+            <Link
+              href="/"
+              className="flex items-center gap-2 font-semibold text-primary"
+            >
               <LoaderPinwheel className="h-6 w-6" />
               <span className="">sns-app</span>
             </Link>
@@ -48,7 +51,7 @@ export default function HeaderNavigation({ children }: Props) {
             <nav className="grid gap-y-3 items-start mt-3 px-4 text-sm font-medium">
               <Link
                 href="/home"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-primary"
               >
                 <Home className="h-5 w-5" />
                 ホーム
@@ -115,7 +118,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/home"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-primary md:h-8 md:w-8"
                 >
                   <Home className="h-5 w-5" />
                   <span className="sr-only">ホーム</span>
@@ -129,7 +132,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/search"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
                 >
                   <Search className="h-5 w-5" />
                   <span className="sr-only">検索</span>
@@ -143,7 +146,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/messages"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
                 >
                   <MessagesSquare className="h-5 w-5" />
                   <span className="sr-only">メッセージ</span>
@@ -157,7 +160,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/groups"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
                 >
                   <Users className="h-5 w-5" />
                   <span className="sr-only">グループ</span>
@@ -171,7 +174,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/notifications"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
                 >
                   <Bell className="h-5 w-5" />
                   <span className="sr-only">通知</span>
@@ -187,7 +190,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/settings"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
                 >
                   <Settings className="h-5 w-5" />
                   <span className="sr-only">設定</span>
@@ -201,7 +204,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/users/username"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="/users/placeholder-profile.svg" />
