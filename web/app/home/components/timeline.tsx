@@ -442,11 +442,11 @@ export default function Timeline() {
   };
 
   return (
-    <div className="md:max-w-[680px]">
-      <Tabs defaultValue="following" onValueChange={onTabChange}>
-        <TabsContent className="my-0" value={tabValue}>
-          <Card className="flex text-sm w-full rounded-none border-0 mb-16 sm:mb-0 sm:border-r-[1px] md:border-x-[1px] dark:bg-black dark:border-slate-800">
-            <CardContent className="w-full p-0">
+    <div className="w-full">
+      <Card className="flex text-sm w-full rounded-none border-0 mb-16 sm:mb-0 sm:border-x-[1px] dark:bg-black dark:border-slate-800">
+        <CardContent className="w-full p-0">
+          <Tabs defaultValue="following" onValueChange={onTabChange}>
+            <TabsContent className="my-0" value={tabValue}>
               <div className="sticky top-0 z-10 rounded-none w-full bg-transparent backdrop-blur border-b">
                 <div className="flex justify-between items-end h-12 px-6 pb-1 text-muted-foreground sm:hidden">
                   <Link href="/search">
@@ -461,10 +461,10 @@ export default function Timeline() {
               </div>
               <CallList calls={calls} />
               <PostList posts={posts} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
       <div className="fixed bottom-[14%] right-[10%]">
         <Button
           size="icon"

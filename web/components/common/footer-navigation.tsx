@@ -1,12 +1,10 @@
-"use client";
-
 import { Bell, Blocks, Home, MessagesSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage } from "../ui/avatar";
 
 export default function FooterNavigation() {
   return (
-    <div className="fixed bottom-0 z-30 flex h-16 w-full items-center justify-between border-t bg-background px-6 sm:hidden">
+    <aside className="sticky bottom-0 z-30 flex items-center justify-between w-full px-6 h-16 border-t bg-background sm:hidden">
       <Button
         variant="ghost"
         size="icon"
@@ -44,6 +42,6 @@ export default function FooterNavigation() {
           <AvatarImage src="/users/placeholder-profile.svg" />
         </Avatar>
       </Button>
-    </div>
+    </aside>
   );
 }

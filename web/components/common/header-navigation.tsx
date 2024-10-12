@@ -1,6 +1,3 @@
-"use client";
-
-import Link from "next/link";
 import {
   Bell,
   Blocks,
@@ -10,105 +7,84 @@ import {
   Search,
   Settings,
 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import { Badge } from "../ui/badge";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "../ui/tooltip";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import { Badge } from "../ui/badge";
 
-export const iframeHeight = "938px";
-
-export const containerClassName = "w-full h-full";
-
-type Props = {
-  children: React.ReactNode;
-};
-
-export default function HeaderNavigation({ children }: Props) {
+export function HeaderNavigation() {
   return (
-    <div>
-      <div className="fixed inset-y-0 z-10 w-64 flex-col hidden lg:block">
-        <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-12 items-center px-6">
+    <aside>
+      {/* wide navigation */}
+      <div className="sticky inset-y-0 w-64 h-dvh hidden lg:block">
+        <div className="flex h-12 items-center px-6">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-semibold text-primary"
+          >
+            <LoaderPinwheel className="h-6 w-6" />
+            <span className="">sns-app</span>
+          </Link>
+          <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
+            <Bell className="h-4 w-4" />
+            <span className="sr-only">Toggle notifications</span>
+          </Button>
+        </div>
+        <div className="flex-1">
+          <nav className="grid gap-y-3 items-start mt-3 px-4 text-sm font-medium">
             <Link
-              href="/"
-              className="flex items-center gap-2 font-semibold text-primary"
+              href="/home"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-primary"
             >
-              <LoaderPinwheel className="h-6 w-6" />
-              <span className="">sns-app</span>
+              <Home className="h-5 w-5" />
+              ホーム
             </Link>
-            <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-              <Bell className="h-4 w-4" />
-              <span className="sr-only">Toggle notifications</span>
-            </Button>
-          </div>
-          <div className="flex-1">
-            <nav className="grid gap-y-3 items-start mt-3 px-4 text-sm font-medium">
-              <Link
-                href="/home"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-primary"
-              >
-                <Home className="h-5 w-5" />
-                ホーム
-              </Link>
-              <Link
-                href="/search"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Search className="h-5 w-5" />
-                検索
-              </Link>
-              <Link
-                href="/groups"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Blocks className="h-5 w-5" />
-                グループ
-              </Link>
-              <Link
-                href="/messages"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <MessagesSquare className="h-5 w-5" />
-                メッセージ
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  6
-                </Badge>
-              </Link>
-              <Link
-                href="/settings"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Settings className="h-5 w-5" />
-                設定
-              </Link>
-            </nav>
-          </div>
-          {/* <div className="mt-auto p-4">
-            <Card x-chunk="dashboard-02-chunk-0">
-              <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>Ver. 0.10</CardTitle>
-                <CardDescription>アップデート情報</CardDescription>
-              </CardHeader>
-              <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                <Button size="sm" className="w-full">
-                  もっとみる
-                </Button>
-              </CardContent>
-            </Card>
-          </div> */}
+            <Link
+              href="/search"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+            >
+              <Search className="h-5 w-5" />
+              検索
+            </Link>
+            <Link
+              href="/groups"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+            >
+              <Blocks className="h-5 w-5" />
+              グループ
+            </Link>
+            <Link
+              href="/messages"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+            >
+              <MessagesSquare className="h-5 w-5" />
+              メッセージ
+              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                6
+              </Badge>
+            </Link>
+            <Link
+              href="/settings"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+            >
+              <Settings className="h-5 w-5" />
+              設定
+            </Link>
+          </nav>
         </div>
       </div>
-      <aside className="fixed inset-y-0 z-10 hidden w-16 flex-col border-r sm:flex md:border-r-0 lg:hidden">
-        <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+      {/* thin navigation */}
+      <div className="sticky inset-y-0 w-16 h-dvh hidden sm:block lg:hidden">
+        <nav className="flex flex-col items-center gap-4 px-2 py-5">
           <Link
             href="/home"
-            className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+            className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground"
           >
             <LoaderPinwheel className="h-4 w-4 transition-all group-hover:scale-110" />
             <span className="sr-only">sns-app</span>
@@ -118,7 +94,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/home"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-primary md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-primary"
                 >
                   <Home className="h-5 w-5" />
                   <span className="sr-only">ホーム</span>
@@ -132,7 +108,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/search"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
                 >
                   <Search className="h-5 w-5" />
                   <span className="sr-only">検索</span>
@@ -146,7 +122,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/groups"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
                 >
                   <Blocks className="h-5 w-5" />
                   <span className="sr-only">グループ</span>
@@ -160,7 +136,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/messages"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
                 >
                   <MessagesSquare className="h-5 w-5" />
                   <span className="sr-only">メッセージ</span>
@@ -174,7 +150,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/notifications"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
                 >
                   <Bell className="h-5 w-5" />
                   <span className="sr-only">通知</span>
@@ -190,7 +166,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/settings"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
                 >
                   <Settings className="h-5 w-5" />
                   <span className="sr-only">設定</span>
@@ -204,7 +180,7 @@ export default function HeaderNavigation({ children }: Props) {
               <TooltipTrigger asChild>
                 <Link
                   href="/users/username"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="/users/placeholder-profile.svg" />
@@ -216,10 +192,7 @@ export default function HeaderNavigation({ children }: Props) {
             </Tooltip>
           </TooltipProvider>
         </nav>
-      </aside>
-      <div className="flex flex-col sm:gap-4 sm:pl-16 lg:pl-64">
-        <main>{children}</main>
       </div>
-    </div>
+    </aside>
   );
 }
