@@ -239,14 +239,14 @@ func (uu *UserUpdate) AddFollowing(u ...*User) *UserUpdate {
 }
 
 // AddFavoriteIDs adds the "favorites" edge to the Favorite entity by IDs.
-func (uu *UserUpdate) AddFavoriteIDs(ids ...uuid.UUID) *UserUpdate {
+func (uu *UserUpdate) AddFavoriteIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddFavoriteIDs(ids...)
 	return uu
 }
 
 // AddFavorites adds the "favorites" edges to the Favorite entity.
 func (uu *UserUpdate) AddFavorites(f ...*Favorite) *UserUpdate {
-	ids := make([]uuid.UUID, len(f))
+	ids := make([]int, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -328,14 +328,14 @@ func (uu *UserUpdate) ClearFavorites() *UserUpdate {
 }
 
 // RemoveFavoriteIDs removes the "favorites" edge to Favorite entities by IDs.
-func (uu *UserUpdate) RemoveFavoriteIDs(ids ...uuid.UUID) *UserUpdate {
+func (uu *UserUpdate) RemoveFavoriteIDs(ids ...int) *UserUpdate {
 	uu.mutation.RemoveFavoriteIDs(ids...)
 	return uu
 }
 
 // RemoveFavorites removes "favorites" edges to Favorite entities.
 func (uu *UserUpdate) RemoveFavorites(f ...*Favorite) *UserUpdate {
-	ids := make([]uuid.UUID, len(f))
+	ids := make([]int, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -579,7 +579,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.FavoritesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -592,7 +592,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.FavoritesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -608,7 +608,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.FavoritesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -844,14 +844,14 @@ func (uuo *UserUpdateOne) AddFollowing(u ...*User) *UserUpdateOne {
 }
 
 // AddFavoriteIDs adds the "favorites" edge to the Favorite entity by IDs.
-func (uuo *UserUpdateOne) AddFavoriteIDs(ids ...uuid.UUID) *UserUpdateOne {
+func (uuo *UserUpdateOne) AddFavoriteIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.AddFavoriteIDs(ids...)
 	return uuo
 }
 
 // AddFavorites adds the "favorites" edges to the Favorite entity.
 func (uuo *UserUpdateOne) AddFavorites(f ...*Favorite) *UserUpdateOne {
-	ids := make([]uuid.UUID, len(f))
+	ids := make([]int, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -933,14 +933,14 @@ func (uuo *UserUpdateOne) ClearFavorites() *UserUpdateOne {
 }
 
 // RemoveFavoriteIDs removes the "favorites" edge to Favorite entities by IDs.
-func (uuo *UserUpdateOne) RemoveFavoriteIDs(ids ...uuid.UUID) *UserUpdateOne {
+func (uuo *UserUpdateOne) RemoveFavoriteIDs(ids ...int) *UserUpdateOne {
 	uuo.mutation.RemoveFavoriteIDs(ids...)
 	return uuo
 }
 
 // RemoveFavorites removes "favorites" edges to Favorite entities.
 func (uuo *UserUpdateOne) RemoveFavorites(f ...*Favorite) *UserUpdateOne {
-	ids := make([]uuid.UUID, len(f))
+	ids := make([]int, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -1214,7 +1214,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.FavoritesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeInt),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1227,7 +1227,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.FavoritesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {
@@ -1243,7 +1243,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.FavoritesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

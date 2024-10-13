@@ -82,21 +82,25 @@ paths:
                   - data
           headers: {}
       security: []
-  /posts/{post_id}/favorites/create:
+  /posts/favorites/create:
     post:
       summary: 投稿にいいねする
       deprecated: false
       description: ""
       operationId: favoritePost
       tags: []
-      parameters:
-        - name: post_id
-          in: path
-          description: ""
-          required: true
-          schema:
-            type: string
-            format: uuid
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                post_id:
+                  type: string
+                  format: uuid
+              required:
+                - post_id
       responses:
         "200":
           description: ""
@@ -109,21 +113,25 @@ paths:
           headers: {}
       security:
         - bearer: []
-  /posts/{post_id}/favorites/delete:
+  /posts/favorites/delete:
     post:
       summary: 投稿のいいねを解除する
       deprecated: false
       description: ""
       operationId: unfavoritePost
       tags: []
-      parameters:
-        - name: post_id
-          in: path
-          description: ""
-          required: true
-          schema:
-            type: string
-            format: uuid
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                post_id:
+                  type: string
+                  format: uuid
+              required:
+                - post_id
       responses:
         "200":
           description: ""

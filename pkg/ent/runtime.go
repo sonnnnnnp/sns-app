@@ -19,13 +19,9 @@ func init() {
 	favoriteFields := schema.Favorite{}.Fields()
 	_ = favoriteFields
 	// favoriteDescCreatedAt is the schema descriptor for created_at field.
-	favoriteDescCreatedAt := favoriteFields[3].Descriptor()
+	favoriteDescCreatedAt := favoriteFields[2].Descriptor()
 	// favorite.DefaultCreatedAt holds the default value on creation for the created_at field.
 	favorite.DefaultCreatedAt = favoriteDescCreatedAt.Default.(func() time.Time)
-	// favoriteDescID is the schema descriptor for id field.
-	favoriteDescID := favoriteFields[0].Descriptor()
-	// favorite.DefaultID holds the default value on creation for the id field.
-	favorite.DefaultID = favoriteDescID.Default.(func() uuid.UUID)
 	postFields := schema.Post{}.Fields()
 	_ = postFields
 	// postDescCreatedAt is the schema descriptor for created_at field.

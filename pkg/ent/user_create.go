@@ -201,14 +201,14 @@ func (uc *UserCreate) AddFollowing(u ...*User) *UserCreate {
 }
 
 // AddFavoriteIDs adds the "favorites" edge to the Favorite entity by IDs.
-func (uc *UserCreate) AddFavoriteIDs(ids ...uuid.UUID) *UserCreate {
+func (uc *UserCreate) AddFavoriteIDs(ids ...int) *UserCreate {
 	uc.mutation.AddFavoriteIDs(ids...)
 	return uc
 }
 
 // AddFavorites adds the "favorites" edges to the Favorite entity.
 func (uc *UserCreate) AddFavorites(f ...*Favorite) *UserCreate {
-	ids := make([]uuid.UUID, len(f))
+	ids := make([]int, len(f))
 	for i := range f {
 		ids[i] = f[i].ID
 	}
@@ -407,7 +407,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.FavoritesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

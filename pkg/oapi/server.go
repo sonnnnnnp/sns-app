@@ -110,6 +110,16 @@ type CreatePostJSONBody struct {
 	Content *string `json:"content,omitempty"`
 }
 
+// FavoritePostJSONBody defines parameters for FavoritePost.
+type FavoritePostJSONBody struct {
+	PostId openapi_types.UUID `json:"post_id"`
+}
+
+// UnfavoritePostJSONBody defines parameters for UnfavoritePost.
+type UnfavoritePostJSONBody struct {
+	PostId openapi_types.UUID `json:"post_id"`
+}
+
 // GetTimelineParams defines parameters for GetTimeline.
 type GetTimelineParams struct {
 	// Cursor 次のページを取得するためのキー
@@ -164,6 +174,12 @@ type RefreshAuthorizationJSONRequestBody RefreshAuthorizationJSONBody
 
 // CreatePostJSONRequestBody defines body for CreatePost for application/json ContentType.
 type CreatePostJSONRequestBody CreatePostJSONBody
+
+// FavoritePostJSONRequestBody defines body for FavoritePost for application/json ContentType.
+type FavoritePostJSONRequestBody FavoritePostJSONBody
+
+// UnfavoritePostJSONRequestBody defines body for UnfavoritePost for application/json ContentType.
+type UnfavoritePostJSONRequestBody UnfavoritePostJSONBody
 
 // RemoveUserFromFollowersJSONRequestBody defines body for RemoveUserFromFollowers for application/json ContentType.
 type RemoveUserFromFollowersJSONRequestBody RemoveUserFromFollowersJSONBody
@@ -263,11 +279,15 @@ type ClientInterface interface {
 
 	CreatePost(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// FavoritePost request
-	FavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// FavoritePostWithBody request with any body
+	FavoritePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UnfavoritePost request
-	UnfavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+	FavoritePost(ctx context.Context, body FavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UnfavoritePostWithBody request with any body
+	UnfavoritePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTimeline request
 	GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -365,8 +385,8 @@ func (c *Client) CreatePost(ctx context.Context, body CreatePostJSONRequestBody,
 	return c.Client.Do(req)
 }
 
-func (c *Client) FavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewFavoritePostRequest(c.Server, postId)
+func (c *Client) FavoritePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFavoritePostRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -377,8 +397,32 @@ func (c *Client) FavoritePost(ctx context.Context, postId openapi_types.UUID, re
 	return c.Client.Do(req)
 }
 
-func (c *Client) UnfavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUnfavoritePostRequest(c.Server, postId)
+func (c *Client) FavoritePost(ctx context.Context, body FavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFavoritePostRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnfavoritePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnfavoritePostRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnfavoritePostRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -670,23 +714,27 @@ func NewCreatePostRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
-// NewFavoritePostRequest generates requests for FavoritePost
-func NewFavoritePostRequest(server string, postId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "post_id", runtime.ParamLocationPath, postId)
+// NewFavoritePostRequest calls the generic FavoritePost builder with application/json body
+func NewFavoritePostRequest(server string, body FavoritePostJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
+	bodyReader = bytes.NewReader(buf)
+	return NewFavoritePostRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewFavoritePostRequestWithBody generates requests for FavoritePost with any type of body
+func NewFavoritePostRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/posts/%s/favorites/create", pathParam0)
+	operationPath := fmt.Sprintf("/posts/favorites/create")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -696,31 +744,37 @@ func NewFavoritePostRequest(server string, postId openapi_types.UUID) (*http.Req
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
 
-// NewUnfavoritePostRequest generates requests for UnfavoritePost
-func NewUnfavoritePostRequest(server string, postId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "post_id", runtime.ParamLocationPath, postId)
+// NewUnfavoritePostRequest calls the generic UnfavoritePost builder with application/json body
+func NewUnfavoritePostRequest(server string, body UnfavoritePostJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUnfavoritePostRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewUnfavoritePostRequestWithBody generates requests for UnfavoritePost with any type of body
+func NewUnfavoritePostRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/posts/%s/favorites/delete", pathParam0)
+	operationPath := fmt.Sprintf("/posts/favorites/delete")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -730,10 +784,12 @@ func NewUnfavoritePostRequest(server string, postId openapi_types.UUID) (*http.R
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -1213,11 +1269,15 @@ type ClientWithResponsesInterface interface {
 
 	CreatePostWithResponse(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
 
-	// FavoritePostWithResponse request
-	FavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error)
+	// FavoritePostWithBodyWithResponse request with any body
+	FavoritePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error)
 
-	// UnfavoritePostWithResponse request
-	UnfavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
+	FavoritePostWithResponse(ctx context.Context, body FavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error)
+
+	// UnfavoritePostWithBodyWithResponse request with any body
+	UnfavoritePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
+
+	UnfavoritePostWithResponse(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
 
 	// GetTimelineWithResponse request
 	GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
@@ -1690,18 +1750,34 @@ func (c *ClientWithResponses) CreatePostWithResponse(ctx context.Context, body C
 	return ParseCreatePostResponse(rsp)
 }
 
-// FavoritePostWithResponse request returning *FavoritePostResponse
-func (c *ClientWithResponses) FavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error) {
-	rsp, err := c.FavoritePost(ctx, postId, reqEditors...)
+// FavoritePostWithBodyWithResponse request with arbitrary body returning *FavoritePostResponse
+func (c *ClientWithResponses) FavoritePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error) {
+	rsp, err := c.FavoritePostWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
 	return ParseFavoritePostResponse(rsp)
 }
 
-// UnfavoritePostWithResponse request returning *UnfavoritePostResponse
-func (c *ClientWithResponses) UnfavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error) {
-	rsp, err := c.UnfavoritePost(ctx, postId, reqEditors...)
+func (c *ClientWithResponses) FavoritePostWithResponse(ctx context.Context, body FavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error) {
+	rsp, err := c.FavoritePost(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFavoritePostResponse(rsp)
+}
+
+// UnfavoritePostWithBodyWithResponse request with arbitrary body returning *UnfavoritePostResponse
+func (c *ClientWithResponses) UnfavoritePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error) {
+	rsp, err := c.UnfavoritePostWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUnfavoritePostResponse(rsp)
+}
+
+func (c *ClientWithResponses) UnfavoritePostWithResponse(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error) {
+	rsp, err := c.UnfavoritePost(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -2281,11 +2357,11 @@ type ServerInterface interface {
 	// (POST /posts/create)
 	CreatePost(ctx echo.Context) error
 	// 投稿にいいねする
-	// (POST /posts/{post_id}/favorites/create)
-	FavoritePost(ctx echo.Context, postId openapi_types.UUID) error
+	// (POST /posts/favorites/create)
+	FavoritePost(ctx echo.Context) error
 	// 投稿のいいねを解除する
-	// (POST /posts/{post_id}/favorites/delete)
-	UnfavoritePost(ctx echo.Context, postId openapi_types.UUID) error
+	// (POST /posts/favorites/delete)
+	UnfavoritePost(ctx echo.Context) error
 	// タイムラインを取得する
 	// (GET /timeline)
 	GetTimeline(ctx echo.Context, params GetTimelineParams) error
@@ -2363,36 +2439,22 @@ func (w *ServerInterfaceWrapper) CreatePost(ctx echo.Context) error {
 // FavoritePost converts echo context to params.
 func (w *ServerInterfaceWrapper) FavoritePost(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "post_id" -------------
-	var postId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "post_id", ctx.Param("post_id"), &postId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter post_id: %s", err))
-	}
 
 	ctx.Set(BearerScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.FavoritePost(ctx, postId)
+	err = w.Handler.FavoritePost(ctx)
 	return err
 }
 
 // UnfavoritePost converts echo context to params.
 func (w *ServerInterfaceWrapper) UnfavoritePost(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "post_id" -------------
-	var postId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "post_id", ctx.Param("post_id"), &postId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter post_id: %s", err))
-	}
 
 	ctx.Set(BearerScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.UnfavoritePost(ctx, postId)
+	err = w.Handler.UnfavoritePost(ctx)
 	return err
 }
 
@@ -2583,8 +2645,8 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/authorize/line", wrapper.AuthorizeWithLine)
 	router.POST(baseURL+"/authorize/refresh", wrapper.RefreshAuthorization)
 	router.POST(baseURL+"/posts/create", wrapper.CreatePost)
-	router.POST(baseURL+"/posts/:post_id/favorites/create", wrapper.FavoritePost)
-	router.POST(baseURL+"/posts/:post_id/favorites/delete", wrapper.UnfavoritePost)
+	router.POST(baseURL+"/posts/favorites/create", wrapper.FavoritePost)
+	router.POST(baseURL+"/posts/favorites/delete", wrapper.UnfavoritePost)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
 	router.GET(baseURL+"/users", wrapper.GetUserByName)
 	router.GET(baseURL+"/users/followers", wrapper.GetUserFollowers)
@@ -2600,30 +2662,30 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

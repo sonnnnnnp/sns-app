@@ -38,7 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/posts/{post_id}/favorites/create": {
+    "/posts/favorites/create": {
         parameters: {
             query?: never;
             header?: never;
@@ -55,7 +55,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/posts/{post_id}/favorites/delete": {
+    "/posts/favorites/delete": {
         parameters: {
             query?: never;
             header?: never;
@@ -384,12 +384,17 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                post_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    post_id: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -405,12 +410,17 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                post_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    post_id: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {

@@ -454,7 +454,7 @@ export function Timeline() {
                   </Link>
                   <SlidersHorizontal className="h-5 w-5 cursor-pointer" />
                 </div>
-                <TabsList className="h-12 rounded-none w-full bg-transparent backdrop-blur">
+                <TabsList className="h-14 rounded-none w-full bg-transparent backdrop-blur">
                   <CustomTabsTrigger value="following" label="フォロー中" />
                   <CustomTabsTrigger value="public" label="オープン" />
                 </TabsList>

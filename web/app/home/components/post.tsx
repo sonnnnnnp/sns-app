@@ -21,20 +21,16 @@ export function Post({ post }: Props) {
 
   const handleFavorite = async () => {
     if (isFavorited) {
-      await client.DELETE("/posts/{post_id}/favorite", {
-        params: {
-          path: {
-            post_id: post.id,
-          },
+      await client.POST("/posts/favorites/delete", {
+        body: {
+          post_id: post.id,
         },
       });
       setFavoritesCount((prevCount) => prevCount - 1);
     } else {
-      await client.POST("/posts/{post_id}/favorite", {
-        params: {
-          path: {
-            post_id: post.id,
-          },
+      await client.POST("/posts/favorites/create", {
+        body: {
+          post_id: post.id,
         },
       });
       setFavoritesCount((prevCount) => prevCount + 1);

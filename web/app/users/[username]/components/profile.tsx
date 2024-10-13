@@ -36,8 +36,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ConfirmActionDialog } from "@/components/dialog/confirm-action-dialog";
+import { useRouter } from "next/navigation";
 
 export function Profile() {
+  const router = useRouter();
   const pathParams = useParams<{ username: string }>();
 
   const [user, setUser] = useState<components["schemas"]["User"] | null>(null);
@@ -115,11 +117,13 @@ export function Profile() {
       <MainCard>
         <div className="flex flex-col w-full">
           <div className="sticky top-0 z-10 rounded-none w-full bg-transparent backdrop-blur border-b">
-            <div className="flex justify-between items-end py-4 px-6 text-muted-foreground">
-              <Link href="#">
+            <div className="flex justify-between items-center h-14 px-2 text-muted-foreground">
+              <Button variant="ghost" onClick={() => router.back()}>
                 <ChevronLeftIcon className="h-5 w-5" />
-              </Link>
-              <SlidersHorizontal className="h-5 w-5 cursor-pointer" />
+              </Button>
+              <Button variant="ghost">
+                <SlidersHorizontal className="h-5 w-5" />
+              </Button>
             </div>
           </div>
           <div className="flex flex-col space-y-4 w-full p-4">
