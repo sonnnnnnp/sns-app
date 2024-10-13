@@ -554,6 +554,26 @@ paths:
           headers: {}
       security:
         - bearer: []
+  /stream:
+    get:
+      summary: WebSocket ストリーム
+      deprecated: false
+      description: >-
+        Note: This endpoint is designated for WebSocket gateway usage and cannot
+        be used as a REST API.
+      operationId: stream
+      tags: []
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+          headers: {}
+      security: []
 components:
   schemas:
     User:

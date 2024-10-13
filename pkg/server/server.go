@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 
@@ -45,6 +46,12 @@ func Run(cfg *config.Config) {
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 	}
 
+	upgrader := &websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+
 	jwtExcludePaths := []string{
 		"/authorize/line",
 		"/authorize/refresh",
@@ -58,6 +65,7 @@ func Run(cfg *config.Config) {
 	e.Use(echomiddleware.Logger())
 	e.Use(echomiddleware.CORSWithConfig(middlewarecfg))
 	e.Use(middleware.ConfigMiddleware(cfg))
+	e.Use(middleware.UpgraderMiddleware(upgrader))
 	e.Use(middleware.JWTMiddleware(jwtExcludePaths))
 	e.Use(middleware.RequestValidatorMiddleware(swagger))
 

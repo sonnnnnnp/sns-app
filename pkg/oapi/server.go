@@ -289,6 +289,9 @@ type ClientInterface interface {
 
 	UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// Stream request
+	Stream(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetTimeline request
 	GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -423,6 +426,18 @@ func (c *Client) UnfavoritePostWithBody(ctx context.Context, contentType string,
 
 func (c *Client) UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUnfavoritePostRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) Stream(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewStreamRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -790,6 +805,33 @@ func NewUnfavoritePostRequestWithBody(server string, contentType string, body io
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewStreamRequest generates requests for Stream
+func NewStreamRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/stream")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -1279,6 +1321,9 @@ type ClientWithResponsesInterface interface {
 
 	UnfavoritePostWithResponse(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
 
+	// StreamWithResponse request
+	StreamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*StreamResponse, error)
+
 	// GetTimelineWithResponse request
 	GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
 
@@ -1440,6 +1485,28 @@ func (r UnfavoritePostResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UnfavoritePostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type StreamResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *map[string]interface{}
+}
+
+// Status returns HTTPResponse.Status
+func (r StreamResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r StreamResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1784,6 +1851,15 @@ func (c *ClientWithResponses) UnfavoritePostWithResponse(ctx context.Context, bo
 	return ParseUnfavoritePostResponse(rsp)
 }
 
+// StreamWithResponse request returning *StreamResponse
+func (c *ClientWithResponses) StreamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*StreamResponse, error) {
+	rsp, err := c.Stream(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseStreamResponse(rsp)
+}
+
 // GetTimelineWithResponse request returning *GetTimelineResponse
 func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error) {
 	rsp, err := c.GetTimeline(ctx, params, reqEditors...)
@@ -2038,6 +2114,32 @@ func ParseUnfavoritePostResponse(rsp *http.Response) (*UnfavoritePostResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Response
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseStreamResponse parses an HTTP response from a StreamWithResponse call
+func ParseStreamResponse(rsp *http.Response) (*StreamResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &StreamResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2362,6 +2464,9 @@ type ServerInterface interface {
 	// 投稿のいいねを解除する
 	// (POST /posts/favorites/delete)
 	UnfavoritePost(ctx echo.Context) error
+	// WebSocket ストリーム
+	// (GET /stream)
+	Stream(ctx echo.Context) error
 	// タイムラインを取得する
 	// (GET /timeline)
 	GetTimeline(ctx echo.Context, params GetTimelineParams) error
@@ -2455,6 +2560,15 @@ func (w *ServerInterfaceWrapper) UnfavoritePost(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.UnfavoritePost(ctx)
+	return err
+}
+
+// Stream converts echo context to params.
+func (w *ServerInterfaceWrapper) Stream(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.Stream(ctx)
 	return err
 }
 
@@ -2647,6 +2761,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/posts/create", wrapper.CreatePost)
 	router.POST(baseURL+"/posts/favorites/create", wrapper.FavoritePost)
 	router.POST(baseURL+"/posts/favorites/delete", wrapper.UnfavoritePost)
+	router.GET(baseURL+"/stream", wrapper.Stream)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
 	router.GET(baseURL+"/users", wrapper.GetUserByName)
 	router.GET(baseURL+"/users/followers", wrapper.GetUserFollowers)
@@ -2662,30 +2777,32 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
