@@ -1,5 +1,4 @@
-import { HeaderNavigation } from "@/components/common/header-navigation";
-import { Widget } from "@/components/common/widget";
+import { Navigation } from "@/components/common/navigation";
 
 export default function Layout({
   children,
@@ -8,9 +7,8 @@ export default function Layout({
 }>) {
   return (
     <div className="flex justify-center min-h-dvh bg-muted">
-      <HeaderNavigation />
+      <Navigation />
       {children}
-      <Widget />
     </div>
   );
 }

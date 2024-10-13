@@ -367,7 +367,7 @@ const CustomTabsTrigger = ({
   );
 };
 
-export default function Timeline() {
+export function Timeline() {
   const [tabValue, setTabValue] = useState("following");
   const [postDialogOpen, setPostDialogOpen] = useState(false);
   const [postContentValid, setPostContentValid] = useState(false);

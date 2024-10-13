@@ -24,7 +24,7 @@ export function CallList({ calls }: Props) {
     <div>
       <ScrollArea className="p-4 pb-5 border-b ">
         {calls.length > 0 ? (
-          <div className="flex w-0 space-x-2">
+          <div className="flex w-0 space-x-4">
             {calls.map((call, i) => (
               <Call key={i} call={call} />
             ))}

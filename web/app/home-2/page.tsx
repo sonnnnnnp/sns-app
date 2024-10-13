@@ -1,4 +1,4 @@
-import Navigation from "@/components/common/Navigation";
+import Navigation from "@/components/common/tmp-navigation";
 import { Timeline } from "./components/timeline";
 
 const Page = () => {
