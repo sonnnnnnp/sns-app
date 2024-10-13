@@ -82,13 +82,25 @@ export function Profile() {
   }, [pathParams.username]);
 
   const onFollowActionConfirm = async () => {
+    if (!user) {
+      return;
+    }
+
     if (isFollowing) {
-      const { data } = await client.POST("/users/following/delete");
+      const { data } = await client.POST("/users/following/delete", {
+        body: {
+          user_id: user.id,
+        },
+      });
       if (!data?.ok) {
         return;
       }
     } else {
-      const { data } = await client.POST("/users/following/create");
+      const { data } = await client.POST("/users/following/create", {
+        body: {
+          user_id: user.id,
+        },
+      });
       if (!data?.ok) {
         return;
       }
