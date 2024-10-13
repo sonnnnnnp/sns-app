@@ -26,6 +26,7 @@ import {
   InfoIcon,
   Loader2,
   MailIcon,
+  MinusIcon,
   PlusIcon,
   RefreshCwOffIcon,
   Share2Icon,
@@ -34,17 +35,22 @@ import {
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ConfirmActionDialog } from "@/components/dialog/confirm-action-dialog";
 
 export function Profile() {
   const pathParams = useParams<{ username: string }>();
+
   const [user, setUser] = useState<components["schemas"]["User"] | null>(null);
   const [posts, setPosts] = useState<components["schemas"]["Post"][]>([]);
 
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [actionDialogOpen, setActionDialogOpen] = useState(false);
+
   useEffect(() => {
     const fetchProfile = async () => {
-      const user = await client.GET("/users/{name}", {
+      const user = await client.GET("/users", {
         params: {
-          path: {
+          query: {
             name: pathParams.username,
           },
         },
@@ -55,6 +61,7 @@ export function Profile() {
       }
 
       setUser(user.data.data);
+      setIsFollowing(user.data.data.social_context?.following ?? false);
 
       const timeline = await client.GET("/timeline", {
         params: {
@@ -73,6 +80,23 @@ export function Profile() {
 
     fetchProfile();
   }, [pathParams.username]);
+
+  const onFollowActionConfirm = async () => {
+    if (isFollowing) {
+      const { data } = await client.POST("/users/following/delete");
+      if (!data?.ok) {
+        return;
+      }
+    } else {
+      const { data } = await client.POST("/users/following/create");
+      if (!data?.ok) {
+        return;
+      }
+    }
+
+    setIsFollowing(!isFollowing);
+    setActionDialogOpen(false);
+  };
 
   return (
     <div>
@@ -98,9 +122,40 @@ export function Profile() {
                 />
                 <div className="absolute top-4 right-4">
                   <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
-                    <Button variant="secondary" className="px-3 shadow-none">
-                      <PlusIcon className="mr-2 h-4 w-4" />
-                      フォロー
+                    <ConfirmActionDialog
+                      open={actionDialogOpen}
+                      message={
+                        isFollowing
+                          ? "このユーザーのフォローを解除しますか？"
+                          : "このユーザーをフォローしますか？"
+                      }
+                      onConfirm={onFollowActionConfirm}
+                      onCancel={() => setActionDialogOpen(false)}
+                    />
+                    <Button
+                      variant="secondary"
+                      className="px-3 shadow-none"
+                      onClick={() => setActionDialogOpen(true)}
+                    >
+                      {isFollowing ? (
+                        <span className="flex items-center">
+                          {actionDialogOpen ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <MinusIcon className="mr-2 h-4 w-4" />
+                          )}
+                          フォロー解除
+                        </span>
+                      ) : (
+                        <span className="flex items-center">
+                          {actionDialogOpen ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <PlusIcon className="mr-2 h-4 w-4" />
+                          )}
+                          フォロー
+                        </span>
+                      )}
                     </Button>
                     <Separator orientation="vertical" className="h-[20px]" />
                     <DropdownMenu>
