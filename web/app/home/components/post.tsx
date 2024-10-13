@@ -44,7 +44,7 @@ export function Post({ post }: Props) {
   };
 
   return (
-    <div className="flex border-b pl-4 pr-3 py-1.5">
+    <div className="flex pl-4 pr-3 py-1.5">
       <div className="mt-2 mr-2">
         <Link href={`/users/${post.author.name}`}>
           <Avatar>

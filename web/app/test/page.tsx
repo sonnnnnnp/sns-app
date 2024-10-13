@@ -1,7 +1,7 @@
 export function Page() {
   return (
     <div className="flex justify-center min-h-dvh">
-      <nav className="flex flex-col">
+      <nav>
         <div className="sticky inset-y-0 w-64 h-dvh bg-emerald-700 hidden lg:block">
           navigation
         </div>
