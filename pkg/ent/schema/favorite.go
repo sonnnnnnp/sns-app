@@ -17,7 +17,7 @@ type Favorite struct {
 
 // Fields of the Favorite.
 func (Favorite) Fields() []ent.Field {
-	return []ent.Field{field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
+	return []ent.Field{
 		field.UUID("user_id", uuid.UUID{}),
 		field.UUID("post_id", uuid.UUID{}),
 		field.Time("created_at").Default(func() time.Time {

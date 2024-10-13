@@ -49,20 +49,6 @@ func (fc *FavoriteCreate) SetNillableCreatedAt(t *time.Time) *FavoriteCreate {
 	return fc
 }
 
-// SetID sets the "id" field.
-func (fc *FavoriteCreate) SetID(u uuid.UUID) *FavoriteCreate {
-	fc.mutation.SetID(u)
-	return fc
-}
-
-// SetNillableID sets the "id" field if the given value is not nil.
-func (fc *FavoriteCreate) SetNillableID(u *uuid.UUID) *FavoriteCreate {
-	if u != nil {
-		fc.SetID(*u)
-	}
-	return fc
-}
-
 // SetUser sets the "user" edge to the User entity.
 func (fc *FavoriteCreate) SetUser(u *User) *FavoriteCreate {
 	return fc.SetUserID(u.ID)
@@ -112,10 +98,6 @@ func (fc *FavoriteCreate) defaults() {
 		v := favorite.DefaultCreatedAt()
 		fc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := fc.mutation.ID(); !ok {
-		v := favorite.DefaultID()
-		fc.mutation.SetID(v)
-	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -149,13 +131,8 @@ func (fc *FavoriteCreate) sqlSave(ctx context.Context) (*Favorite, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
-		}
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	fc.mutation.id = &_node.ID
 	fc.mutation.done = true
 	return _node, nil
@@ -164,12 +141,8 @@ func (fc *FavoriteCreate) sqlSave(ctx context.Context) (*Favorite, error) {
 func (fc *FavoriteCreate) createSpec() (*Favorite, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Favorite{config: fc.config}
-		_spec = sqlgraph.NewCreateSpec(favorite.Table, sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(favorite.Table, sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeInt))
 	)
-	if id, ok := fc.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = &id
-	}
 	if value, ok := fc.mutation.CreatedAt(); ok {
 		_spec.SetField(favorite.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -256,6 +229,10 @@ func (fcb *FavoriteCreateBulk) Save(ctx context.Context) ([]*Favorite, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
+				if specs[i].ID.Value != nil {
+					id := specs[i].ID.Value.(int64)
+					nodes[i].ID = int(id)
+				}
 				mutation.done = true
 				return nodes[i], nil
 			})

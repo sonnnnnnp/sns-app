@@ -9,7 +9,7 @@ import (
 )
 
 type IUserRepository interface {
-	CreateUser(ctx context.Context) (*ent.User, error)
+	CreateUser(ctx context.Context, lineID *string) (*ent.User, error)
 	FollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
 	GetSocialContext(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialContext, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error)

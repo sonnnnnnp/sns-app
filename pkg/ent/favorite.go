@@ -19,7 +19,7 @@ import (
 type Favorite struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// UserID holds the value of the "user_id" field.
 	UserID uuid.UUID `json:"user_id,omitempty"`
 	// PostID holds the value of the "post_id" field.
@@ -70,9 +70,11 @@ func (*Favorite) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case favorite.FieldID:
+			values[i] = new(sql.NullInt64)
 		case favorite.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case favorite.FieldID, favorite.FieldUserID, favorite.FieldPostID:
+		case favorite.FieldUserID, favorite.FieldPostID:
 			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -90,11 +92,11 @@ func (f *Favorite) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case favorite.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				f.ID = *value
+			value, ok := values[i].(*sql.NullInt64)
+			if !ok {
+				return fmt.Errorf("unexpected type %T for field id", value)
 			}
+			f.ID = int(value.Int64)
 		case favorite.FieldUserID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])

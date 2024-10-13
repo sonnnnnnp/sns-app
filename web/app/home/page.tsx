@@ -1,10 +1,14 @@
 import Layout from "@/layouts/layout";
-import Timeline from "./components/timeline";
+import { Widget } from "@/components/common/widget";
+import { Timeline } from "./components/timeline";
 
 const HomePage = () => {
   return (
     <Layout>
-      <Timeline />
+      <main className="flex-grow max-w-[750px]">
+        <Timeline />
+      </main>
+      <Widget />
     </Layout>
   );
 };

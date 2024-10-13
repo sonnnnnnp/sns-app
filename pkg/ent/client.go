@@ -279,7 +279,7 @@ func (c *FavoriteClient) UpdateOne(f *Favorite) *FavoriteUpdateOne {
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *FavoriteClient) UpdateOneID(id uuid.UUID) *FavoriteUpdateOne {
+func (c *FavoriteClient) UpdateOneID(id int) *FavoriteUpdateOne {
 	mutation := newFavoriteMutation(c.config, OpUpdateOne, withFavoriteID(id))
 	return &FavoriteUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -296,7 +296,7 @@ func (c *FavoriteClient) DeleteOne(f *Favorite) *FavoriteDeleteOne {
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *FavoriteClient) DeleteOneID(id uuid.UUID) *FavoriteDeleteOne {
+func (c *FavoriteClient) DeleteOneID(id int) *FavoriteDeleteOne {
 	builder := c.Delete().Where(favorite.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -313,12 +313,12 @@ func (c *FavoriteClient) Query() *FavoriteQuery {
 }
 
 // Get returns a Favorite entity by its id.
-func (c *FavoriteClient) Get(ctx context.Context, id uuid.UUID) (*Favorite, error) {
+func (c *FavoriteClient) Get(ctx context.Context, id int) (*Favorite, error) {
 	return c.Query().Where(favorite.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *FavoriteClient) GetX(ctx context.Context, id uuid.UUID) *Favorite {
+func (c *FavoriteClient) GetX(ctx context.Context, id int) *Favorite {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)

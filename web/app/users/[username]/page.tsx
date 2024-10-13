@@ -1,10 +1,16 @@
-const Page = ({ params }: { params: { username: string } }) => {
+import Layout from "@/layouts/layout";
+import { Widget } from "@/components/common/widget";
+import { Profile } from "./components/profile";
+
+const ProfilePage = () => {
   return (
-    <div>
-      <h1>{params.username}</h1>
-      <h2>{JSON.stringify(params)}</h2>
-    </div>
+    <Layout>
+      <main className="flex-grow max-w-[750px]">
+        <Profile />
+      </main>
+      <Widget />
+    </Layout>
   );
 };
 
-export default Page;
+export default ProfilePage;

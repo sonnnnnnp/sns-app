@@ -19,10 +19,12 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <head></head>
-      <body className={`${inter.className} dark:bg-black dark:text-white`}>
+      <body
+        className={`${inter.className} overflow-y-scroll dark:bg-black dark:text-white`}
+      >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

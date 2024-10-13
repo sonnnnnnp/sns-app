@@ -11,11 +11,11 @@ import (
 	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
 )
 
-func (au *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineUserID string) (u *ent.User, isNew bool, err error) {
-	u, err = au.userRepo.GetUserByLineID(ctx, lineUserID)
+func (au *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) (u *ent.User, isNew bool, err error) {
+	u, err = au.userRepo.GetUserByLineID(ctx, lineID)
 	if err != nil {
 		if errors.Is(err, internal_errors.ErrUserNotFound) {
-			u, err = au.userRepo.CreateUser(ctx)
+			u, err = au.userRepo.CreateUser(ctx, &lineID)
 			if err != nil {
 				return nil, false, err
 			}

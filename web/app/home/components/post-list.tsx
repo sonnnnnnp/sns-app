@@ -1,6 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Post } from "./post";
 import { components } from "@/lib/api/client";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
   posts: components["schemas"]["Timeline"]["posts"];
@@ -27,7 +28,12 @@ export function PostList({ posts }: Props) {
               </div>
             </div>
           ))
-        : posts.map((post, i) => <Post key={i} post={post} />)}
+        : posts.map((post, i) => (
+            <div key={i}>
+              <Post post={post} />
+              {i < posts.length - 1 && <Separator />}
+            </div>
+          ))}
     </div>
   );
 }

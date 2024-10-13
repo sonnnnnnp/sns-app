@@ -38,7 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/posts/{post_id}/favorite": {
+    "/posts/favorites/create": {
         parameters: {
             query?: never;
             header?: never;
@@ -49,8 +49,24 @@ export interface paths {
         put?: never;
         /** 投稿にいいねする */
         post: operations["favoritePost"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/posts/favorites/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /** 投稿のいいねを解除する */
-        delete: operations["unfavoritePost"];
+        post: operations["unfavoritePost"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -73,7 +89,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{user_id}/follow": {
+    "/users/following/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** ユーザーをアンフォローする */
+        post: operations["unfollowUser"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/following/create": {
         parameters: {
             query?: never;
             header?: never;
@@ -84,14 +117,13 @@ export interface paths {
         put?: never;
         /** ユーザーをフォローする */
         post: operations["followUser"];
-        /** ユーザーをアンフォローする */
-        delete: operations["unfollowUser"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/users/{user_id}/following": {
+    "/users/following": {
         parameters: {
             query?: never;
             header?: never;
@@ -102,14 +134,13 @@ export interface paths {
         get: operations["getUserFollowing"];
         put?: never;
         post?: never;
-        /** ユーザーをフォロワーから削除する */
-        delete: operations["removeUserFromFollowers"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/users/{user_id}/followers": {
+    "/users/followers": {
         parameters: {
             query?: never;
             header?: never;
@@ -126,7 +157,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{name}": {
+    "/users/followers/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** ユーザーをフォロワーから削除する */
+        post: operations["removeUserFromFollowers"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users": {
         parameters: {
             query?: never;
             header?: never;
@@ -336,12 +384,17 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                post_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    post_id: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -357,12 +410,17 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                post_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    post_id: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -405,16 +463,21 @@ export interface operations {
             };
         };
     };
-    followUser: {
+    unfollowUser: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                user_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    user_id: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -432,16 +495,21 @@ export interface operations {
             };
         };
     };
-    unfollowUser: {
+    followUser: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                user_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    user_id: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -461,11 +529,39 @@ export interface operations {
     };
     getUserFollowing: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
+            query: {
                 user_id: string;
             };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["Users"];
+                    };
+                };
+            };
+        };
+    };
+    getUserFollowers: {
+        parameters: {
+            query: {
+                user_id: string;
+            };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -491,12 +587,17 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                user_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** Format: uuid */
+                    user_id: string;
+                };
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -514,41 +615,13 @@ export interface operations {
             };
         };
     };
-    getUserFollowers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                user_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @description 正常に処理を終了したかどうか */
-                        ok: boolean;
-                        /** @description レスポンスコード */
-                        code: number;
-                        /** @description データ */
-                        data: components["schemas"]["Users"];
-                    };
-                };
-            };
-        };
-    };
     getUserByName: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
+            query: {
                 name: string;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -638,6 +711,7 @@ export interface operations {
                 cursor?: string;
                 limit?: number;
                 user_id?: string;
+                following?: boolean;
             };
             header?: never;
             path?: never;

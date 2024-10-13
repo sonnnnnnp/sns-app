@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Heart, MessageCircle, Repeat2, Share } from "lucide-react";
@@ -19,20 +21,16 @@ export function Post({ post }: Props) {
 
   const handleFavorite = async () => {
     if (isFavorited) {
-      await client.DELETE("/posts/{post_id}/favorite", {
-        params: {
-          path: {
-            post_id: post.id,
-          },
+      await client.POST("/posts/favorites/delete", {
+        body: {
+          post_id: post.id,
         },
       });
       setFavoritesCount((prevCount) => prevCount - 1);
     } else {
-      await client.POST("/posts/{post_id}/favorite", {
-        params: {
-          path: {
-            post_id: post.id,
-          },
+      await client.POST("/posts/favorites/create", {
+        body: {
+          post_id: post.id,
         },
       });
       setFavoritesCount((prevCount) => prevCount + 1);
@@ -42,7 +40,7 @@ export function Post({ post }: Props) {
   };
 
   return (
-    <div className="flex border-b pl-4 pr-3 py-1.5">
+    <div className="flex pl-4 pr-3 py-1.5">
       <div className="mt-2 mr-2">
         <Link href={`/users/${post.author.name}`}>
           <Avatar>

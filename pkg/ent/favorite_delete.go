@@ -40,7 +40,7 @@ func (fd *FavoriteDelete) ExecX(ctx context.Context) int {
 }
 
 func (fd *FavoriteDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(favorite.Table, sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewDeleteSpec(favorite.Table, sqlgraph.NewFieldSpec(favorite.FieldID, field.TypeInt))
 	if ps := fd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

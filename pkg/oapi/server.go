@@ -110,12 +110,53 @@ type CreatePostJSONBody struct {
 	Content *string `json:"content,omitempty"`
 }
 
+// FavoritePostJSONBody defines parameters for FavoritePost.
+type FavoritePostJSONBody struct {
+	PostId openapi_types.UUID `json:"post_id"`
+}
+
+// UnfavoritePostJSONBody defines parameters for UnfavoritePost.
+type UnfavoritePostJSONBody struct {
+	PostId openapi_types.UUID `json:"post_id"`
+}
+
 // GetTimelineParams defines parameters for GetTimeline.
 type GetTimelineParams struct {
 	// Cursor 次のページを取得するためのキー
-	Cursor *openapi_types.UUID `form:"cursor,omitempty" json:"cursor,omitempty"`
-	Limit  *int                `form:"limit,omitempty" json:"limit,omitempty"`
-	UserId *openapi_types.UUID `form:"user_id,omitempty" json:"user_id,omitempty"`
+	Cursor    *openapi_types.UUID `form:"cursor,omitempty" json:"cursor,omitempty"`
+	Limit     *int                `form:"limit,omitempty" json:"limit,omitempty"`
+	UserId    *openapi_types.UUID `form:"user_id,omitempty" json:"user_id,omitempty"`
+	Following *bool               `form:"following,omitempty" json:"following,omitempty"`
+}
+
+// GetUserByNameParams defines parameters for GetUserByName.
+type GetUserByNameParams struct {
+	Name string `form:"name" json:"name"`
+}
+
+// GetUserFollowersParams defines parameters for GetUserFollowers.
+type GetUserFollowersParams struct {
+	UserId openapi_types.UUID `form:"user_id" json:"user_id"`
+}
+
+// RemoveUserFromFollowersJSONBody defines parameters for RemoveUserFromFollowers.
+type RemoveUserFromFollowersJSONBody struct {
+	UserId openapi_types.UUID `json:"user_id"`
+}
+
+// GetUserFollowingParams defines parameters for GetUserFollowing.
+type GetUserFollowingParams struct {
+	UserId openapi_types.UUID `form:"user_id" json:"user_id"`
+}
+
+// FollowUserJSONBody defines parameters for FollowUser.
+type FollowUserJSONBody struct {
+	UserId openapi_types.UUID `json:"user_id"`
+}
+
+// UnfollowUserJSONBody defines parameters for UnfollowUser.
+type UnfollowUserJSONBody struct {
+	UserId openapi_types.UUID `json:"user_id"`
 }
 
 // UpdateUserJSONBody defines parameters for UpdateUser.
@@ -133,6 +174,21 @@ type RefreshAuthorizationJSONRequestBody RefreshAuthorizationJSONBody
 
 // CreatePostJSONRequestBody defines body for CreatePost for application/json ContentType.
 type CreatePostJSONRequestBody CreatePostJSONBody
+
+// FavoritePostJSONRequestBody defines body for FavoritePost for application/json ContentType.
+type FavoritePostJSONRequestBody FavoritePostJSONBody
+
+// UnfavoritePostJSONRequestBody defines body for UnfavoritePost for application/json ContentType.
+type UnfavoritePostJSONRequestBody UnfavoritePostJSONBody
+
+// RemoveUserFromFollowersJSONRequestBody defines body for RemoveUserFromFollowers for application/json ContentType.
+type RemoveUserFromFollowersJSONRequestBody RemoveUserFromFollowersJSONBody
+
+// FollowUserJSONRequestBody defines body for FollowUser for application/json ContentType.
+type FollowUserJSONRequestBody FollowUserJSONBody
+
+// UnfollowUserJSONRequestBody defines body for UnfollowUser for application/json ContentType.
+type UnfollowUserJSONRequestBody UnfollowUserJSONBody
 
 // UpdateUserJSONRequestBody defines body for UpdateUser for application/json ContentType.
 type UpdateUserJSONRequestBody UpdateUserJSONBody
@@ -223,14 +279,42 @@ type ClientInterface interface {
 
 	CreatePost(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UnfavoritePost request
-	UnfavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// FavoritePostWithBody request with any body
+	FavoritePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// FavoritePost request
-	FavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+	FavoritePost(ctx context.Context, body FavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UnfavoritePostWithBody request with any body
+	UnfavoritePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTimeline request
 	GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetUserByName request
+	GetUserByName(ctx context.Context, params *GetUserByNameParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetUserFollowers request
+	GetUserFollowers(ctx context.Context, params *GetUserFollowersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RemoveUserFromFollowersWithBody request with any body
+	RemoveUserFromFollowersWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	RemoveUserFromFollowers(ctx context.Context, body RemoveUserFromFollowersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetUserFollowing request
+	GetUserFollowing(ctx context.Context, params *GetUserFollowingParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// FollowUserWithBody request with any body
+	FollowUserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	FollowUser(ctx context.Context, body FollowUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UnfollowUserWithBody request with any body
+	UnfollowUserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UnfollowUser(ctx context.Context, body UnfollowUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetSelf request
 	GetSelf(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -239,24 +323,6 @@ type ClientInterface interface {
 	UpdateUserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateUser(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetUserByName request
-	GetUserByName(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// UnfollowUser request
-	UnfollowUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// FollowUser request
-	FollowUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetUserFollowers request
-	GetUserFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// RemoveUserFromFollowers request
-	RemoveUserFromFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetUserFollowing request
-	GetUserFollowing(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) AuthorizeWithLine(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -319,8 +385,8 @@ func (c *Client) CreatePost(ctx context.Context, body CreatePostJSONRequestBody,
 	return c.Client.Do(req)
 }
 
-func (c *Client) UnfavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUnfavoritePostRequest(c.Server, postId)
+func (c *Client) FavoritePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFavoritePostRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -331,8 +397,32 @@ func (c *Client) UnfavoritePost(ctx context.Context, postId openapi_types.UUID, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) FavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewFavoritePostRequest(c.Server, postId)
+func (c *Client) FavoritePost(ctx context.Context, body FavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFavoritePostRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnfavoritePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnfavoritePostRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnfavoritePostRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -345,6 +435,114 @@ func (c *Client) FavoritePost(ctx context.Context, postId openapi_types.UUID, re
 
 func (c *Client) GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTimelineRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetUserByName(ctx context.Context, params *GetUserByNameParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserByNameRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetUserFollowers(ctx context.Context, params *GetUserFollowersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserFollowersRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RemoveUserFromFollowersWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemoveUserFromFollowersRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) RemoveUserFromFollowers(ctx context.Context, body RemoveUserFromFollowersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemoveUserFromFollowersRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetUserFollowing(ctx context.Context, params *GetUserFollowingParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserFollowingRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) FollowUserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFollowUserRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) FollowUser(ctx context.Context, body FollowUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFollowUserRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnfollowUserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnfollowUserRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnfollowUser(ctx context.Context, body UnfollowUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnfollowUserRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -381,78 +579,6 @@ func (c *Client) UpdateUserWithBody(ctx context.Context, contentType string, bod
 
 func (c *Client) UpdateUser(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateUserRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetUserByName(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUserByNameRequest(c.Server, name)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) UnfollowUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUnfollowUserRequest(c.Server, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) FollowUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewFollowUserRequest(c.Server, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetUserFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUserFollowersRequest(c.Server, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) RemoveUserFromFollowers(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewRemoveUserFromFollowersRequest(c.Server, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetUserFollowing(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUserFollowingRequest(c.Server, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -588,23 +714,27 @@ func NewCreatePostRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
-// NewUnfavoritePostRequest generates requests for UnfavoritePost
-func NewUnfavoritePostRequest(server string, postId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "post_id", runtime.ParamLocationPath, postId)
+// NewFavoritePostRequest calls the generic FavoritePost builder with application/json body
+func NewFavoritePostRequest(server string, body FavoritePostJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
+	bodyReader = bytes.NewReader(buf)
+	return NewFavoritePostRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewFavoritePostRequestWithBody generates requests for FavoritePost with any type of body
+func NewFavoritePostRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/posts/%s/favorite", pathParam0)
+	operationPath := fmt.Sprintf("/posts/favorites/create")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -614,31 +744,37 @@ func NewUnfavoritePostRequest(server string, postId openapi_types.UUID) (*http.R
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
 
-// NewFavoritePostRequest generates requests for FavoritePost
-func NewFavoritePostRequest(server string, postId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "post_id", runtime.ParamLocationPath, postId)
+// NewUnfavoritePostRequest calls the generic UnfavoritePost builder with application/json body
+func NewUnfavoritePostRequest(server string, body UnfavoritePostJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUnfavoritePostRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewUnfavoritePostRequestWithBody generates requests for UnfavoritePost with any type of body
+func NewUnfavoritePostRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/posts/%s/favorite", pathParam0)
+	operationPath := fmt.Sprintf("/posts/favorites/delete")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -648,10 +784,12 @@ func NewFavoritePostRequest(server string, postId openapi_types.UUID) (*http.Req
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -726,6 +864,22 @@ func NewGetTimelineRequest(server string, params *GetTimelineParams) (*http.Requ
 
 		}
 
+		if params.Following != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "following", runtime.ParamLocationQuery, *params.Following); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
 		queryURL.RawQuery = queryValues.Encode()
 	}
 
@@ -733,6 +887,261 @@ func NewGetTimelineRequest(server string, params *GetTimelineParams) (*http.Requ
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewGetUserByNameRequest generates requests for GetUserByName
+func NewGetUserByNameRequest(server string, params *GetUserByNameParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetUserFollowersRequest generates requests for GetUserFollowers
+func NewGetUserFollowersRequest(server string, params *GetUserFollowersParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/followers")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "user_id", runtime.ParamLocationQuery, params.UserId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewRemoveUserFromFollowersRequest calls the generic RemoveUserFromFollowers builder with application/json body
+func NewRemoveUserFromFollowersRequest(server string, body RemoveUserFromFollowersJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRemoveUserFromFollowersRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewRemoveUserFromFollowersRequestWithBody generates requests for RemoveUserFromFollowers with any type of body
+func NewRemoveUserFromFollowersRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/followers/delete")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetUserFollowingRequest generates requests for GetUserFollowing
+func NewGetUserFollowingRequest(server string, params *GetUserFollowingParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/following")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "user_id", runtime.ParamLocationQuery, params.UserId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewFollowUserRequest calls the generic FollowUser builder with application/json body
+func NewFollowUserRequest(server string, body FollowUserJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewFollowUserRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewFollowUserRequestWithBody generates requests for FollowUser with any type of body
+func NewFollowUserRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/following/create")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewUnfollowUserRequest calls the generic UnfollowUser builder with application/json body
+func NewUnfollowUserRequest(server string, body UnfollowUserJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUnfollowUserRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewUnfollowUserRequestWithBody generates requests for UnfollowUser with any type of body
+func NewUnfollowUserRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/following/delete")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -804,210 +1213,6 @@ func NewUpdateUserRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
-// NewGetUserByNameRequest generates requests for GetUserByName
-func NewGetUserByNameRequest(server string, name string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "name", runtime.ParamLocationPath, name)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewUnfollowUserRequest generates requests for UnfollowUser
-func NewUnfollowUserRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/%s/follow", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewFollowUserRequest generates requests for FollowUser
-func NewFollowUserRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/%s/follow", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetUserFollowersRequest generates requests for GetUserFollowers
-func NewGetUserFollowersRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/%s/followers", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewRemoveUserFromFollowersRequest generates requests for RemoveUserFromFollowers
-func NewRemoveUserFromFollowersRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/%s/following", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetUserFollowingRequest generates requests for GetUserFollowing
-func NewGetUserFollowingRequest(server string, userId openapi_types.UUID) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/%s/following", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -1064,14 +1269,42 @@ type ClientWithResponsesInterface interface {
 
 	CreatePostWithResponse(ctx context.Context, body CreatePostJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
 
-	// UnfavoritePostWithResponse request
-	UnfavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
+	// FavoritePostWithBodyWithResponse request with any body
+	FavoritePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error)
 
-	// FavoritePostWithResponse request
-	FavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error)
+	FavoritePostWithResponse(ctx context.Context, body FavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error)
+
+	// UnfavoritePostWithBodyWithResponse request with any body
+	UnfavoritePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
+
+	UnfavoritePostWithResponse(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
 
 	// GetTimelineWithResponse request
 	GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
+
+	// GetUserByNameWithResponse request
+	GetUserByNameWithResponse(ctx context.Context, params *GetUserByNameParams, reqEditors ...RequestEditorFn) (*GetUserByNameResponse, error)
+
+	// GetUserFollowersWithResponse request
+	GetUserFollowersWithResponse(ctx context.Context, params *GetUserFollowersParams, reqEditors ...RequestEditorFn) (*GetUserFollowersResponse, error)
+
+	// RemoveUserFromFollowersWithBodyWithResponse request with any body
+	RemoveUserFromFollowersWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RemoveUserFromFollowersResponse, error)
+
+	RemoveUserFromFollowersWithResponse(ctx context.Context, body RemoveUserFromFollowersJSONRequestBody, reqEditors ...RequestEditorFn) (*RemoveUserFromFollowersResponse, error)
+
+	// GetUserFollowingWithResponse request
+	GetUserFollowingWithResponse(ctx context.Context, params *GetUserFollowingParams, reqEditors ...RequestEditorFn) (*GetUserFollowingResponse, error)
+
+	// FollowUserWithBodyWithResponse request with any body
+	FollowUserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*FollowUserResponse, error)
+
+	FollowUserWithResponse(ctx context.Context, body FollowUserJSONRequestBody, reqEditors ...RequestEditorFn) (*FollowUserResponse, error)
+
+	// UnfollowUserWithBodyWithResponse request with any body
+	UnfollowUserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UnfollowUserResponse, error)
+
+	UnfollowUserWithResponse(ctx context.Context, body UnfollowUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UnfollowUserResponse, error)
 
 	// GetSelfWithResponse request
 	GetSelfWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSelfResponse, error)
@@ -1080,24 +1313,6 @@ type ClientWithResponsesInterface interface {
 	UpdateUserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
 
 	UpdateUserWithResponse(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
-
-	// GetUserByNameWithResponse request
-	GetUserByNameWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*GetUserByNameResponse, error)
-
-	// UnfollowUserWithResponse request
-	UnfollowUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfollowUserResponse, error)
-
-	// FollowUserWithResponse request
-	FollowUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FollowUserResponse, error)
-
-	// GetUserFollowersWithResponse request
-	GetUserFollowersWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowersResponse, error)
-
-	// RemoveUserFromFollowersWithResponse request
-	RemoveUserFromFollowersWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*RemoveUserFromFollowersResponse, error)
-
-	// GetUserFollowingWithResponse request
-	GetUserFollowingWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowingResponse, error)
 }
 
 type AuthorizeWithLineResponse struct {
@@ -1187,28 +1402,6 @@ func (r CreatePostResponse) StatusCode() int {
 	return 0
 }
 
-type UnfavoritePostResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Response
-}
-
-// Status returns HTTPResponse.Status
-func (r UnfavoritePostResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UnfavoritePostResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type FavoritePostResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1225,6 +1418,28 @@ func (r FavoritePostResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r FavoritePostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UnfavoritePostResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Response
+}
+
+// Status returns HTTPResponse.Status
+func (r UnfavoritePostResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UnfavoritePostResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1260,64 +1475,6 @@ func (r GetTimelineResponse) StatusCode() int {
 	return 0
 }
 
-type GetSelfResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		// Code レスポンスコード
-		Code int  `json:"code"`
-		Data User `json:"data"`
-
-		// Ok 正常に処理を終了したかどうか
-		Ok bool `json:"ok"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetSelfResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetSelfResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		// Code レスポンスコード
-		Code int  `json:"code"`
-		Data User `json:"data"`
-
-		// Ok 正常に処理を終了したかどうか
-		Ok bool `json:"ok"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type GetUserByNameResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1341,64 +1498,6 @@ func (r GetUserByNameResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetUserByNameResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UnfollowUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		// Code レスポンスコード
-		Code int           `json:"code"`
-		Data SocialContext `json:"data"`
-
-		// Ok 正常に処理を終了したかどうか
-		Ok bool `json:"ok"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r UnfollowUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UnfollowUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type FollowUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		// Code レスポンスコード
-		Code int           `json:"code"`
-		Data SocialContext `json:"data"`
-
-		// Ok 正常に処理を終了したかどうか
-		Ok bool `json:"ok"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r FollowUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r FollowUserResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1492,6 +1591,122 @@ func (r GetUserFollowingResponse) StatusCode() int {
 	return 0
 }
 
+type FollowUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int           `json:"code"`
+		Data SocialContext `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r FollowUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r FollowUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UnfollowUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int           `json:"code"`
+		Data SocialContext `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r UnfollowUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UnfollowUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetSelfResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int  `json:"code"`
+		Data User `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSelfResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSelfResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int  `json:"code"`
+		Data User `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // AuthorizeWithLineWithResponse request returning *AuthorizeWithLineResponse
 func (c *ClientWithResponses) AuthorizeWithLineWithResponse(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*AuthorizeWithLineResponse, error) {
 	rsp, err := c.AuthorizeWithLine(ctx, params, reqEditors...)
@@ -1535,22 +1750,38 @@ func (c *ClientWithResponses) CreatePostWithResponse(ctx context.Context, body C
 	return ParseCreatePostResponse(rsp)
 }
 
-// UnfavoritePostWithResponse request returning *UnfavoritePostResponse
-func (c *ClientWithResponses) UnfavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error) {
-	rsp, err := c.UnfavoritePost(ctx, postId, reqEditors...)
+// FavoritePostWithBodyWithResponse request with arbitrary body returning *FavoritePostResponse
+func (c *ClientWithResponses) FavoritePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error) {
+	rsp, err := c.FavoritePostWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFavoritePostResponse(rsp)
+}
+
+func (c *ClientWithResponses) FavoritePostWithResponse(ctx context.Context, body FavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error) {
+	rsp, err := c.FavoritePost(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFavoritePostResponse(rsp)
+}
+
+// UnfavoritePostWithBodyWithResponse request with arbitrary body returning *UnfavoritePostResponse
+func (c *ClientWithResponses) UnfavoritePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error) {
+	rsp, err := c.UnfavoritePostWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
 	return ParseUnfavoritePostResponse(rsp)
 }
 
-// FavoritePostWithResponse request returning *FavoritePostResponse
-func (c *ClientWithResponses) FavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error) {
-	rsp, err := c.FavoritePost(ctx, postId, reqEditors...)
+func (c *ClientWithResponses) UnfavoritePostWithResponse(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error) {
+	rsp, err := c.UnfavoritePost(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseFavoritePostResponse(rsp)
+	return ParseUnfavoritePostResponse(rsp)
 }
 
 // GetTimelineWithResponse request returning *GetTimelineResponse
@@ -1560,6 +1791,84 @@ func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, param
 		return nil, err
 	}
 	return ParseGetTimelineResponse(rsp)
+}
+
+// GetUserByNameWithResponse request returning *GetUserByNameResponse
+func (c *ClientWithResponses) GetUserByNameWithResponse(ctx context.Context, params *GetUserByNameParams, reqEditors ...RequestEditorFn) (*GetUserByNameResponse, error) {
+	rsp, err := c.GetUserByName(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserByNameResponse(rsp)
+}
+
+// GetUserFollowersWithResponse request returning *GetUserFollowersResponse
+func (c *ClientWithResponses) GetUserFollowersWithResponse(ctx context.Context, params *GetUserFollowersParams, reqEditors ...RequestEditorFn) (*GetUserFollowersResponse, error) {
+	rsp, err := c.GetUserFollowers(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserFollowersResponse(rsp)
+}
+
+// RemoveUserFromFollowersWithBodyWithResponse request with arbitrary body returning *RemoveUserFromFollowersResponse
+func (c *ClientWithResponses) RemoveUserFromFollowersWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RemoveUserFromFollowersResponse, error) {
+	rsp, err := c.RemoveUserFromFollowersWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRemoveUserFromFollowersResponse(rsp)
+}
+
+func (c *ClientWithResponses) RemoveUserFromFollowersWithResponse(ctx context.Context, body RemoveUserFromFollowersJSONRequestBody, reqEditors ...RequestEditorFn) (*RemoveUserFromFollowersResponse, error) {
+	rsp, err := c.RemoveUserFromFollowers(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRemoveUserFromFollowersResponse(rsp)
+}
+
+// GetUserFollowingWithResponse request returning *GetUserFollowingResponse
+func (c *ClientWithResponses) GetUserFollowingWithResponse(ctx context.Context, params *GetUserFollowingParams, reqEditors ...RequestEditorFn) (*GetUserFollowingResponse, error) {
+	rsp, err := c.GetUserFollowing(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserFollowingResponse(rsp)
+}
+
+// FollowUserWithBodyWithResponse request with arbitrary body returning *FollowUserResponse
+func (c *ClientWithResponses) FollowUserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*FollowUserResponse, error) {
+	rsp, err := c.FollowUserWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFollowUserResponse(rsp)
+}
+
+func (c *ClientWithResponses) FollowUserWithResponse(ctx context.Context, body FollowUserJSONRequestBody, reqEditors ...RequestEditorFn) (*FollowUserResponse, error) {
+	rsp, err := c.FollowUser(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFollowUserResponse(rsp)
+}
+
+// UnfollowUserWithBodyWithResponse request with arbitrary body returning *UnfollowUserResponse
+func (c *ClientWithResponses) UnfollowUserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UnfollowUserResponse, error) {
+	rsp, err := c.UnfollowUserWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUnfollowUserResponse(rsp)
+}
+
+func (c *ClientWithResponses) UnfollowUserWithResponse(ctx context.Context, body UnfollowUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UnfollowUserResponse, error) {
+	rsp, err := c.UnfollowUser(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUnfollowUserResponse(rsp)
 }
 
 // GetSelfWithResponse request returning *GetSelfResponse
@@ -1586,60 +1895,6 @@ func (c *ClientWithResponses) UpdateUserWithResponse(ctx context.Context, body U
 		return nil, err
 	}
 	return ParseUpdateUserResponse(rsp)
-}
-
-// GetUserByNameWithResponse request returning *GetUserByNameResponse
-func (c *ClientWithResponses) GetUserByNameWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*GetUserByNameResponse, error) {
-	rsp, err := c.GetUserByName(ctx, name, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetUserByNameResponse(rsp)
-}
-
-// UnfollowUserWithResponse request returning *UnfollowUserResponse
-func (c *ClientWithResponses) UnfollowUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnfollowUserResponse, error) {
-	rsp, err := c.UnfollowUser(ctx, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseUnfollowUserResponse(rsp)
-}
-
-// FollowUserWithResponse request returning *FollowUserResponse
-func (c *ClientWithResponses) FollowUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FollowUserResponse, error) {
-	rsp, err := c.FollowUser(ctx, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseFollowUserResponse(rsp)
-}
-
-// GetUserFollowersWithResponse request returning *GetUserFollowersResponse
-func (c *ClientWithResponses) GetUserFollowersWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowersResponse, error) {
-	rsp, err := c.GetUserFollowers(ctx, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetUserFollowersResponse(rsp)
-}
-
-// RemoveUserFromFollowersWithResponse request returning *RemoveUserFromFollowersResponse
-func (c *ClientWithResponses) RemoveUserFromFollowersWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*RemoveUserFromFollowersResponse, error) {
-	rsp, err := c.RemoveUserFromFollowers(ctx, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseRemoveUserFromFollowersResponse(rsp)
-}
-
-// GetUserFollowingWithResponse request returning *GetUserFollowingResponse
-func (c *ClientWithResponses) GetUserFollowingWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetUserFollowingResponse, error) {
-	rsp, err := c.GetUserFollowing(ctx, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetUserFollowingResponse(rsp)
 }
 
 // ParseAuthorizeWithLineResponse parses an HTTP response from a AuthorizeWithLineWithResponse call
@@ -1741,15 +1996,15 @@ func ParseCreatePostResponse(rsp *http.Response) (*CreatePostResponse, error) {
 	return response, nil
 }
 
-// ParseUnfavoritePostResponse parses an HTTP response from a UnfavoritePostWithResponse call
-func ParseUnfavoritePostResponse(rsp *http.Response) (*UnfavoritePostResponse, error) {
+// ParseFavoritePostResponse parses an HTTP response from a FavoritePostWithResponse call
+func ParseFavoritePostResponse(rsp *http.Response) (*FavoritePostResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &UnfavoritePostResponse{
+	response := &FavoritePostResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1767,15 +2022,15 @@ func ParseUnfavoritePostResponse(rsp *http.Response) (*UnfavoritePostResponse, e
 	return response, nil
 }
 
-// ParseFavoritePostResponse parses an HTTP response from a FavoritePostWithResponse call
-func ParseFavoritePostResponse(rsp *http.Response) (*FavoritePostResponse, error) {
+// ParseUnfavoritePostResponse parses an HTTP response from a UnfavoritePostWithResponse call
+func ParseUnfavoritePostResponse(rsp *http.Response) (*UnfavoritePostResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &FavoritePostResponse{
+	response := &UnfavoritePostResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1826,72 +2081,6 @@ func ParseGetTimelineResponse(rsp *http.Response) (*GetTimelineResponse, error) 
 	return response, nil
 }
 
-// ParseGetSelfResponse parses an HTTP response from a GetSelfWithResponse call
-func ParseGetSelfResponse(rsp *http.Response) (*GetSelfResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetSelfResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			// Code レスポンスコード
-			Code int  `json:"code"`
-			Data User `json:"data"`
-
-			// Ok 正常に処理を終了したかどうか
-			Ok bool `json:"ok"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseUpdateUserResponse parses an HTTP response from a UpdateUserWithResponse call
-func ParseUpdateUserResponse(rsp *http.Response) (*UpdateUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			// Code レスポンスコード
-			Code int  `json:"code"`
-			Data User `json:"data"`
-
-			// Ok 正常に処理を終了したかどうか
-			Ok bool `json:"ok"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
 // ParseGetUserByNameResponse parses an HTTP response from a GetUserByNameWithResponse call
 func ParseGetUserByNameResponse(rsp *http.Response) (*GetUserByNameResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -1911,72 +2100,6 @@ func ParseGetUserByNameResponse(rsp *http.Response) (*GetUserByNameResponse, err
 			// Code レスポンスコード
 			Code int  `json:"code"`
 			Data User `json:"data"`
-
-			// Ok 正常に処理を終了したかどうか
-			Ok bool `json:"ok"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseUnfollowUserResponse parses an HTTP response from a UnfollowUserWithResponse call
-func ParseUnfollowUserResponse(rsp *http.Response) (*UnfollowUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UnfollowUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			// Code レスポンスコード
-			Code int           `json:"code"`
-			Data SocialContext `json:"data"`
-
-			// Ok 正常に処理を終了したかどうか
-			Ok bool `json:"ok"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseFollowUserResponse parses an HTTP response from a FollowUserWithResponse call
-func ParseFollowUserResponse(rsp *http.Response) (*FollowUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &FollowUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			// Code レスポンスコード
-			Code int           `json:"code"`
-			Data SocialContext `json:"data"`
 
 			// Ok 正常に処理を終了したかどうか
 			Ok bool `json:"ok"`
@@ -2090,6 +2213,138 @@ func ParseGetUserFollowingResponse(rsp *http.Response) (*GetUserFollowingRespons
 	return response, nil
 }
 
+// ParseFollowUserResponse parses an HTTP response from a FollowUserWithResponse call
+func ParseFollowUserResponse(rsp *http.Response) (*FollowUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &FollowUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int           `json:"code"`
+			Data SocialContext `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUnfollowUserResponse parses an HTTP response from a UnfollowUserWithResponse call
+func ParseUnfollowUserResponse(rsp *http.Response) (*UnfollowUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UnfollowUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int           `json:"code"`
+			Data SocialContext `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetSelfResponse parses an HTTP response from a GetSelfWithResponse call
+func ParseGetSelfResponse(rsp *http.Response) (*GetSelfResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSelfResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int  `json:"code"`
+			Data User `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateUserResponse parses an HTTP response from a UpdateUserWithResponse call
+func ParseUpdateUserResponse(rsp *http.Response) (*UpdateUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int  `json:"code"`
+			Data User `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// LINE でログイン
@@ -2101,39 +2356,39 @@ type ServerInterface interface {
 	// 投稿を作成する
 	// (POST /posts/create)
 	CreatePost(ctx echo.Context) error
-	// 投稿のいいねを解除する
-	// (DELETE /posts/{post_id}/favorite)
-	UnfavoritePost(ctx echo.Context, postId openapi_types.UUID) error
 	// 投稿にいいねする
-	// (POST /posts/{post_id}/favorite)
-	FavoritePost(ctx echo.Context, postId openapi_types.UUID) error
+	// (POST /posts/favorites/create)
+	FavoritePost(ctx echo.Context) error
+	// 投稿のいいねを解除する
+	// (POST /posts/favorites/delete)
+	UnfavoritePost(ctx echo.Context) error
 	// タイムラインを取得する
 	// (GET /timeline)
 	GetTimeline(ctx echo.Context, params GetTimelineParams) error
+	// ユーザーを取得する
+	// (GET /users)
+	GetUserByName(ctx echo.Context, params GetUserByNameParams) error
+	// ユーザーのフォロワーを取得する
+	// (GET /users/followers)
+	GetUserFollowers(ctx echo.Context, params GetUserFollowersParams) error
+	// ユーザーをフォロワーから削除する
+	// (POST /users/followers/delete)
+	RemoveUserFromFollowers(ctx echo.Context) error
+	// ユーザーのフォローを取得する
+	// (GET /users/following)
+	GetUserFollowing(ctx echo.Context, params GetUserFollowingParams) error
+	// ユーザーをフォローする
+	// (POST /users/following/create)
+	FollowUser(ctx echo.Context) error
+	// ユーザーをアンフォローする
+	// (POST /users/following/delete)
+	UnfollowUser(ctx echo.Context) error
 	// 自分を取得する
 	// (GET /users/me)
 	GetSelf(ctx echo.Context) error
 	// ユーザーを更新する
 	// (PUT /users/update)
 	UpdateUser(ctx echo.Context) error
-	// ユーザーを取得する
-	// (GET /users/{name})
-	GetUserByName(ctx echo.Context, name string) error
-	// ユーザーをアンフォローする
-	// (DELETE /users/{user_id}/follow)
-	UnfollowUser(ctx echo.Context, userId openapi_types.UUID) error
-	// ユーザーをフォローする
-	// (POST /users/{user_id}/follow)
-	FollowUser(ctx echo.Context, userId openapi_types.UUID) error
-	// ユーザーのフォロワーを取得する
-	// (GET /users/{user_id}/followers)
-	GetUserFollowers(ctx echo.Context, userId openapi_types.UUID) error
-	// ユーザーをフォロワーから削除する
-	// (DELETE /users/{user_id}/following)
-	RemoveUserFromFollowers(ctx echo.Context, userId openapi_types.UUID) error
-	// ユーザーのフォローを取得する
-	// (GET /users/{user_id}/following)
-	GetUserFollowing(ctx echo.Context, userId openapi_types.UUID) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -2181,39 +2436,25 @@ func (w *ServerInterfaceWrapper) CreatePost(ctx echo.Context) error {
 	return err
 }
 
-// UnfavoritePost converts echo context to params.
-func (w *ServerInterfaceWrapper) UnfavoritePost(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "post_id" -------------
-	var postId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "post_id", ctx.Param("post_id"), &postId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter post_id: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.UnfavoritePost(ctx, postId)
-	return err
-}
-
 // FavoritePost converts echo context to params.
 func (w *ServerInterfaceWrapper) FavoritePost(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "post_id" -------------
-	var postId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "post_id", ctx.Param("post_id"), &postId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter post_id: %s", err))
-	}
 
 	ctx.Set(BearerScopes, []string{})
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.FavoritePost(ctx, postId)
+	err = w.Handler.FavoritePost(ctx)
+	return err
+}
+
+// UnfavoritePost converts echo context to params.
+func (w *ServerInterfaceWrapper) UnfavoritePost(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UnfavoritePost(ctx)
 	return err
 }
 
@@ -2246,8 +2487,108 @@ func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
 	}
 
+	// ------------- Optional query parameter "following" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "following", ctx.QueryParams(), &params.Following)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter following: %s", err))
+	}
+
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetTimeline(ctx, params)
+	return err
+}
+
+// GetUserByName converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUserByName(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetUserByNameParams
+	// ------------- Required query parameter "name" -------------
+
+	err = runtime.BindQueryParameter("form", true, true, "name", ctx.QueryParams(), &params.Name)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetUserByName(ctx, params)
+	return err
+}
+
+// GetUserFollowers converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUserFollowers(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetUserFollowersParams
+	// ------------- Required query parameter "user_id" -------------
+
+	err = runtime.BindQueryParameter("form", true, true, "user_id", ctx.QueryParams(), &params.UserId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetUserFollowers(ctx, params)
+	return err
+}
+
+// RemoveUserFromFollowers converts echo context to params.
+func (w *ServerInterfaceWrapper) RemoveUserFromFollowers(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.RemoveUserFromFollowers(ctx)
+	return err
+}
+
+// GetUserFollowing converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUserFollowing(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetUserFollowingParams
+	// ------------- Required query parameter "user_id" -------------
+
+	err = runtime.BindQueryParameter("form", true, true, "user_id", ctx.QueryParams(), &params.UserId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetUserFollowing(ctx, params)
+	return err
+}
+
+// FollowUser converts echo context to params.
+func (w *ServerInterfaceWrapper) FollowUser(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.FollowUser(ctx)
+	return err
+}
+
+// UnfollowUser converts echo context to params.
+func (w *ServerInterfaceWrapper) UnfollowUser(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.UnfollowUser(ctx)
 	return err
 }
 
@@ -2270,114 +2611,6 @@ func (w *ServerInterfaceWrapper) UpdateUser(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.UpdateUser(ctx)
-	return err
-}
-
-// GetUserByName converts echo context to params.
-func (w *ServerInterfaceWrapper) GetUserByName(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "name" -------------
-	var name string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "name", ctx.Param("name"), &name, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetUserByName(ctx, name)
-	return err
-}
-
-// UnfollowUser converts echo context to params.
-func (w *ServerInterfaceWrapper) UnfollowUser(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.UnfollowUser(ctx, userId)
-	return err
-}
-
-// FollowUser converts echo context to params.
-func (w *ServerInterfaceWrapper) FollowUser(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.FollowUser(ctx, userId)
-	return err
-}
-
-// GetUserFollowers converts echo context to params.
-func (w *ServerInterfaceWrapper) GetUserFollowers(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetUserFollowers(ctx, userId)
-	return err
-}
-
-// RemoveUserFromFollowers converts echo context to params.
-func (w *ServerInterfaceWrapper) RemoveUserFromFollowers(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.RemoveUserFromFollowers(ctx, userId)
-	return err
-}
-
-// GetUserFollowing converts echo context to params.
-func (w *ServerInterfaceWrapper) GetUserFollowing(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "user_id" -------------
-	var userId openapi_types.UUID
-
-	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetUserFollowing(ctx, userId)
 	return err
 }
 
@@ -2412,47 +2645,47 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/authorize/line", wrapper.AuthorizeWithLine)
 	router.POST(baseURL+"/authorize/refresh", wrapper.RefreshAuthorization)
 	router.POST(baseURL+"/posts/create", wrapper.CreatePost)
-	router.DELETE(baseURL+"/posts/:post_id/favorite", wrapper.UnfavoritePost)
-	router.POST(baseURL+"/posts/:post_id/favorite", wrapper.FavoritePost)
+	router.POST(baseURL+"/posts/favorites/create", wrapper.FavoritePost)
+	router.POST(baseURL+"/posts/favorites/delete", wrapper.UnfavoritePost)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
+	router.GET(baseURL+"/users", wrapper.GetUserByName)
+	router.GET(baseURL+"/users/followers", wrapper.GetUserFollowers)
+	router.POST(baseURL+"/users/followers/delete", wrapper.RemoveUserFromFollowers)
+	router.GET(baseURL+"/users/following", wrapper.GetUserFollowing)
+	router.POST(baseURL+"/users/following/create", wrapper.FollowUser)
+	router.POST(baseURL+"/users/following/delete", wrapper.UnfollowUser)
 	router.GET(baseURL+"/users/me", wrapper.GetSelf)
 	router.PUT(baseURL+"/users/update", wrapper.UpdateUser)
-	router.GET(baseURL+"/users/:name", wrapper.GetUserByName)
-	router.DELETE(baseURL+"/users/:user_id/follow", wrapper.UnfollowUser)
-	router.POST(baseURL+"/users/:user_id/follow", wrapper.FollowUser)
-	router.GET(baseURL+"/users/:user_id/followers", wrapper.GetUserFollowers)
-	router.DELETE(baseURL+"/users/:user_id/following", wrapper.RemoveUserFromFollowers)
-	router.GET(baseURL+"/users/:user_id/following", wrapper.GetUserFollowing)
 
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

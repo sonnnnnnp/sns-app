@@ -37,7 +37,7 @@ type FavoriteMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uuid.UUID
+	id            *int
 	created_at    *time.Time
 	clearedFields map[string]struct{}
 	user          *uuid.UUID
@@ -69,7 +69,7 @@ func newFavoriteMutation(c config, op Op, opts ...favoriteOption) *FavoriteMutat
 }
 
 // withFavoriteID sets the ID field of the mutation.
-func withFavoriteID(id uuid.UUID) favoriteOption {
+func withFavoriteID(id int) favoriteOption {
 	return func(m *FavoriteMutation) {
 		var (
 			err   error
@@ -119,15 +119,9 @@ func (m FavoriteMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Favorite entities.
-func (m *FavoriteMutation) SetID(id uuid.UUID) {
-	m.id = &id
-}
-
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *FavoriteMutation) ID() (id uuid.UUID, exists bool) {
+func (m *FavoriteMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -138,12 +132,12 @@ func (m *FavoriteMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *FavoriteMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *FavoriteMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -584,8 +578,8 @@ type PostMutation struct {
 	clearedFields    map[string]struct{}
 	author           *uuid.UUID
 	clearedauthor    bool
-	favorites        map[uuid.UUID]struct{}
-	removedfavorites map[uuid.UUID]struct{}
+	favorites        map[int]struct{}
+	removedfavorites map[int]struct{}
 	clearedfavorites bool
 	done             bool
 	oldValue         func(context.Context) (*Post, error)
@@ -881,9 +875,9 @@ func (m *PostMutation) ResetAuthor() {
 }
 
 // AddFavoriteIDs adds the "favorites" edge to the Favorite entity by ids.
-func (m *PostMutation) AddFavoriteIDs(ids ...uuid.UUID) {
+func (m *PostMutation) AddFavoriteIDs(ids ...int) {
 	if m.favorites == nil {
-		m.favorites = make(map[uuid.UUID]struct{})
+		m.favorites = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.favorites[ids[i]] = struct{}{}
@@ -901,9 +895,9 @@ func (m *PostMutation) FavoritesCleared() bool {
 }
 
 // RemoveFavoriteIDs removes the "favorites" edge to the Favorite entity by IDs.
-func (m *PostMutation) RemoveFavoriteIDs(ids ...uuid.UUID) {
+func (m *PostMutation) RemoveFavoriteIDs(ids ...int) {
 	if m.removedfavorites == nil {
-		m.removedfavorites = make(map[uuid.UUID]struct{})
+		m.removedfavorites = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.favorites, ids[i])
@@ -912,7 +906,7 @@ func (m *PostMutation) RemoveFavoriteIDs(ids ...uuid.UUID) {
 }
 
 // RemovedFavorites returns the removed IDs of the "favorites" edge to the Favorite entity.
-func (m *PostMutation) RemovedFavoritesIDs() (ids []uuid.UUID) {
+func (m *PostMutation) RemovedFavoritesIDs() (ids []int) {
 	for id := range m.removedfavorites {
 		ids = append(ids, id)
 	}
@@ -920,7 +914,7 @@ func (m *PostMutation) RemovedFavoritesIDs() (ids []uuid.UUID) {
 }
 
 // FavoritesIDs returns the "favorites" edge IDs in the mutation.
-func (m *PostMutation) FavoritesIDs() (ids []uuid.UUID) {
+func (m *PostMutation) FavoritesIDs() (ids []int) {
 	for id := range m.favorites {
 		ids = append(ids, id)
 	}
@@ -1252,8 +1246,8 @@ type UserMutation struct {
 	following        map[uuid.UUID]struct{}
 	removedfollowing map[uuid.UUID]struct{}
 	clearedfollowing bool
-	favorites        map[uuid.UUID]struct{}
-	removedfavorites map[uuid.UUID]struct{}
+	favorites        map[int]struct{}
+	removedfavorites map[int]struct{}
 	clearedfavorites bool
 	done             bool
 	oldValue         func(context.Context) (*User, error)
@@ -1929,9 +1923,9 @@ func (m *UserMutation) ResetFollowing() {
 }
 
 // AddFavoriteIDs adds the "favorites" edge to the Favorite entity by ids.
-func (m *UserMutation) AddFavoriteIDs(ids ...uuid.UUID) {
+func (m *UserMutation) AddFavoriteIDs(ids ...int) {
 	if m.favorites == nil {
-		m.favorites = make(map[uuid.UUID]struct{})
+		m.favorites = make(map[int]struct{})
 	}
 	for i := range ids {
 		m.favorites[ids[i]] = struct{}{}
@@ -1949,9 +1943,9 @@ func (m *UserMutation) FavoritesCleared() bool {
 }
 
 // RemoveFavoriteIDs removes the "favorites" edge to the Favorite entity by IDs.
-func (m *UserMutation) RemoveFavoriteIDs(ids ...uuid.UUID) {
+func (m *UserMutation) RemoveFavoriteIDs(ids ...int) {
 	if m.removedfavorites == nil {
-		m.removedfavorites = make(map[uuid.UUID]struct{})
+		m.removedfavorites = make(map[int]struct{})
 	}
 	for i := range ids {
 		delete(m.favorites, ids[i])
@@ -1960,7 +1954,7 @@ func (m *UserMutation) RemoveFavoriteIDs(ids ...uuid.UUID) {
 }
 
 // RemovedFavorites returns the removed IDs of the "favorites" edge to the Favorite entity.
-func (m *UserMutation) RemovedFavoritesIDs() (ids []uuid.UUID) {
+func (m *UserMutation) RemovedFavoritesIDs() (ids []int) {
 	for id := range m.removedfavorites {
 		ids = append(ids, id)
 	}
@@ -1968,7 +1962,7 @@ func (m *UserMutation) RemovedFavoritesIDs() (ids []uuid.UUID) {
 }
 
 // FavoritesIDs returns the "favorites" edge IDs in the mutation.
-func (m *UserMutation) FavoritesIDs() (ids []uuid.UUID) {
+func (m *UserMutation) FavoritesIDs() (ids []int) {
 	for id := range m.favorites {
 		ids = append(ids, id)
 	}

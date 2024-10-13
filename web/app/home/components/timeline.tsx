@@ -1,6 +1,6 @@
 "use client";
 
-import { Images, Pencil, Type } from "lucide-react";
+import { Images, Pencil, Search, SlidersHorizontal, Type } from "lucide-react";
 
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
@@ -31,6 +31,7 @@ import twitterText from "twitter-text";
 import { components } from "@/lib/api/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { CallData, CallList } from "./call-list";
+import Link from "next/link";
 
 export const iframeHeight = "938px";
 
@@ -358,7 +359,7 @@ const CustomTabsTrigger = ({
 }) => {
   return (
     <TabsTrigger
-      className="w-[50%] data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none .data-\[state\=active\]\:shadow-none[data-state=active]"
+      className="w-[50%] data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none .data-\[state\=active\]\:shadow-none[data-state=active]"
       value={value}
     >
       {label}
@@ -366,7 +367,7 @@ const CustomTabsTrigger = ({
   );
 };
 
-export default function Timeline() {
+export function Timeline() {
   const [tabValue, setTabValue] = useState("following");
   const [postDialogOpen, setPostDialogOpen] = useState(false);
   const [postContentValid, setPostContentValid] = useState(false);
@@ -441,22 +442,30 @@ export default function Timeline() {
   };
 
   return (
-    <div className="max-w-[780px]">
-      <Tabs defaultValue="following" onValueChange={onTabChange}>
-        <TabsContent className="my-0" value={tabValue}>
-          <Card className="flex text-sm w-full rounded-none border-0 mb-16 sm:mb-0 sm:border-r-[1px] md:border-x-[1px] dark:bg-black dark:border-slate-800">
-            <CardContent className="w-full p-0">
-              <TabsList className="sticky top-0 z-10 p-0 h-12 rounded-none w-full bg-transparent backdrop-blur border-b">
-                <CustomTabsTrigger value="following" label="フォロー中" />
-                <CustomTabsTrigger value="public" label="オープン" />
-              </TabsList>
+    <div className="w-full">
+      <Card className="flex text-sm w-full rounded-none border-0 mb-16 sm:mb-0 sm:border-x-[1px] dark:bg-black dark:border-slate-800">
+        <CardContent className="w-full p-0">
+          <Tabs defaultValue="following" onValueChange={onTabChange}>
+            <TabsContent className="my-0" value={tabValue}>
+              <div className="sticky top-0 z-10 rounded-none w-full bg-transparent backdrop-blur border-b">
+                <div className="flex justify-between items-end h-12 px-6 pb-1 text-muted-foreground sm:hidden">
+                  <Link href="/search">
+                    <Search className="h-5 w-5" />
+                  </Link>
+                  <SlidersHorizontal className="h-5 w-5 cursor-pointer" />
+                </div>
+                <TabsList className="h-14 rounded-none w-full bg-transparent backdrop-blur">
+                  <CustomTabsTrigger value="following" label="フォロー中" />
+                  <CustomTabsTrigger value="public" label="オープン" />
+                </TabsList>
+              </div>
               <CallList calls={calls} />
               <PostList posts={posts} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-      <div className="fixed bottom-[12%] right-[10%]">
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+      <div className="fixed bottom-[14%] right-[10%]">
         <Button
           size="icon"
           className="h-14 w-14 overflow-hidden rounded-full"
@@ -464,7 +473,7 @@ export default function Timeline() {
             setPostDialogOpen(true);
           }}
         >
-          <Pencil className=" h-6 w-6" />
+          <Pencil className="h-6 w-6" strokeWidth={1.5} />
         </Button>
         <Dialog open={postDialogOpen}>
           <DialogContent
