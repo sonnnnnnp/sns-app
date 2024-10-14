@@ -11,7 +11,7 @@ import {
 
 const Messages = () => {
   return (
-    <div className="h-dvh py-7">
+    <div className="absolute top-0 left-0 h-dvh py-7">
       <Card className="h-full flex">
         <ChatList />
         <ChatWindow />
