@@ -411,13 +411,6 @@ export function Timeline() {
   };
 
   const handleCreatePost = async () => {
-    if (postContent.length <= 0) {
-      toast("エラー", {
-        description: "本文を入力してください",
-      });
-      return;
-    }
-
     const { data } = await client.POST("/posts/create", {
       body: {
         content: postContent,

@@ -27,8 +27,15 @@ type Props = {
 };
 
 export function Post({ post }: Props) {
+  const favoriteSound = new Audio("/audio/favorite.wav");
+
   const [favoritesCount, setFavoritesCount] = useState(post.favorites_count);
   const [isFavorited, setIsFavorited] = useState(post.favorited);
+
+  const playFavoriteSound = () => {
+    favoriteSound.volume = 0.2;
+    favoriteSound.play();
+  };
 
   const handleFavorite = async () => {
     if (isFavorited) {
@@ -39,6 +46,8 @@ export function Post({ post }: Props) {
       });
       setFavoritesCount((prevCount) => prevCount - 1);
     } else {
+      playFavoriteSound();
+
       await client.POST("/posts/favorites/create", {
         body: {
           post_id: post.id,

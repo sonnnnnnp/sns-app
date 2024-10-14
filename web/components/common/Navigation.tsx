@@ -23,7 +23,7 @@ export function Navigation() {
     <nav>
       {/* wide navigation */}
       <div className="sticky inset-y-0 w-64 h-dvh hidden lg:block">
-        <div className="flex h-12 items-center px-6">
+        <div className="flex h-14 items-center px-6">
           <Link
             href="/"
             className="flex items-center gap-2 font-semibold text-primary"
