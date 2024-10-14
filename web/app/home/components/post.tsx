@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Heart, MessageCircle, Repeat2, Share } from "lucide-react";
@@ -10,6 +11,16 @@ import { getTimeAgo } from "@/utils/date";
 import { components } from "@/lib/api/client";
 import { useState } from "react";
 import client from "@/lib/api";
+
+export const convertNewlinesToBr = (text: string) => {
+  const lines = text.split("\n");
+  return lines.map((line, index) => (
+    <React.Fragment key={index}>
+      {line}
+      {index < lines.length - 1 && <br />}
+    </React.Fragment>
+  ));
+};
 
 type Props = {
   post: components["schemas"]["Post"];
@@ -71,7 +82,7 @@ export function Post({ post }: Props) {
         </div>
         <div className="grid gap-y-1">
           <p className="pl-2 pr-3 text-sm text-muted-foreground break-all dark:text-slate-300">
-            {post.text}
+            {convertNewlinesToBr(post.text ?? "")}
           </p>
           <div className="flex items-center justify-between">
             <span className="w-10">
