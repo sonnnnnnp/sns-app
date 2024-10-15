@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 )
@@ -11,7 +12,7 @@ func (c Controller) Stream(ctx echo.Context) error {
 
 	conn, err := upgrader.Upgrade(ctx.Response(), ctx.Request(), nil)
 	if err != nil {
-		return err
+		return errors.ErrWebsocketProtocolRequired
 	}
 	defer conn.Close()
 

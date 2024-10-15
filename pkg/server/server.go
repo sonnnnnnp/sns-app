@@ -50,6 +50,9 @@ func Run(cfg *config.Config) {
 		CheckOrigin: func(r *http.Request) bool {
 			return true
 		},
+		Error: func(w http.ResponseWriter, r *http.Request, status int, reason error) {
+			// do nothing
+		},
 	}
 
 	jwtExcludePaths := []string{
