@@ -1,15 +1,15 @@
 package middleware
 
 import (
-	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 )
 
-func UpgraderMiddleware(upgrader *websocket.Upgrader) echo.MiddlewareFunc {
+func WebSocketMiddleware(h *ws.Hub) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
-			c := ctxhelper.SetUpgrader(ctx.Request().Context(), upgrader)
+			c := ctxhelper.SetWebSocketHub(ctx.Request().Context(), h)
 			ctx.SetRequest(ctx.Request().WithContext(c))
 			return next(ctx)
 		}

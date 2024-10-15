@@ -46,7 +46,8 @@ func Run(cfg *config.Config) {
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 	}
 
-	upgrader := ws.GetUpgrader(nil)
+	websocket := ws.NewHub()
+	go websocket.Start()
 
 	jwtExcludePaths := []string{
 		"/authorize/line",
@@ -61,7 +62,7 @@ func Run(cfg *config.Config) {
 	e.Use(echomiddleware.Logger())
 	e.Use(echomiddleware.CORSWithConfig(middlewarecfg))
 	e.Use(middleware.ConfigMiddleware(cfg))
-	e.Use(middleware.UpgraderMiddleware(upgrader))
+	e.Use(middleware.WebSocketMiddleware(websocket))
 	e.Use(middleware.JWTMiddleware(jwtExcludePaths))
 	e.Use(middleware.RequestValidatorMiddleware(swagger))
 

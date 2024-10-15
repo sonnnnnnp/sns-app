@@ -8,28 +8,27 @@ import (
 )
 
 func (c Controller) Stream(ctx echo.Context) error {
-	upgrader := ctxhelper.GetUpgrader(ctx.Request().Context())
+	h := ctxhelper.GetWebSocketHub(ctx.Request().Context())
 
-	conn, err := upgrader.Upgrade(ctx.Response(), ctx.Request(), nil)
+	conn, err := h.Upgrader.Upgrade(ctx.Response(), ctx.Request(), nil)
 	if err != nil {
 		return errors.ErrWebsocketProtocolRequired
 	}
-	defer conn.Close()
 
-	// TODO: add user id to client struct
 	client := &ws.Client{Conn: conn}
+	h.Register <- client
 
-	var room = ws.Room{}
-	room.Add(client)
+	defer func() {
+		h.Unregister <- client
+	}()
 
 	for {
-		_, msg, err := conn.ReadMessage()
+		var msg ws.Message
+		err := conn.ReadJSON(&msg)
 		if err != nil {
-			ctx.Logger().Error(err)
 			break
 		}
-
-		room.Publish(msg)
+		h.Broadcast <- msg
 	}
 
 	return nil

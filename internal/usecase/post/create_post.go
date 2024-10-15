@@ -5,6 +5,7 @@ import (
 
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
@@ -24,6 +25,10 @@ func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSON
 	if err != nil {
 		return nil, err
 	}
+
+	// TODO: broadcast post to timeline channel
+	websocket := ctxhelper.GetWebSocketHub(ctx)
+	websocket.Broadcast <- ws.Message{Type: "post"}
 
 	return &oapi.Post{
 		Id: p.ID,
