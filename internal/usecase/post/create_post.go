@@ -26,11 +26,7 @@ func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSON
 		return nil, err
 	}
 
-	// TODO: broadcast post to timeline channel
-	websocket := ctxhelper.GetWebSocketHub(ctx)
-	websocket.Broadcast <- ws.Message{Type: "post"}
-
-	return &oapi.Post{
+	data := &oapi.Post{
 		Id: p.ID,
 		Author: oapi.User{
 			AvatarImageUrl: &p.Edges.Author.AvatarImageURL,
@@ -45,5 +41,14 @@ func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSON
 		Text:      &p.Text,
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,
-	}, nil
+	}
+
+	websocket := ctxhelper.GetWebSocketHub(ctx)
+	websocket.Broadcast <- ws.Message{
+		Type:    "post",
+		Channel: ws.ChannelTimeline,
+		Body:    data,
+	}
+
+	return data, nil
 }

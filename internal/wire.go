@@ -12,6 +12,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/domain/user"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
 	post2 "github.com/sonnnnnnp/sns-app/internal/usecase/post"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
 	user2 "github.com/sonnnnnnp/sns-app/internal/usecase/user"
 	"github.com/sonnnnnnp/sns-app/pkg/ent"
@@ -26,8 +27,9 @@ func Wire(db *ent.Client) *controller.Controller {
 	authorizeUsecase := authorize.New(client, userRepository)
 	postRepository := post.New(db)
 	postUsecase := post2.New(postRepository, userRepository)
+	streamUsecase := stream.New()
 	timelineUsecase := timeline.New(postRepository)
 	userUsecase := user2.New(userRepository)
-	controllerController := controller.New(authorizeUsecase, postUsecase, timelineUsecase, userUsecase)
+	controllerController := controller.New(authorizeUsecase, postUsecase, streamUsecase, timelineUsecase, userUsecase)
 	return controllerController
 }

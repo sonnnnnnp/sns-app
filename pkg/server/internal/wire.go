@@ -7,6 +7,7 @@ import (
 	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
 	authorize_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
 	post_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/post"
+	stream_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/stream"
 	timeline_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
 	user_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/user"
 	"github.com/sonnnnnnp/sns-app/pkg/ent"
@@ -22,6 +23,7 @@ func Wire(db *ent.Client) *controller.Controller {
 
 		authorize_usecase.New,
 		post_usecase.New,
+		stream_usecase.New,
 		timeline_usecase.New,
 		user_usecase.New,
 

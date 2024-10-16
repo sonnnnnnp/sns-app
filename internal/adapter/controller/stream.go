@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"log"
+
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
@@ -15,7 +17,7 @@ func (c Controller) Stream(ctx echo.Context) error {
 		return errors.ErrWebsocketProtocolRequired
 	}
 
-	client := &ws.Client{Conn: conn}
+	client := ws.NewClient(ctxhelper.GetUserID(ctx.Request().Context()), conn)
 	h.Register <- client
 
 	defer func() {
@@ -28,7 +30,20 @@ func (c Controller) Stream(ctx echo.Context) error {
 		if err != nil {
 			break
 		}
-		h.Broadcast <- msg
+
+		log.Printf("%v", msg)
+
+		switch msg.Type {
+		case "subscribe":
+			c.streamUsecase.OnSubscribe(ctx.Request().Context(), h, client, msg)
+		case "unsubscribe":
+			c.streamUsecase.OnUnsubscribe(ctx.Request().Context(), h, client, msg)
+		default:
+			h.Broadcast <- ws.Message{
+				Type: "error",
+				Body: "unknown operation type",
+			}
+		}
 	}
 
 	return nil

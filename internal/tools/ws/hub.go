@@ -12,7 +12,7 @@ type Hub struct {
 	Broadcast  chan Message
 	Register   chan *Client
 	Unregister chan *Client
-	mutex      sync.Mutex
+	Mutex      sync.Mutex
 }
 
 func NewHub() *Hub {
@@ -29,18 +29,18 @@ func (h *Hub) Start() {
 	for {
 		select {
 		case client := <-h.Register:
-			h.mutex.Lock()
+			h.Mutex.Lock()
 			h.Clients[client] = true
-			h.mutex.Unlock()
+			h.Mutex.Unlock()
 		case client := <-h.Unregister:
-			h.mutex.Lock()
+			h.Mutex.Lock()
 			if _, ok := h.Clients[client]; ok {
 				delete(h.Clients, client)
 				client.Conn.Close()
 			}
-			h.mutex.Unlock()
+			h.Mutex.Unlock()
 		case message := <-h.Broadcast:
-			h.mutex.Lock()
+			h.Mutex.Lock()
 			for client := range h.Clients {
 				err := client.Conn.WriteJSON(message)
 				if err != nil {
@@ -48,7 +48,22 @@ func (h *Hub) Start() {
 					delete(h.Clients, client)
 				}
 			}
-			h.mutex.Unlock()
+			h.Mutex.Unlock()
+
+			// case message := <-h.Broadcast:
+			// 	h.mutex.Lock()
+			// 	for client := range h.Clients {
+			// 		client.mutex.Lock()
+			// 		if client.Channels[message.Channel] {
+			// 			err := client.Conn.WriteJSON(message)
+			// 			if err != nil {
+			// 				client.Conn.Close()
+			// 				delete(h.Clients, client)
+			// 			}
+			// 		}
+			// 		client.mutex.Unlock()
+			// 	}
+			// 	h.mutex.Unlock()
 		}
 	}
 }
