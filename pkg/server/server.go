@@ -46,13 +46,13 @@ func Run(cfg *config.Config) {
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 	}
 
-	websocket := ws.NewHub()
-	go websocket.Start()
-
 	jwtExcludePaths := []string{
 		"/authorize/line",
 		"/authorize/refresh",
 	}
+
+	websocket := ws.NewHub()
+	go websocket.Listen()
 
 	swagger, err := oapi.GetSwagger()
 	if err != nil {
@@ -61,10 +61,10 @@ func Run(cfg *config.Config) {
 
 	e.Use(echomiddleware.Logger())
 	e.Use(echomiddleware.CORSWithConfig(middlewarecfg))
-	e.Use(middleware.ConfigMiddleware(cfg))
-	e.Use(middleware.WebSocketMiddleware(websocket))
-	e.Use(middleware.JWTMiddleware(jwtExcludePaths))
-	e.Use(middleware.RequestValidatorMiddleware(swagger))
+	e.Use(middleware.Config(cfg))
+	e.Use(middleware.JWT(jwtExcludePaths))
+	e.Use(middleware.WebSocket(websocket))
+	e.Use(middleware.RequestValidator(swagger))
 
 	oapi.RegisterHandlers(e, internal.Wire(db))
 

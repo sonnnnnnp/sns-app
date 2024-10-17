@@ -1,69 +1,45 @@
 package ws
 
 import (
-	"sync"
-
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
 type Hub struct {
-	Upgrader   *websocket.Upgrader
-	Clients    map[*Client]bool
-	Broadcast  chan Message
-	Register   chan *Client
-	Unregister chan *Client
-	Mutex      sync.Mutex
+	Upgrader       *websocket.Upgrader
+	Clients        map[*Client]bool
+	RegisterChan   chan *Client
+	UnregisterChan chan *Client
 }
 
 func NewHub() *Hub {
 	return &Hub{
-		Upgrader:   GetUpgrader(nil),
-		Clients:    make(map[*Client]bool),
-		Broadcast:  make(chan Message),
-		Register:   make(chan *Client),
-		Unregister: make(chan *Client),
+		Upgrader:       GetUpgrader(nil),
+		Clients:        make(map[*Client]bool),
+		RegisterChan:   make(chan *Client),
+		UnregisterChan: make(chan *Client),
 	}
 }
 
-func (h *Hub) Start() {
+func (h *Hub) ContainsUser(uIDs []uuid.UUID, uID uuid.UUID) bool {
+	for _, u := range uIDs {
+		if u == uID {
+			return true
+		}
+	}
+	return false
+}
+
+func (h *Hub) Listen() {
 	for {
 		select {
-		case client := <-h.Register:
-			h.Mutex.Lock()
+		case client := <-h.RegisterChan:
 			h.Clients[client] = true
-			h.Mutex.Unlock()
-		case client := <-h.Unregister:
-			h.Mutex.Lock()
+		case client := <-h.UnregisterChan:
 			if _, ok := h.Clients[client]; ok {
 				delete(h.Clients, client)
 				client.Conn.Close()
 			}
-			h.Mutex.Unlock()
-		case message := <-h.Broadcast:
-			h.Mutex.Lock()
-			for client := range h.Clients {
-				err := client.Conn.WriteJSON(message)
-				if err != nil {
-					client.Conn.Close()
-					delete(h.Clients, client)
-				}
-			}
-			h.Mutex.Unlock()
-
-			// case message := <-h.Broadcast:
-			// 	h.mutex.Lock()
-			// 	for client := range h.Clients {
-			// 		client.mutex.Lock()
-			// 		if client.Channels[message.Channel] {
-			// 			err := client.Conn.WriteJSON(message)
-			// 			if err != nil {
-			// 				client.Conn.Close()
-			// 				delete(h.Clients, client)
-			// 			}
-			// 		}
-			// 		client.mutex.Unlock()
-			// 	}
-			// 	h.mutex.Unlock()
 		}
 	}
 }

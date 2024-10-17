@@ -10,7 +10,7 @@ import (
 	echomiddleware "github.com/oapi-codegen/echo-middleware"
 )
 
-func RequestValidatorMiddleware(swagger *openapi3.T) echo.MiddlewareFunc {
+func RequestValidator(swagger *openapi3.T) echo.MiddlewareFunc {
 	return echomiddleware.OapiRequestValidatorWithOptions(
 		swagger,
 		&echomiddleware.Options{

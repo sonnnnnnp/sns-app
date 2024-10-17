@@ -6,7 +6,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 )
 
-func WebSocketMiddleware(h *ws.Hub) echo.MiddlewareFunc {
+func WebSocket(h *ws.Hub) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			c := ctxhelper.SetWebSocketHub(ctx.Request().Context(), h)

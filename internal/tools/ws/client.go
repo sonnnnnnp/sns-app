@@ -2,7 +2,6 @@ package ws
 
 import (
 	"errors"
-	"sync"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -12,7 +11,6 @@ type Client struct {
 	UserID   uuid.UUID
 	Conn     *websocket.Conn
 	Channels map[string]bool
-	mutex    sync.Mutex
 }
 
 func NewClient(uID uuid.UUID, conn *websocket.Conn) *Client {
@@ -24,16 +22,10 @@ func NewClient(uID uuid.UUID, conn *websocket.Conn) *Client {
 }
 
 func (c *Client) Send(msg Message) error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
 	return c.Conn.WriteJSON(msg)
 }
 
 func (c *Client) Subscribe(channel string) error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
 	if c.Channels[channel] {
 		return errors.New("channel already subscribed")
 	}
@@ -44,9 +36,6 @@ func (c *Client) Subscribe(channel string) error {
 }
 
 func (c *Client) Unsubscribe(channel string) error {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
 	if !c.Channels[channel] {
 		return errors.New("channel not subscribed")
 	}

@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
@@ -10,18 +10,18 @@ import (
 )
 
 func (c Controller) Stream(ctx echo.Context) error {
-	h := ctxhelper.GetWebSocketHub(ctx.Request().Context())
+	hub := ctxhelper.GetWebSocketHub(ctx.Request().Context())
 
-	conn, err := h.Upgrader.Upgrade(ctx.Response(), ctx.Request(), nil)
+	conn, err := hub.Upgrader.Upgrade(ctx.Response(), ctx.Request(), nil)
 	if err != nil {
 		return errors.ErrWebsocketProtocolRequired
 	}
 
 	client := ws.NewClient(ctxhelper.GetUserID(ctx.Request().Context()), conn)
-	h.Register <- client
+	hub.RegisterChan <- client
 
 	defer func() {
-		h.Unregister <- client
+		hub.UnregisterChan <- client
 	}()
 
 	for {
@@ -31,18 +31,20 @@ func (c Controller) Stream(ctx echo.Context) error {
 			break
 		}
 
-		log.Printf("%v", msg)
-
-		switch msg.Type {
-		case "subscribe":
-			c.streamUsecase.OnSubscribe(ctx.Request().Context(), h, client, msg)
-		case "unsubscribe":
-			c.streamUsecase.OnUnsubscribe(ctx.Request().Context(), h, client, msg)
-		default:
-			h.Broadcast <- ws.Message{
-				Type: "error",
-				Body: "unknown operation type",
+		if err := func(msg ws.Message) error {
+			switch msg.Type {
+			case "subscribe":
+				return c.streamUsecase.OnSubscribe(ctx.Request().Context(), client, msg)
+			case "unsubscribe":
+				return c.streamUsecase.OnUnsubscribe(ctx.Request().Context(), client, msg)
+			default:
+				return fmt.Errorf("unspported message type: %s", msg.Type)
 			}
+		}(msg); err != nil {
+			client.Send(ws.Message{
+				Type: "error",
+				Body: fmt.Sprintf("%v", err),
+			})
 		}
 	}
 

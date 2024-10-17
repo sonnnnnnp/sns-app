@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/domain/post"
 	"github.com/sonnnnnnp/sns-app/internal/domain/user"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
@@ -18,15 +19,20 @@ type IPostUsecase interface {
 type PostUsecase struct {
 	postRepo *post.PostRepository
 	userRepo *user.UserRepository
+
+	streamUsecase *stream.StreamUsecase
 }
 
 func New(
 	postRepo *post.PostRepository,
 	userRepo *user.UserRepository,
+	streamUsecase *stream.StreamUsecase,
 ) *PostUsecase {
 	return &PostUsecase{
 		postRepo: postRepo,
 		userRepo: userRepo,
+
+		streamUsecase: streamUsecase,
 	}
 }
 

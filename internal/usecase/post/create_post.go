@@ -43,12 +43,15 @@ func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSON
 		UpdatedAt: p.UpdatedAt,
 	}
 
-	websocket := ctxhelper.GetWebSocketHub(ctx)
-	websocket.Broadcast <- ws.Message{
-		Type:    "post",
-		Channel: ws.ChannelTimeline,
-		Body:    data,
-	}
+	pu.streamUsecase.Broadcast(
+		ctx,
+		ws.ChannelTimeline,
+		ws.Message{
+			Type: "post",
+			Body: data,
+		},
+		nil, // broadcast to all users
+	)
 
 	return data, nil
 }
