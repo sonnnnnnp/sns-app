@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 
@@ -15,6 +14,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/middleware"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
@@ -46,16 +46,13 @@ func Run(cfg *config.Config) {
 		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
 	}
 
-	upgrader := &websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool {
-			return true
-		},
-	}
-
 	jwtExcludePaths := []string{
 		"/authorize/line",
 		"/authorize/refresh",
 	}
+
+	websocket := ws.NewHub()
+	go websocket.Listen()
 
 	swagger, err := oapi.GetSwagger()
 	if err != nil {
@@ -64,10 +61,10 @@ func Run(cfg *config.Config) {
 
 	e.Use(echomiddleware.Logger())
 	e.Use(echomiddleware.CORSWithConfig(middlewarecfg))
-	e.Use(middleware.ConfigMiddleware(cfg))
-	e.Use(middleware.UpgraderMiddleware(upgrader))
-	e.Use(middleware.JWTMiddleware(jwtExcludePaths))
-	e.Use(middleware.RequestValidatorMiddleware(swagger))
+	e.Use(middleware.Config(cfg))
+	e.Use(middleware.JWT(jwtExcludePaths))
+	e.Use(middleware.WebSocket(websocket))
+	e.Use(middleware.RequestValidator(swagger))
 
 	oapi.RegisterHandlers(e, internal.Wire(db))
 

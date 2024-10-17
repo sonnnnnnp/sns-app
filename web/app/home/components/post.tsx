@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Heart, MessageCircle, Repeat2, Share } from "lucide-react";
@@ -11,13 +12,30 @@ import { components } from "@/lib/api/client";
 import { useState } from "react";
 import client from "@/lib/api";
 
+export const convertNewlinesToBr = (text: string) => {
+  const lines = text.split("\n");
+  return lines.map((line, index) => (
+    <React.Fragment key={index}>
+      {line}
+      {index < lines.length - 1 && <br />}
+    </React.Fragment>
+  ));
+};
+
 type Props = {
   post: components["schemas"]["Post"];
 };
 
 export function Post({ post }: Props) {
+  const favoriteSound = new Audio("/audio/favorite.wav");
+
   const [favoritesCount, setFavoritesCount] = useState(post.favorites_count);
   const [isFavorited, setIsFavorited] = useState(post.favorited);
+
+  const playFavoriteSound = () => {
+    favoriteSound.volume = 0.2;
+    favoriteSound.play();
+  };
 
   const handleFavorite = async () => {
     if (isFavorited) {
@@ -28,6 +46,8 @@ export function Post({ post }: Props) {
       });
       setFavoritesCount((prevCount) => prevCount - 1);
     } else {
+      playFavoriteSound();
+
       await client.POST("/posts/favorites/create", {
         body: {
           post_id: post.id,
@@ -71,7 +91,7 @@ export function Post({ post }: Props) {
         </div>
         <div className="grid gap-y-1">
           <p className="pl-2 pr-3 text-sm text-muted-foreground break-all dark:text-slate-300">
-            {post.text}
+            {convertNewlinesToBr(post.text ?? "")}
           </p>
           <div className="flex items-center justify-between">
             <span className="w-10">

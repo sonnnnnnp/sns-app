@@ -4,13 +4,13 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 )
 
 // context キーの衝突を防止するため非公開独自キーを定義
 type configKey struct{}
-type upgraderKey struct{}
+type websocketHubKey struct{}
 type accessTokenKey struct{}
 type userIDkey struct{}
 
@@ -23,13 +23,13 @@ func GetConfig(ctx context.Context) *config.Config {
 	return cfg
 }
 
-func SetUpgrader(ctx context.Context, upgrader *websocket.Upgrader) context.Context {
-	return context.WithValue(ctx, upgraderKey{}, upgrader)
+func SetWebSocketHub(ctx context.Context, h *ws.Hub) context.Context {
+	return context.WithValue(ctx, websocketHubKey{}, h)
 }
 
-func GetUpgrader(ctx context.Context) *websocket.Upgrader {
-	upgrader, _ := ctx.Value(upgraderKey{}).(*websocket.Upgrader)
-	return upgrader
+func GetWebSocketHub(ctx context.Context) *ws.Hub {
+	h, _ := ctx.Value(websocketHubKey{}).(*ws.Hub)
+	return h
 }
 
 func SetAccessToken(ctx context.Context, token string) context.Context {

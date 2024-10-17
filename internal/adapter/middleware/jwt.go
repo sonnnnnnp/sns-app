@@ -10,7 +10,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/tools/jwter"
 )
 
-func JWTMiddleware(excludePaths []string) echo.MiddlewareFunc {
+func JWT(excludePaths []string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			// 認証が不必要なパスの除外

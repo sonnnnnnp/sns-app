@@ -12,4 +12,6 @@ var (
 	ErrCannotFollowSelf = errors.New("cannot follow self")
 
 	ErrPostAreadlyFavorited = errors.New("post already favorited")
+
+	ErrWebsocketProtocolRequired = errors.New("websocket protocol required")
 )

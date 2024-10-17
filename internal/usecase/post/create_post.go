@@ -5,6 +5,7 @@ import (
 
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
@@ -25,7 +26,7 @@ func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSON
 		return nil, err
 	}
 
-	return &oapi.Post{
+	data := &oapi.Post{
 		Id: p.ID,
 		Author: oapi.User{
 			AvatarImageUrl: &p.Edges.Author.AvatarImageURL,
@@ -40,5 +41,17 @@ func (pu *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSON
 		Text:      &p.Text,
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,
-	}, nil
+	}
+
+	pu.streamUsecase.Broadcast(
+		ctx,
+		ws.ChannelTimeline,
+		ws.Message{
+			Type: "post",
+			Body: data,
+		},
+		nil, // broadcast to all users
+	)
+
+	return data, nil
 }
