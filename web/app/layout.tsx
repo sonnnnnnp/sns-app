@@ -20,10 +20,8 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <head></head>
-      <body
-        className={`${inter.className} fixed top-0 left-0 w-full h-full overflow-y-scroll dark:bg-black dark:text-white`}
-      >
-        <div className="absolute top-0 left-0 w-full h-full overflow-scroll">
+      <body className={`${inter.className} dark:bg-black dark:text-white`}>
+        <div className="fixed top-0 left-0 w-full h-full overflow-scroll overflow-y-scroll">
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
