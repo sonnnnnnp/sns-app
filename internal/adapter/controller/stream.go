@@ -24,6 +24,8 @@ func (c Controller) Stream(ctx echo.Context) error {
 		hub.UnregisterChan <- client
 	}()
 
+	go client.Ping()
+
 	for {
 		var msg ws.Message
 		err := conn.ReadJSON(&msg)
