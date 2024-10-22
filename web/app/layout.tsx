@@ -21,19 +21,21 @@ export default function RootLayout({
     <html lang="ja" suppressHydrationWarning>
       <head></head>
       <body
-        className={`${inter.className} overflow-y-scroll dark:bg-black dark:text-white`}
+        className={`${inter.className} fixed top-0 left-0 w-full h-full overflow-y-scroll dark:bg-black dark:text-white`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <StreamProvider>
-            {children}
-            <Toaster />
-          </StreamProvider>
-        </ThemeProvider>
+        <div className="absolute top-0 left-0 w-full h-full overflow-scroll">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <StreamProvider>
+              {children}
+              <Toaster />
+            </StreamProvider>
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   );
