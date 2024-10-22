@@ -126,7 +126,7 @@ export function Profile() {
               </Button>
             </div>
           </div>
-          <div className="flex flex-col space-y-4 w-full p-4">
+          <div className="flex flex-col space-y-3 w-full p-3">
             <Card className="p-0 overflow-hidden">
               <div className="relative">
                 <img
