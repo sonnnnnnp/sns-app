@@ -447,7 +447,7 @@ export function Timeline() {
                   <CustomTabsTrigger value="public" label="オープン" />
                 </TabsList>
               </div>
-              <div className="flex flex-col space-y-4 w-full p-3">
+              <div className="flex flex-col space-y-4 w-full p-4">
                 <Card>
                   <CallList calls={calls} />
                   <PostList posts={posts} />
