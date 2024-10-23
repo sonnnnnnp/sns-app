@@ -22,7 +22,7 @@ export function Navigation() {
   return (
     <nav>
       {/* wide navigation */}
-      <div className="sticky inset-y-0 w-64 h-dvh hidden lg:block">
+      <div className="sticky inset-y-0 w-64 h-dvh hidden xl:block">
         <div className="flex h-14 items-center px-6">
           <Link
             href="/"
@@ -80,7 +80,7 @@ export function Navigation() {
         </div>
       </div>
       {/* thin navigation */}
-      <div className="sticky inset-y-0 w-16 h-dvh hidden sm:block lg:hidden">
+      <div className="sticky inset-y-0 w-16 h-dvh hidden sm:block xl:hidden">
         <div className="flex flex-col items-center gap-4 px-2 py-5">
           <Link
             href="/home"

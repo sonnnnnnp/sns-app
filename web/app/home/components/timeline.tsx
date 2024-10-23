@@ -441,8 +441,8 @@ export function Timeline() {
         <div className="flex flex-col w-full">
           <Tabs defaultValue="following" onValueChange={onTabChange}>
             <TabsContent className="my-0" value={tabValue}>
-              <div className="sticky top-0 z-10 rounded-none w-full bg-transparent backdrop-blur border-b">
-                <TabsList className="h-14 rounded-none w-full bg-transparent backdrop-blur">
+              <div className="sticky top-0 z-10 rounded-none w-full">
+                <TabsList className="h-14 rounded-none w-full bg-transparent backdrop-blur border-b">
                   <CustomTabsTrigger value="following" label="フォロー中" />
                   <CustomTabsTrigger value="public" label="オープン" />
                 </TabsList>
@@ -487,7 +487,7 @@ export function Timeline() {
               <div className="relative w-full pr-2 overflow-hidden bg-background">
                 <Textarea
                   placeholder="なんでも気軽につぶやいてみよう！"
-                  className="min-h-28 resize-none border-0 shadow-none focus-visible:ring-0"
+                  className="min-h-28 resize-none border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                   onChange={onPostContentChange}
                   value={postContent}
                 />

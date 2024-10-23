@@ -1,4 +1,5 @@
 import { Navigation } from "@/components/common/navigation";
+import { Widget } from "@/components/common/widget";
 
 export default function Layout({
   children,
@@ -6,9 +7,10 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex justify-center min-h-dvh bg-muted">
+    <div className="flex min-h-dvh">
       <Navigation />
-      {children}
+      <main className="flex-grow">{children}</main>
+      <Widget />
     </div>
   );
 }
