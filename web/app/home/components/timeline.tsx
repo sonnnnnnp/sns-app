@@ -1,6 +1,6 @@
 "use client";
 
-import { Images, Pencil, Search, SlidersHorizontal, Type } from "lucide-react";
+import { Images, Pencil, Type } from "lucide-react";
 
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
@@ -29,9 +29,8 @@ import { toast } from "sonner";
 
 import twitterText from "twitter-text";
 import { components } from "@/lib/api/client";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { CallData, CallList } from "./call-list";
-import Link from "next/link";
 import { MainCard } from "@/components/main-card";
 
 export const iframeHeight = "938px";
@@ -379,11 +378,7 @@ export function Timeline() {
   >([]);
 
   useEffect(() => {
-    const loadTimeline = async () => {
-      onTabChange("following");
-    };
-
-    loadTimeline();
+    onTabChange("following");
   }, []);
 
   const onTabChange = async (value: string) => {
