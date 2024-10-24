@@ -32,6 +32,7 @@ import { components } from "@/lib/api/client";
 import { Card } from "@/components/ui/card";
 import { CallData, CallList } from "./call-list";
 import { MainCard } from "@/components/main-card";
+import { PostDialog } from "@/components/dialog/post-dialog";
 
 export const iframeHeight = "938px";
 
@@ -462,75 +463,15 @@ export function Timeline() {
         >
           <Pencil className="h-6 w-6" strokeWidth={1.5} />
         </Button>
-        <Dialog open={postDialogOpen}>
-          <DialogContent
-            hideCloseButton={true}
-            onInteractOutside={() => setPostDialogOpen(false)}
-            onEscapeKeyDown={() => setPostDialogOpen(false)}
-            className="pb-3"
-          >
-            <VisuallyHidden.Root>
-              <DialogHeader>
-                <DialogTitle />
-                <DialogDescription />
-              </DialogHeader>
-            </VisuallyHidden.Root>
-            <div className="flex">
-              <Avatar className="h-9 w-9 mt-0.5">
-                <AvatarImage src="/users/placeholder-profile.svg" />
-              </Avatar>
-              <div className="relative w-full pr-2 overflow-hidden bg-background">
-                <Textarea
-                  placeholder="なんでも気軽につぶやいてみよう！"
-                  className="min-h-28 resize-none border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                  onChange={onPostContentChange}
-                  value={postContent}
-                />
-              </div>
-            </div>
-            <Separator />
-            <div className="flex items-center pt-0">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Images className="size-4" />
-                      <span className="sr-only">メディア</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">メディア</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Type className="size-4" />
-                      <span className="sr-only">フォント</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">フォント</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <Button
-                variant="link"
-                className="ml-auto gap-1.5"
-                onClick={handleDraftPost}
-              >
-                下書き
-              </Button>
-              <Button
-                size="sm"
-                className="ml-2 gap-1.5"
-                onClick={handleCreatePost}
-                disabled={!postContentValid}
-              >
-                投稿する
-                <Pencil className="size-3.5" />
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <PostDialog
+          open={postDialogOpen}
+          postContent={postContent}
+          postContentValid={postContentValid}
+          onCloseAction={() => setPostDialogOpen(false)}
+          onPostContentChange={onPostContentChange}
+          handleDraftPost={handleDraftPost}
+          handleCreatePost={handleCreatePost}
+        />
       </div>
     </div>
   );

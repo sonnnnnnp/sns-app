@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 import {
   Bell,
   Blocks,
@@ -21,16 +23,54 @@ import {
 } from "../ui/tooltip";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import React from "react";
+import { PostDialog } from "../dialog/post-dialog";
+import { toast } from "sonner";
+import client from "@/lib/api";
+
+import twitterText from "twitter-text";
 
 export function Navigation() {
   const [open, setOpen] = React.useState(false);
+  const [postDialogOpen, setPostDialogOpen] = React.useState(false);
+  const [postContentValid, setPostContentValid] = React.useState(false);
+  const [postContent, setPostContent] = React.useState("");
+
+  const onPostContentChange = async (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setPostContent(e.target.value);
+
+    const parsedContent = twitterText.parseTweet(e.target.value);
+
+    setPostContentValid(parsedContent.valid);
+  };
+
+  const handleDraftPost = async () => {
+    setPostDialogOpen(false);
+  };
+
+  const handleCreatePost = async () => {
+    const { data } = await client.POST("/posts/create", {
+      body: {
+        content: postContent,
+      },
+    });
+
+    if (!data?.ok) {
+      toast(`エラー: ${data?.code}`, {
+        description: "投稿に失敗しました",
+      });
+      return;
+    }
+
+    setPostDialogOpen(false);
+  };
 
   return (
     <nav>
       {/* wide navigation */}
       <div className="sticky inset-y-0 w-64 h-dvh border-r hidden xl:block">
-        <div className="flex flex-col space-y-4 items-center justify-center px-4 py-3 border-b">
+        <div className="flex flex-col space-y-3 items-center justify-center p-4 border-b">
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -38,7 +78,7 @@ export function Navigation() {
                 role="combobox"
                 aria-expanded={open}
                 aria-label="Select a team"
-                className="w-full justify-start px-3"
+                className="w-full justify-start px-3 py-8"
               >
                 <Avatar className="mr-2 h-10 w-10">
                   <AvatarImage src="/users/placeholder-profile.svg" />
@@ -48,13 +88,18 @@ export function Navigation() {
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">hello</PopoverContent>
           </Popover>
-          <Button className="w-full gap-2">
+          <Button
+            className="w-full gap-2"
+            onClick={() => {
+              setPostDialogOpen(true);
+            }}
+          >
             投稿する
             <PencilIcon className="size-3.5" />
           </Button>
         </div>
         <div className="flex-1">
-          <div className="grid gap-y-3 items-start mt-3 px-4 text-sm font-medium">
+          <div className="grid gap-y-3 items-start p-4 text-sm font-medium">
             <Link
               href="/home"
               className="flex items-center gap-3 rounded-lg p-3 text-primary bg-accent"
@@ -250,6 +295,15 @@ export function Navigation() {
           </Avatar>
         </Button>
       </div>
+      <PostDialog
+        open={postDialogOpen}
+        postContent={postContent}
+        postContentValid={postContentValid}
+        onCloseAction={() => setPostDialogOpen(false)}
+        onPostContentChange={onPostContentChange}
+        handleDraftPost={handleDraftPost}
+        handleCreatePost={handleCreatePost}
+      />
     </nav>
   );
 }
