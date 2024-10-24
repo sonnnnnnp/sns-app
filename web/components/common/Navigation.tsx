@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import client from "@/lib/api";
 
 import twitterText from "twitter-text";
+import { Separator } from "../ui/separator";
 
 export function Navigation() {
   const [open, setOpen] = React.useState(false);
@@ -142,15 +143,8 @@ export function Navigation() {
         </div>
       </div>
       {/* thin navigation */}
-      <div className="sticky inset-y-0 w-16 h-dvh border-r hidden sm:block xl:hidden">
+      <div className="sticky inset-y-0 flex-col w-16 h-dvh border-r hidden sm:flex xl:hidden">
         <div className="flex flex-col items-center gap-4 px-2 py-5">
-          <Link
-            href="/home"
-            className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground"
-          >
-            <LoaderPinwheel className="h-4 w-4 transition-all group-hover:scale-110" />
-            <span className="sr-only">sns-app</span>
-          </Link>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -219,6 +213,22 @@ export function Navigation() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">通知</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <Separator className="w-8" />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  className="h-9 w-9 p-2.5 overflow-hidden"
+                  onClick={() => {
+                    setPostDialogOpen(true);
+                  }}
+                >
+                  <PencilIcon className="h-8 w-8" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">設定</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
