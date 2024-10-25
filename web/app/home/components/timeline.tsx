@@ -1,6 +1,6 @@
 "use client";
 
-import { Images, Pencil, Search, SlidersHorizontal, Type } from "lucide-react";
+import { Images, Pencil, Type } from "lucide-react";
 
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
@@ -29,9 +29,10 @@ import { toast } from "sonner";
 
 import twitterText from "twitter-text";
 import { components } from "@/lib/api/client";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { CallData, CallList } from "./call-list";
-import Link from "next/link";
+import { MainCard } from "@/components/main-card";
+import { PostDialog } from "@/components/dialog/post-dialog";
 
 export const iframeHeight = "938px";
 
@@ -378,11 +379,7 @@ export function Timeline() {
   >([]);
 
   useEffect(() => {
-    const loadTimeline = async () => {
-      onTabChange("following");
-    };
-
-    loadTimeline();
+    onTabChange("following");
   }, []);
 
   const onTabChange = async (value: string) => {
@@ -435,30 +432,28 @@ export function Timeline() {
   };
 
   return (
-    <div className="w-full">
-      <Card className="flex text-sm w-full rounded-none border-0 mb-16 sm:mb-0 sm:border-x-[1px] dark:bg-black dark:border-slate-800">
-        <CardContent className="w-full p-0">
+    <div>
+      <MainCard>
+        <div className="flex flex-col w-full">
           <Tabs defaultValue="following" onValueChange={onTabChange}>
             <TabsContent className="my-0" value={tabValue}>
-              <div className="sticky top-0 z-10 rounded-none w-full bg-transparent backdrop-blur border-b">
-                <div className="flex justify-between items-end h-12 px-6 pb-1 text-muted-foreground sm:hidden">
-                  <Link href="/search">
-                    <Search className="h-5 w-5" />
-                  </Link>
-                  <SlidersHorizontal className="h-5 w-5 cursor-pointer" />
-                </div>
-                <TabsList className="h-14 rounded-none w-full bg-transparent backdrop-blur">
+              <div className="sticky top-0 z-10 rounded-none w-full">
+                <TabsList className="h-14 rounded-none w-full bg-transparent backdrop-blur border-b">
                   <CustomTabsTrigger value="following" label="フォロー中" />
                   <CustomTabsTrigger value="public" label="オープン" />
                 </TabsList>
               </div>
-              <CallList calls={calls} />
-              <PostList posts={posts} />
+              <div className="flex flex-col space-y-4 w-full p-4">
+                <Card>
+                  <CallList calls={calls} />
+                  <PostList posts={posts} />
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
-        </CardContent>
-      </Card>
-      <div className="fixed bottom-[14%] right-[10%]">
+        </div>
+      </MainCard>
+      <div className="fixed bottom-[14%] right-[10%] sm:hidden">
         <Button
           size="icon"
           className="h-14 w-14 overflow-hidden rounded-full"
@@ -468,75 +463,15 @@ export function Timeline() {
         >
           <Pencil className="h-6 w-6" strokeWidth={1.5} />
         </Button>
-        <Dialog open={postDialogOpen}>
-          <DialogContent
-            hideCloseButton={true}
-            onInteractOutside={() => setPostDialogOpen(false)}
-            onEscapeKeyDown={() => setPostDialogOpen(false)}
-            className="pb-3"
-          >
-            <VisuallyHidden.Root>
-              <DialogHeader>
-                <DialogTitle />
-                <DialogDescription />
-              </DialogHeader>
-            </VisuallyHidden.Root>
-            <div className="flex">
-              <Avatar className="h-9 w-9 mt-0.5">
-                <AvatarImage src="/users/placeholder-profile.svg" />
-              </Avatar>
-              <div className="relative w-full pr-2 overflow-hidden bg-background">
-                <Textarea
-                  placeholder="なんでも気軽につぶやいてみよう！"
-                  className="min-h-28 resize-none border-0 shadow-none focus-visible:ring-0"
-                  onChange={onPostContentChange}
-                  value={postContent}
-                />
-              </div>
-            </div>
-            <Separator />
-            <div className="flex items-center pt-0">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Images className="size-4" />
-                      <span className="sr-only">メディア</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">メディア</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Type className="size-4" />
-                      <span className="sr-only">フォント</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top">フォント</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <Button
-                variant="link"
-                className="ml-auto gap-1.5"
-                onClick={handleDraftPost}
-              >
-                下書き
-              </Button>
-              <Button
-                size="sm"
-                className="ml-2 gap-1.5"
-                onClick={handleCreatePost}
-                disabled={!postContentValid}
-              >
-                投稿する
-                <Pencil className="size-3.5" />
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <PostDialog
+          open={postDialogOpen}
+          postContent={postContent}
+          postContentValid={postContentValid}
+          onCloseAction={() => setPostDialogOpen(false)}
+          onPostContentChange={onPostContentChange}
+          handleDraftPost={handleDraftPost}
+          handleCreatePost={handleCreatePost}
+        />
       </div>
     </div>
   );

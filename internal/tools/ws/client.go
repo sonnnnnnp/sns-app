@@ -2,6 +2,7 @@ package ws
 
 import (
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -43,4 +44,19 @@ func (c *Client) Unsubscribe(channel string) error {
 	delete(c.Channels, channel)
 
 	return nil
+}
+
+func (c *Client) Ping() {
+	ticker := time.NewTicker(time.Second * 5)
+	defer func() {
+		ticker.Stop()
+		c.Conn.Close()
+	}()
+
+	for range ticker.C {
+		c.Conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
+		if err := c.Send(Message{Type: "ping"}); err != nil {
+			return
+		}
+	}
 }

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "next-themes";
+import { StreamProvider } from "@/providers/stream-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,18 +20,20 @@ export default function RootLayout({
   return (
     <html lang="ja" suppressHydrationWarning>
       <head></head>
-      <body
-        className={`${inter.className} overflow-y-scroll dark:bg-black dark:text-white`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+      <body className={`${inter.className} dark:bg-black dark:text-white`}>
+        <div className="fixed top-0 left-0 w-full h-full overflow-scroll overflow-y-scroll">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <StreamProvider>
+              {children}
+              <Toaster />
+            </StreamProvider>
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   );

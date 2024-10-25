@@ -60,7 +60,7 @@ export function Post({ post }: Props) {
   };
 
   return (
-    <div className="flex pl-4 pr-3 py-1.5">
+    <div className="flex p-2 pl-4">
       <div className="mt-2 mr-2">
         <Link href={`/users/${post.author.name}`}>
           <Avatar>
@@ -73,26 +73,23 @@ export function Post({ post }: Props) {
         </Link>
       </div>
       <div className="flex-1">
-        <div className="flex items-center">
-          <div className="flex items-center gap-1.5 px-2 text-sm">
+        <div className="flex items-center p-2.5">
+          <div className="flex items-center gap-1.5 text-sm">
             <span className="font-semibold dark:text-white">
               {post.author.nickname}
             </span>
             <span className="text-muted-foreground dark:text-slate-400 hidden md:block">
               {`@${post.author.name}`}
             </span>
-            <span className="text-xs text-muted-foreground dark:text-slate-400">
-              {` ･ ${getTimeAgo(new Date(post.created_at))}`}
-            </span>
           </div>
-          <div className="ml-auto">
-            <PostHandler />
-          </div>
+          <span className="ml-auto text-xs text-muted-foreground dark:text-slate-400">
+            {getTimeAgo(new Date(post.created_at))}
+          </span>
         </div>
-        <div className="grid gap-y-1">
-          <p className="pl-2 pr-3 text-sm text-muted-foreground break-all dark:text-slate-300">
-            {convertNewlinesToBr(post.text ?? "")}
-          </p>
+        <p className="px-2.5 text-sm text-muted-foreground break-all dark:text-slate-300">
+          {convertNewlinesToBr(post.text ?? "")}
+        </p>
+        <div className="grid gap-y-1 mt-2">
           <div className="flex items-center justify-between">
             <span className="w-10">
               <Button className="p-2.5 rounded-full" variant={null} size={"sm"}>
@@ -124,9 +121,10 @@ export function Post({ post }: Props) {
               </Button>
             </span>
             <span className="w-10">
-              <Button className="p-2.5 rounded-full" variant={null} size={"sm"}>
+              <PostHandler />
+              {/* <Button className="p-2.5 rounded-full" variant={null} size={"sm"}>
                 <Share className="h-4 w-4 text-muted-foreground opacity-70" />
-              </Button>
+              </Button> */}
             </span>
           </div>
         </div>
