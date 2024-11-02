@@ -52,3 +52,12 @@ wire:
 #? seed: データベースへ初期データを投入
 seed:
 	docker compose run --rm api bash -c "go run ./cmd/seed"
+
+sql-gen:
+	docker compose run --rm api bash -c "sqlc generate"
+
+migrate:
+	docker compose run --rm api bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@db:5432/db?sslmode=disable up"
+
+migrate-down:
+	docker compose run --rm api bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@db:5432/db?sslmode=disable down"

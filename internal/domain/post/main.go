@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
@@ -18,12 +19,12 @@ type IPostRepository interface {
 }
 
 type PostRepository struct {
-	db *ent.Client
+	conn *pgx.Conn
 }
 
-func New(db *ent.Client) *PostRepository {
+func New(conn *pgx.Conn) *PostRepository {
 	return &PostRepository{
-		db: db,
+		conn: conn,
 	}
 }
 

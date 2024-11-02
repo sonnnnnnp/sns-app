@@ -7,6 +7,7 @@
 package internal
 
 import (
+	"github.com/jackc/pgx/v5"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	"github.com/sonnnnnnp/sns-app/internal/domain/post"
 	"github.com/sonnnnnnp/sns-app/internal/domain/user"
@@ -15,17 +16,16 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
 	user2 "github.com/sonnnnnnp/sns-app/internal/usecase/user"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 )
 
 // Injectors from wire.go:
 
-func Wire(db *ent.Client) *controller.Controller {
+func Wire(pgx2 *pgx.Conn) *controller.Controller {
 	client := line.New()
-	userRepository := user.New(db)
+	userRepository := user.New(pgx2)
 	authorizeUsecase := authorize.New(client, userRepository)
-	postRepository := post.New(db)
+	postRepository := post.New(pgx2)
 	streamUsecase := stream.New()
 	postUsecase := post2.New(postRepository, userRepository, streamUsecase)
 	timelineUsecase := timeline.New(postRepository)

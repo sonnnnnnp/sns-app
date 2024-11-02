@@ -2,6 +2,7 @@ package internal
 
 import (
 	"github.com/google/wire"
+	"github.com/jackc/pgx/v5"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	post_repository "github.com/sonnnnnnp/sns-app/internal/domain/post"
 	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
@@ -10,11 +11,10 @@ import (
 	stream_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/stream"
 	timeline_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
 	user_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/user"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 )
 
-func Wire(db *ent.Client) *controller.Controller {
+func Wire(pgx *pgx.Conn) *controller.Controller {
 	wire.Build(
 		line.New,
 

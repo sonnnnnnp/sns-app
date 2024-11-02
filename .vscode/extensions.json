@@ -1,8 +1,9 @@
 {
-	"recommendations": [
-		"editorconfig.editorconfig",
-		"dbaeumer.vscode-eslint",
-		"esbenp.prettier-vscode",
-		"bradlc.vscode-tailwindcss"
-	]
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "inferrinizzard.prettier-sql-vscode"
+  ]
 }

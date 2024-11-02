@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 
-	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
-
 	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
+	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (au *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) (u *ent.User, isNew bool, err error) {
+func (au *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) (u *db.User, isNew bool, err error) {
 	u, err = au.userRepo.GetUserByLineID(ctx, lineID)
 	if err != nil {
 		if errors.Is(err, internal_errors.ErrUserNotFound) {

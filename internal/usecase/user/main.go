@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/domain/user"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
@@ -17,7 +17,7 @@ type IUserUsecase interface {
 	FollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialContext, error)
 	UnfollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialContext, error)
 	RemoveUserFromFollowers(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialContext, error)
-	CreateUser(ctx context.Context) (*ent.User, error)
+	CreateUser(ctx context.Context) (*db.User, error)
 	UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*oapi.User, error)
 }
 

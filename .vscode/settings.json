@@ -1,4 +1,12 @@
 {
+  "[sql]": {
+    "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
+  },
+  "Prettier-SQL.indentStyle": "standard",
+  "Prettier-SQL.tabSizeOverride": 2,
+  "Prettier-SQL.keywordCase": "upper",
+  "Prettier-SQL.linesBetweenQueries": 1,
+
   "search.exclude": {
     "**/node_modules": true
   },
