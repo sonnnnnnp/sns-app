@@ -13,7 +13,7 @@ help: Makefile
 build:
 	docker compose build --no-cache
 	[ -f .env ] || cp .env.example .env
-	cd web && [ -f .env ] || cp .env.example .env && npm ci
+	cd web && npm ci
 
 #? up: アプリケーションの起動
 up:
