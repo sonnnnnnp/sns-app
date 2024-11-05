@@ -1,14 +1,17 @@
 package config
 
-import "github.com/caarlos0/env/v11"
+import (
+	"time"
+
+	"github.com/caarlos0/env/v11"
+)
 
 type Config struct {
-	DBHost     string `env:"DB_HOST" envDefault:"db"`
-	DBUser     string `env:"DB_USER" envDefault:"user"`
-	DBPassword string `env:"DB_PASSWORD" envDefault:"password"`
-	DBName     string `env:"DB_NAME" envDefault:"db"`
-	DBPort     int    `env:"DB_PORT" envDefault:"5432"`
-	DBSSLMode  string `env:"DB_SSL_MODE" envDefault:"disable"`
+	DBURL             string        `env:"DB_URL" envDefault:"postgres://user:password@db:5432/db"`
+	DBMaxConnLifetime time.Duration `env:"DB_MAX_CONN_LIFETIME" envDefault:"30m"`
+	DBMaxConnIdleTime time.Duration `env:"DB_MAX_CONN_IDLE_TIME" envDefault:"5m"`
+	DBMaxConns        int32         `env:"DB_MAX_CONNS" envDefault:"10"`
+	DBMinConns        int32         `env:"DB_MIN_CONNS" envDefault:"1"`
 
 	JWTSecret string `env:"JWT_SECRET" envDefault:"jwt_secret"`
 

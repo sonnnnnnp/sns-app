@@ -1,15 +1,14 @@
 package server
 
 import (
-	"context"
 	"log"
 	"net/http"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 
 	"github.com/sonnnnnnp/sns-app/internal"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/middleware"
 	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
@@ -20,27 +19,15 @@ import (
 )
 
 func Run(cfg *config.Config) {
-	// sql, err := db.Open(&db.ConnectionOptions{
-	// 	Host:     cfg.DBHost,
-	// 	Port:     cfg.DBPort,
-	// 	User:     cfg.DBUser,
-	// 	Name:     cfg.DBName,
-	// 	Password: cfg.DBPassword,
-	// 	SSLMode:  cfg.DBSSLMode,
-	// })
-	// if err != nil {
-	// 	log.Fatalf("failed opening connection to database: %v", err)
-	// }
-	// defer sql.Close()
-
-	dbCfg, err := pgxpool.ParseConfig("postgres://user:password@db:5432/db")
+	pool, err := db.Open(&db.ConnectionOptions{
+		ConnString:      cfg.DBURL,
+		MaxConnLifetime: cfg.DBMaxConnLifetime,
+		MaxConnIdleTime: cfg.DBMaxConnIdleTime,
+		MaxConns:        cfg.DBMaxConns,
+		MinConns:        cfg.DBMinConns,
+	})
 	if err != nil {
-		log.Fatalf("failed parsing database config: %v", err)
-	}
-
-	pool, err := pgxpool.NewWithConfig(context.Background(), dbCfg)
-	if err != nil {
-		log.Fatalf("failed creating pool: %v", err)
+		log.Fatalf("failed opening connection to database: %v", err)
 	}
 	defer pool.Close()
 
