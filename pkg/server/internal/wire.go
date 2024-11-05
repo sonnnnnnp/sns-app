@@ -2,7 +2,7 @@ package internal
 
 import (
 	"github.com/google/wire"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	post_repository "github.com/sonnnnnnp/sns-app/internal/domain/post"
 	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
@@ -14,7 +14,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 )
 
-func Wire(pgx *pgx.Conn) *controller.Controller {
+func Wire(pool *pgxpool.Pool) *controller.Controller {
 	wire.Build(
 		line.New,
 

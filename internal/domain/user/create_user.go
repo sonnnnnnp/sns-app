@@ -8,7 +8,7 @@ import (
 )
 
 func (repo *UserRepository) CreateUser(ctx context.Context, lineID *string) (*db.User, error) {
-	queries := db.New(repo.conn)
+	queries := db.New(repo.pool)
 
 	nickname := "unknown"
 	u, err := queries.CreateUser(ctx, db.CreateUserParams{

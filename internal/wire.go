@@ -7,7 +7,7 @@
 package internal
 
 import (
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	"github.com/sonnnnnnp/sns-app/internal/domain/post"
 	"github.com/sonnnnnnp/sns-app/internal/domain/user"
@@ -21,11 +21,11 @@ import (
 
 // Injectors from wire.go:
 
-func Wire(pgx2 *pgx.Conn) *controller.Controller {
+func Wire(pool *pgxpool.Pool) *controller.Controller {
 	client := line.New()
-	userRepository := user.New(pgx2)
+	userRepository := user.New(pool)
 	authorizeUsecase := authorize.New(client, userRepository)
-	postRepository := post.New(pgx2)
+	postRepository := post.New(pool)
 	streamUsecase := stream.New()
 	postUsecase := post2.New(postRepository, userRepository, streamUsecase)
 	timelineUsecase := timeline.New(postRepository)

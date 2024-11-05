@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 
@@ -33,11 +33,16 @@ func Run(cfg *config.Config) {
 	// }
 	// defer sql.Close()
 
-	conn, err := pgx.Connect(context.Background(), "postgres://user:password@db:5432/db")
+	dbCfg, err := pgxpool.ParseConfig("postgres://user:password@db:5432/db")
 	if err != nil {
-		log.Fatalf("failed connecting to the database: %v", err)
+		log.Fatalf("failed parsing database config: %v", err)
 	}
-	defer conn.Close(context.Background())
+
+	pool, err := pgxpool.NewWithConfig(context.Background(), dbCfg)
+	if err != nil {
+		log.Fatalf("failed creating pool: %v", err)
+	}
+	defer pool.Close()
 
 	e := echo.New()
 
@@ -68,7 +73,7 @@ func Run(cfg *config.Config) {
 	e.Use(middleware.WebSocket(websocket))
 	e.Use(middleware.RequestValidator(swagger))
 
-	oapi.RegisterHandlers(e, internal.Wire(conn))
+	oapi.RegisterHandlers(e, internal.Wire(pool))
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
