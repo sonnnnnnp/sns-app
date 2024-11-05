@@ -8,7 +8,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (pr *PostRepository) CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (*ent.Post, error) {
+func (repo *PostRepository) CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (*ent.Post, error) {
 	// query := pr.db.Post.Create().SetAuthorID(uID)
 
 	// if body.Content != nil {

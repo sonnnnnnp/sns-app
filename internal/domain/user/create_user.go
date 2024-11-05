@@ -7,8 +7,8 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (ur *UserRepository) CreateUser(ctx context.Context, lineID *string) (*db.User, error) {
-	queries := db.New(ur.conn)
+func (repo *UserRepository) CreateUser(ctx context.Context, lineID *string) (*db.User, error) {
+	queries := db.New(repo.conn)
 
 	nickname := "unknown"
 	u, err := queries.CreateUser(ctx, db.CreateUserParams{

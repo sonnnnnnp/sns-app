@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (pr *PostRepository) FavoritePost(ctx context.Context, uID uuid.UUID, pID uuid.UUID) error {
+func (repo *PostRepository) FavoritePost(ctx context.Context, uID uuid.UUID, pID uuid.UUID) error {
 	// _, err := pr.db.Favorite.Create().SetUserID(uID).SetPostID(pID).Save(ctx)
 	// if err != nil {
 	// 	if ent.IsConstraintError(err) {

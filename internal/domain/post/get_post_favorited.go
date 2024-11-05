@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (pr *PostRepository) GetPostFavorited(ctx context.Context, uID uuid.UUID, pID uuid.UUID) (bool, error) {
+func (repo *PostRepository) GetPostFavorited(ctx context.Context, uID uuid.UUID, pID uuid.UUID) (bool, error) {
 	// count, err := pr.db.Favorite.Query().Where(
 	// 	favorite.And(
 	// 		favorite.UserID(uID),

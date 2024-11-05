@@ -47,7 +47,7 @@ ent-gen:
 wire:
 	docker compose run --rm api bash -c "cd /api/pkg/server/internal && wire gen && mv ./wire_gen.go /api/internal/wire.go"
 
-.PHONY: seed
+.PHONY: seed sql-gen migrate migrate-down
 
 #? seed: データベースへ初期データを投入
 seed:

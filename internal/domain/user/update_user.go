@@ -8,7 +8,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (ur *UserRepository) UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*ent.User, error) {
+func (repo *UserRepository) UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*ent.User, error) {
 	// query := ur.db.User.UpdateOneID(id)
 
 	// if body.Name != nil {

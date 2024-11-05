@@ -7,7 +7,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/ent"
 )
 
-func (pr *PostRepository) GetPosts(ctx context.Context, limit *int, fromCursor *uuid.UUID, uID *uuid.UUID) (posts []*ent.Post, nextCursor uuid.UUID, err error) {
+func (repo *PostRepository) GetPosts(ctx context.Context, limit *int, fromCursor *uuid.UUID, uID *uuid.UUID) (posts []*ent.Post, nextCursor uuid.UUID, err error) {
 	// defaultLimit := 25
 	// if limit == nil {
 	// 	limit = &defaultLimit
