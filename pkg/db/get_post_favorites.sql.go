@@ -8,7 +8,7 @@ package db
 import (
 	"context"
 
-	uuid "github.com/google/uuid"
+	"github.com/google/uuid"
 )
 
 const getPostFavorites = `-- name: GetPostFavorites :many

@@ -10,14 +10,12 @@ import (
 )
 
 type IPostRepository interface {
-	GetPosts(ctx context.Context, limit *int, fromCursor *uuid.UUID, uID *uuid.UUID) (rows []db.GetPostsRow, nextCursor uuid.UUID, err error)
+	GetTimeline(ctx context.Context, limit *int, fromCursor *uuid.UUID, uID *uuid.UUID) (rows []db.GetPostsRow, nextCursor uuid.UUID, err error)
 	CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (*db.Post, error)
 	CreatePostFavorite(ctx context.Context, uID uuid.UUID, pID uuid.UUID) error
 	DeletePostFavorite(ctx context.Context, uID uuid.UUID, pID uuid.UUID) error
 	GetPostFavorite(ctx context.Context, uID uuid.UUID, pID uuid.UUID) (*db.GetPostFavoriteRow, error)
 	GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]db.GetPostFavoritesRow, error)
-	GetPostFavorited(ctx context.Context, uID uuid.UUID, pID uuid.UUID) (bool, error)
-	GetPostFavoritesCount(ctx context.Context, pID uuid.UUID) (int, error)
 }
 
 type PostRepository struct {

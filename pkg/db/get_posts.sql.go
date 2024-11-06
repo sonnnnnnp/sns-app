@@ -7,8 +7,9 @@ package db
 
 import (
 	"context"
+	"time"
 
-	uuid "github.com/google/uuid"
+	"github.com/google/uuid"
 )
 
 const getPosts = `-- name: GetPosts :many
@@ -16,17 +17,30 @@ SELECT
     posts.id, posts.author_id, posts.text, posts.created_at, posts.updated_at,
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
     (
-        SELECT COUNT(*) FROM post_favorites
+        SELECT COUNT(*)
+        FROM post_favorites
         WHERE post_favorites.post_id = posts.id
     ) AS favorites_count,
     EXISTS (
-        SELECT 1 FROM post_favorites
-        WHERE post_favorites.post_id = posts.id AND post_favorites.user_id = $1
+        SELECT 1
+        FROM post_favorites
+        WHERE post_favorites.post_id = posts.id AND post_favorites.user_id = $2
     ) AS favorited
 FROM posts
 JOIN users ON posts.author_id = users.id
+WHERE
+    ($3::uuid IS NULL OR posts.author_id = $3::uuid)
+    AND ($4::timestamptz IS NULL OR posts.created_at < $4::timestamptz)
 ORDER BY posts.created_at DESC
+LIMIT $1
 `
+
+type GetPostsParams struct {
+	Limit     int64
+	UserID    uuid.UUID
+	AuthorID  *uuid.UUID
+	CreatedAt *time.Time
+}
 
 type GetPostsRow struct {
 	Post           Post
@@ -35,8 +49,13 @@ type GetPostsRow struct {
 	Favorited      bool
 }
 
-func (q *Queries) GetPosts(ctx context.Context, userID uuid.UUID) ([]GetPostsRow, error) {
-	rows, err := q.db.Query(ctx, getPosts, userID)
+func (q *Queries) GetPosts(ctx context.Context, arg GetPostsParams) ([]GetPostsRow, error) {
+	rows, err := q.db.Query(ctx, getPosts,
+		arg.Limit,
+		arg.UserID,
+		arg.AuthorID,
+		arg.CreatedAt,
+	)
 	if err != nil {
 		return nil, err
 	}
