@@ -2,6 +2,7 @@ version: "2"
 sql:
   - engine: "postgresql"
     queries:
+      - ./pkg/db/queries/posts
       - ./pkg/db/queries/users
     schema: "./pkg/db/migrations"
     gen:
