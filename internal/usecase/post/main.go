@@ -12,8 +12,9 @@ import (
 
 type IPostUsecase interface {
 	CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*oapi.Post, error)
-	FavoritePost(ctx context.Context, pID uuid.UUID) error
-	UnavoritePost(ctx context.Context, pID uuid.UUID) error
+	CreatePostFavorite(ctx context.Context, pID uuid.UUID) error
+	DeletePostFavorite(ctx context.Context, pID uuid.UUID) error
+	GetPostFavorites(ctx context.Context, pID uuid.UUID) (favorites []oapi.PostFavorite, err error)
 }
 
 type PostUsecase struct {

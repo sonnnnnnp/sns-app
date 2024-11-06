@@ -18,7 +18,7 @@ type ErrorMessage struct {
 
 func ErrorHandler(err error, ctx echo.Context) {
 	if he, ok := err.(*echo.HTTPError); ok {
-		ctx.JSON(http.StatusOK, &Response{
+		ctx.JSON(he.Code, &Response{
 			Code: he.Code,
 			OK:   false,
 			Data: &ErrorMessage{
@@ -30,7 +30,7 @@ func ErrorHandler(err error, ctx echo.Context) {
 
 	code := getErrorCode(err)
 
-	ctx.JSON(http.StatusOK, &Response{
+	ctx.JSON(http.StatusBadRequest, &Response{
 		Code: code,
 		OK:   false,
 		Data: &ErrorMessage{

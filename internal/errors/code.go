@@ -16,6 +16,7 @@ var errorCodeMap = map[error]int{
 	ErrCannotFollowSelf: -1101,
 
 	ErrPostAreadlyFavorited: -1201,
+	ErrPostFavoriteNotFound: -1202,
 
 	// Network errors
 	ErrWebsocketProtocolRequired: -10000,

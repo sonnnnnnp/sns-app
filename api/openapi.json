@@ -222,6 +222,67 @@
         ]
       }
     },
+    "/posts/favorites": {
+      "get": {
+        "summary": "投稿にいいねしたユーザーを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "GetPostFavorites",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PostFavorite"
+                      },
+                      "description": "データ"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/posts/create": {
       "post": {
         "summary": "投稿を作成する",
@@ -1026,6 +1087,27 @@
           "text",
           "favorites_count",
           "favorited"
+        ]
+      },
+      "PostFavorite": {
+        "type": "object",
+        "properties": {
+          "post_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "post_id",
+          "created_at",
+          "user"
         ]
       },
       "Timeline": {

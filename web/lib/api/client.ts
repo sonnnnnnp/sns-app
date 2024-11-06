@@ -72,6 +72,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/posts/favorites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 投稿にいいねしたユーザーを取得する */
+        get: operations["GetPostFavorites"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/posts/create": {
         parameters: {
             query?: never;
@@ -312,6 +329,13 @@ export interface components {
             /** Format: date-time */
             created_at: string;
         };
+        PostFavorite: {
+            /** Format: uuid */
+            post_id: string;
+            /** Format: date-time */
+            created_at: string;
+            user: components["schemas"]["User"];
+        };
         Timeline: {
             posts: components["schemas"]["Post"][];
             /**
@@ -448,6 +472,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Response"];
+                };
+            };
+        };
+    };
+    GetPostFavorites: {
+        parameters: {
+            query: {
+                post_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["PostFavorite"][];
+                    };
                 };
             };
         };

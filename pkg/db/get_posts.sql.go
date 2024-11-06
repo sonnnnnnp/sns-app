@@ -14,7 +14,7 @@ SELECT
     posts.id, posts.author_id, posts.text, posts.created_at, posts.updated_at,
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at
 FROM posts
-INNER JOIN users ON posts.author_id = users.id
+JOIN users ON posts.author_id = users.id
 ORDER BY posts.created_at DESC
 `
 

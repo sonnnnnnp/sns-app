@@ -1,1 +1,5 @@
+DROP TABLE IF EXISTS post_favorites;
+
+DROP TABLE IF EXISTS posts;
+
 DROP TABLE IF EXISTS users;

@@ -27,7 +27,7 @@ func (c Controller) FavoritePost(ctx echo.Context) error {
 		return err
 	}
 
-	err := c.postUsecase.FavoritePost(ctx.Request().Context(), body.PostId)
+	err := c.postUsecase.CreatePostFavorite(ctx.Request().Context(), body.PostId)
 	if err != nil {
 		return err
 	}
@@ -41,10 +41,19 @@ func (c Controller) UnfavoritePost(ctx echo.Context) error {
 		return err
 	}
 
-	err := c.postUsecase.UnavoritePost(ctx.Request().Context(), body.PostId)
+	err := c.postUsecase.DeletePostFavorite(ctx.Request().Context(), body.PostId)
 	if err != nil {
 		return err
 	}
 
 	return c.json(ctx, http.StatusOK, nil)
+}
+
+func (c Controller) GetPostFavorites(ctx echo.Context, params oapi.GetPostFavoritesParams) error {
+	favorites, err := c.postUsecase.GetPostFavorites(ctx.Request().Context(), params.PostId)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, favorites)
 }

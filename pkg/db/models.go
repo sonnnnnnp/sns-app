@@ -17,6 +17,12 @@ type Post struct {
 	UpdatedAt pgtype.Timestamptz
 }
 
+type PostFavorite struct {
+	UserID    uuid.UUID
+	PostID    uuid.UUID
+	CreatedAt pgtype.Timestamptz
+}
+
 type User struct {
 	ID             uuid.UUID
 	Name           string
