@@ -32,7 +32,7 @@ func (q *Queries) GetPostFavorites(ctx context.Context, postID uuid.UUID) ([]Get
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetPostFavoritesRow
+	items := []GetPostFavoritesRow{}
 	for rows.Next() {
 		var i GetPostFavoritesRow
 		if err := rows.Scan(

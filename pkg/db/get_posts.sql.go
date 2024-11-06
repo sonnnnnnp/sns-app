@@ -60,7 +60,7 @@ func (q *Queries) GetPosts(ctx context.Context, arg GetPostsParams) ([]GetPostsR
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetPostsRow
+	items := []GetPostsRow{}
 	for rows.Next() {
 		var i GetPostsRow
 		if err := rows.Scan(

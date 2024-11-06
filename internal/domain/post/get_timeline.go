@@ -44,7 +44,7 @@ func (repo *PostRepository) GetTimeline(ctx context.Context, limit *int, fromCur
 	}
 
 	if len(rows) == 0 {
-		return nil, uuid.Nil, nil
+		return rows, uuid.Nil, nil
 	}
 
 	nextCursor = rows[len(rows)-1].Post.ID
