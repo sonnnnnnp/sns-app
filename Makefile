@@ -47,17 +47,20 @@ ent-gen:
 wire:
 	docker compose run --rm api bash -c "cd /api/pkg/server/internal && wire gen && mv ./wire_gen.go /api/internal/wire.go"
 
-.PHONY: seed sql-gen migrate migrate-down
+.PHONY: migrate migrate-down seed sql-gen
+
+#? migrate: データベースの構造をマイグレート
+migrate:
+	docker compose run --rm api bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@db:5432/db?sslmode=disable up"
+
+#? migrate-down: データベースの構造を初期化
+migrate-down:
+	docker compose run --rm api bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@db:5432/db?sslmode=disable down"
 
 #? seed: データベースへ初期データを投入
 seed:
 	docker compose run --rm api bash -c "go run ./cmd/seed"
 
+#? sql-gen: SQL クエリから Go コードを生成
 sql-gen:
 	docker compose run --rm api bash -c "sqlc generate"
-
-migrate:
-	docker compose run --rm api bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@db:5432/db?sslmode=disable up"
-
-migrate-down:
-	docker compose run --rm api bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@db:5432/db?sslmode=disable down"
