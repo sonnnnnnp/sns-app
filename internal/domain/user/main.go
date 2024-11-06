@@ -13,10 +13,10 @@ import (
 type IUserRepository interface {
 	CreateUser(ctx context.Context, lineID *string) (*db.User, error)
 	FollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
-	GetSocialContext(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialContext, error)
-	GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error)
+	GetSocialConnection(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialConnection, error)
+	GetUserByID(ctx context.Context, id uuid.UUID) (*db.User, error)
 	GetUserByLineID(ctx context.Context, lineID string) (*db.User, error)
-	GetUserByName(ctx context.Context, name string) (*ent.User, error)
+	GetUserByName(ctx context.Context, name string) (*db.User, error)
 	GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]*ent.User, error)
 	GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]*ent.User, error)
 	UnfollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error

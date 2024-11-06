@@ -2,22 +2,23 @@ package user
 
 import (
 	"context"
+	"errors"
 
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
+	"github.com/jackc/pgx/v5"
+	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (repo *UserRepository) GetUserByName(ctx context.Context, name string) (*ent.User, error) {
-	// u, err := ur.db.User.Query().Where(user.Name(name)).First(ctx)
-	// if err != nil {
-	// 	switch {
-	// 	case ent.IsNotFound(err):
-	// 		return nil, errors.ErrUserNotFound
-	// 	default:
-	// 		return nil, err
-	// 	}
-	// }
+func (repo *UserRepository) GetUserByName(ctx context.Context, name string) (*db.User, error) {
+	queries := db.New(repo.pool)
 
-	// return u, nil
+	u, err := queries.GetUserByName(ctx, name)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, internal_errors.ErrUserNotFound
+		}
+		return nil, err
+	}
 
-	return nil, nil
+	return &u, nil
 }

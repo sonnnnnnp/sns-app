@@ -6,11 +6,18 @@ package db
 
 import (
 	uuid "github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type User struct {
-	ID       uuid.UUID
-	Name     string
-	Nickname *string
-	LineID   *string
+	ID             uuid.UUID
+	Name           string
+	Nickname       string
+	Biography      *string
+	AvatarImageUrl *string
+	BannerImageUrl *string
+	Birthdate      pgtype.Timestamptz
+	LineID         *string
+	CreatedAt      pgtype.Timestamptz
+	UpdatedAt      pgtype.Timestamptz
 }

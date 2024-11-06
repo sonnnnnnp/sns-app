@@ -9,7 +9,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uu *UserUsecase) RemoveUserFromFollowers(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialContext, error) {
+func (uu *UserUsecase) RemoveUserFromFollowers(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error) {
 	uID := ctxhelper.GetUserID(ctx)
 
 	if uID == targetUID {
@@ -20,5 +20,5 @@ func (uu *UserUsecase) RemoveUserFromFollowers(ctx context.Context, targetUID uu
 		return nil, err
 	}
 
-	return uu.userRepo.GetSocialContext(ctx, uID, targetUID)
+	return uu.userRepo.GetSocialConnection(ctx, uID, targetUID)
 }

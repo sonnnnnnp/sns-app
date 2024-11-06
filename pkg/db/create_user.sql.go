@@ -7,39 +7,31 @@ package db
 
 import (
 	"context"
-
-	uuid "github.com/google/uuid"
 )
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  id, name, nickname, line_id
+  line_id
 ) VALUES (
-  $1, $2, $3, $4
+  $1
 )
-RETURNING id, name, nickname, line_id
+RETURNING id, name, nickname, biography, avatar_image_url, banner_image_url, birthdate, line_id, created_at, updated_at
 `
 
-type CreateUserParams struct {
-	ID       uuid.UUID
-	Name     string
-	Nickname *string
-	LineID   *string
-}
-
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, createUser,
-		arg.ID,
-		arg.Name,
-		arg.Nickname,
-		arg.LineID,
-	)
+func (q *Queries) CreateUser(ctx context.Context, lineID *string) (User, error) {
+	row := q.db.QueryRow(ctx, createUser, lineID)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
 		&i.Nickname,
+		&i.Biography,
+		&i.AvatarImageUrl,
+		&i.BannerImageUrl,
+		&i.Birthdate,
 		&i.LineID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }

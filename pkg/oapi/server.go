@@ -60,8 +60,8 @@ type Response struct {
 	Ok bool `json:"ok"`
 }
 
-// SocialContext defines model for SocialContext.
-type SocialContext struct {
+// SocialConnection defines model for SocialConnection.
+type SocialConnection struct {
 	FollowedBy bool `json:"followed_by"`
 	Following  bool `json:"following"`
 }
@@ -84,10 +84,10 @@ type User struct {
 	Id openapi_types.UUID `json:"id"`
 
 	// Name 名前
-	Name          string         `json:"name"`
-	Nickname      string         `json:"nickname"`
-	SocialContext *SocialContext `json:"social_context,omitempty"`
-	UpdatedAt     time.Time      `json:"updated_at"`
+	Name             string            `json:"name"`
+	Nickname         string            `json:"nickname"`
+	SocialConnection *SocialConnection `json:"social_connection,omitempty"`
+	UpdatedAt        time.Time         `json:"updated_at"`
 }
 
 // Users defines model for Users.
@@ -1605,8 +1605,8 @@ type RemoveUserFromFollowersResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *struct {
 		// Code レスポンスコード
-		Code int           `json:"code"`
-		Data SocialContext `json:"data"`
+		Code int              `json:"code"`
+		Data SocialConnection `json:"data"`
 
 		// Ok 正常に処理を終了したかどうか
 		Ok bool `json:"ok"`
@@ -1663,8 +1663,8 @@ type FollowUserResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *struct {
 		// Code レスポンスコード
-		Code int           `json:"code"`
-		Data SocialContext `json:"data"`
+		Code int              `json:"code"`
+		Data SocialConnection `json:"data"`
 
 		// Ok 正常に処理を終了したかどうか
 		Ok bool `json:"ok"`
@@ -1692,8 +1692,8 @@ type UnfollowUserResponse struct {
 	HTTPResponse *http.Response
 	JSON200      *struct {
 		// Code レスポンスコード
-		Code int           `json:"code"`
-		Data SocialContext `json:"data"`
+		Code int              `json:"code"`
+		Data SocialConnection `json:"data"`
 
 		// Ok 正常に処理を終了したかどうか
 		Ok bool `json:"ok"`
@@ -2266,8 +2266,8 @@ func ParseRemoveUserFromFollowersResponse(rsp *http.Response) (*RemoveUserFromFo
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Code レスポンスコード
-			Code int           `json:"code"`
-			Data SocialContext `json:"data"`
+			Code int              `json:"code"`
+			Data SocialConnection `json:"data"`
 
 			// Ok 正常に処理を終了したかどうか
 			Ok bool `json:"ok"`
@@ -2332,8 +2332,8 @@ func ParseFollowUserResponse(rsp *http.Response) (*FollowUserResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Code レスポンスコード
-			Code int           `json:"code"`
-			Data SocialContext `json:"data"`
+			Code int              `json:"code"`
+			Data SocialConnection `json:"data"`
 
 			// Ok 正常に処理を終了したかどうか
 			Ok bool `json:"ok"`
@@ -2365,8 +2365,8 @@ func ParseUnfollowUserResponse(rsp *http.Response) (*UnfollowUserResponse, error
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			// Code レスポンスコード
-			Code int           `json:"code"`
-			Data SocialContext `json:"data"`
+			Code int              `json:"code"`
+			Data SocialConnection `json:"data"`
 
 			// Ok 正常に処理を終了したかどうか
 			Ok bool `json:"ok"`
@@ -2779,32 +2779,32 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

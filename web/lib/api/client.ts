@@ -278,13 +278,13 @@ export interface components {
             avatar_image_url: string | null;
             banner_image_url: string | null;
             biography: string | null;
-            social_context?: components["schemas"]["SocialContext"];
+            social_connection?: components["schemas"]["SocialConnection"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
             created_at: string;
         };
-        SocialContext: {
+        SocialConnection: {
             following: boolean;
             followed_by: boolean;
         };
@@ -509,7 +509,7 @@ export interface operations {
                         ok: boolean;
                         /** @description レスポンスコード */
                         code: number;
-                        data: components["schemas"]["SocialContext"];
+                        data: components["schemas"]["SocialConnection"];
                     };
                 };
             };
@@ -541,7 +541,7 @@ export interface operations {
                         ok: boolean;
                         /** @description レスポンスコード */
                         code: number;
-                        data: components["schemas"]["SocialContext"];
+                        data: components["schemas"]["SocialConnection"];
                     };
                 };
             };
@@ -629,7 +629,7 @@ export interface operations {
                         ok: boolean;
                         /** @description レスポンスコード */
                         code: number;
-                        data: components["schemas"]["SocialContext"];
+                        data: components["schemas"]["SocialConnection"];
                     };
                 };
             };

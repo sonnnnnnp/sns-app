@@ -10,7 +10,7 @@ import (
 )
 
 const getUserByLineID = `-- name: GetUserByLineID :one
-SELECT id, name, nickname, line_id FROM users
+SELECT id, name, nickname, biography, avatar_image_url, banner_image_url, birthdate, line_id, created_at, updated_at FROM users
 WHERE line_id = $1
 `
 
@@ -21,7 +21,13 @@ func (q *Queries) GetUserByLineID(ctx context.Context, lineID *string) (User, er
 		&i.ID,
 		&i.Name,
 		&i.Nickname,
+		&i.Biography,
+		&i.AvatarImageUrl,
+		&i.BannerImageUrl,
+		&i.Birthdate,
 		&i.LineID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }

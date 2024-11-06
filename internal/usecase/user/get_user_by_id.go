@@ -16,23 +16,23 @@ func (uu *UserUsecase) GetUserByID(ctx context.Context, id uuid.UUID) (*oapi.Use
 		return nil, err
 	}
 
-	var sc *oapi.SocialContext
+	var sc *oapi.SocialConnection
 	if u.ID != uID {
-		sc, err = uu.userRepo.GetSocialContext(ctx, uID, u.ID)
+		sc, err = uu.userRepo.GetSocialConnection(ctx, uID, u.ID)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	return &oapi.User{
-		Id:             u.ID,
-		Name:           u.Name,
-		Nickname:       u.Nickname,
-		AvatarImageUrl: &u.AvatarImageURL,
-		BannerImageUrl: &u.BannerImageURL,
-		Biography:      &u.Biography,
-		SocialContext:  sc,
-		UpdatedAt:      u.UpdatedAt,
-		CreatedAt:      u.CreatedAt,
+		Id:               u.ID,
+		Name:             u.Name,
+		Nickname:         u.Nickname,
+		AvatarImageUrl:   u.AvatarImageUrl,
+		BannerImageUrl:   u.BannerImageUrl,
+		Biography:        u.Biography,
+		SocialConnection: sc,
+		UpdatedAt:        u.UpdatedAt.Time,
+		CreatedAt:        u.CreatedAt.Time,
 	}, nil
 }

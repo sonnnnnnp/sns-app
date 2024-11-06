@@ -7,7 +7,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (repo *UserRepository) GetSocialContext(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialContext, error) {
+func (repo *UserRepository) GetSocialConnection(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialConnection, error) {
 	// isFollowedBy, err := ur.db.User.Query().Where(user.ID(targetUID)).QueryFollowing().Exist(ctx)
 	// if err != nil {
 	// 	return nil, err
