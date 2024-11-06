@@ -4,13 +4,14 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (repo *PostRepository) GetPosts(ctx context.Context, limit *int, fromCursor *uuid.UUID, uID *uuid.UUID) (rows []db.GetPostsRow, nextCursor uuid.UUID, err error) {
 	queries := db.New(repo.pool)
 
-	rows, err = queries.GetPosts(ctx)
+	rows, err = queries.GetPosts(ctx, ctxhelper.GetUserID(ctx))
 	if err != nil {
 		return nil, uuid.Nil, err
 	}

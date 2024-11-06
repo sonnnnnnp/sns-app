@@ -26,12 +26,12 @@ func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *oapi.GetTime
 				Name:           r.User.Name,
 				UpdatedAt:      r.User.UpdatedAt.Time,
 			},
-			CreatedAt: r.Post.CreatedAt.Time,
-			// Favorited:      false,
-			// FavoritesCount: 0,
-			Id:        r.Post.ID,
-			Text:      r.Post.Text,
-			UpdatedAt: r.Post.UpdatedAt.Time,
+			CreatedAt:      r.Post.CreatedAt.Time,
+			Favorited:      r.Favorited,
+			FavoritesCount: int(r.FavoritesCount),
+			Id:             r.Post.ID,
+			Text:           r.Post.Text,
+			UpdatedAt:      r.Post.UpdatedAt.Time,
 		})
 	}
 

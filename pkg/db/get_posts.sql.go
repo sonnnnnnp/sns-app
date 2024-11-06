@@ -7,24 +7,36 @@ package db
 
 import (
 	"context"
+
+	uuid "github.com/google/uuid"
 )
 
 const getPosts = `-- name: GetPosts :many
 SELECT
     posts.id, posts.author_id, posts.text, posts.created_at, posts.updated_at,
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at
+    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    (
+        SELECT COUNT(*) FROM post_favorites
+        WHERE post_favorites.post_id = posts.id
+    ) AS favorites_count,
+    EXISTS (
+        SELECT 1 FROM post_favorites
+        WHERE post_favorites.post_id = posts.id AND post_favorites.user_id = $1
+    ) AS favorited
 FROM posts
 JOIN users ON posts.author_id = users.id
 ORDER BY posts.created_at DESC
 `
 
 type GetPostsRow struct {
-	Post Post
-	User User
+	Post           Post
+	User           User
+	FavoritesCount int64
+	Favorited      bool
 }
 
-func (q *Queries) GetPosts(ctx context.Context) ([]GetPostsRow, error) {
-	rows, err := q.db.Query(ctx, getPosts)
+func (q *Queries) GetPosts(ctx context.Context, userID uuid.UUID) ([]GetPostsRow, error) {
+	rows, err := q.db.Query(ctx, getPosts, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -48,6 +60,8 @@ func (q *Queries) GetPosts(ctx context.Context) ([]GetPostsRow, error) {
 			&i.User.LineID,
 			&i.User.CreatedAt,
 			&i.User.UpdatedAt,
+			&i.FavoritesCount,
+			&i.Favorited,
 		); err != nil {
 			return nil, err
 		}
