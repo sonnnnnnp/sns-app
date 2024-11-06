@@ -1,0 +1,1096 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "sns-app",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/authorize/refresh": {
+      "post": {
+        "summary": "認証トークンを更新",
+        "deprecated": false,
+        "description": "",
+        "operationId": "refreshAuthorization",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refresh_token": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "refresh_token"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Authorization"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/authorize/line": {
+      "post": {
+        "summary": "LINE でログイン",
+        "deprecated": false,
+        "description": "",
+        "operationId": "authorizeWithLine",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Authorization"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/posts/favorites/create": {
+      "post": {
+        "summary": "投稿にいいねする",
+        "deprecated": false,
+        "description": "",
+        "operationId": "favoritePost",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "post_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "post_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response",
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/posts/favorites/delete": {
+      "post": {
+        "summary": "投稿のいいねを解除する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "unfavoritePost",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "post_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "post_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response",
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/posts/create": {
+      "post": {
+        "summary": "投稿を作成する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "createPost",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Post"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/following/delete": {
+      "post": {
+        "summary": "ユーザーをアンフォローする",
+        "deprecated": false,
+        "description": "",
+        "operationId": "unfollowUser",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "user_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SocialConnection"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/following/create": {
+      "post": {
+        "summary": "ユーザーをフォローする",
+        "deprecated": false,
+        "description": "",
+        "operationId": "followUser",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "user_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SocialConnection"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/following": {
+      "get": {
+        "summary": "ユーザーのフォローを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getUserFollowing",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Users"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/followers": {
+      "get": {
+        "summary": "ユーザーのフォロワーを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getUserFollowers",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Users"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/followers/delete": {
+      "post": {
+        "summary": "ユーザーをフォロワーから削除する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "removeUserFromFollowers",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "required": [
+                  "user_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SocialConnection"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "ユーザーを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getUserByName",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/update": {
+      "put": {
+        "summary": "ユーザーを更新する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "updateUser",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "nickname": {
+                    "type": "string"
+                  },
+                  "avatar_image_url": {
+                    "type": "string"
+                  },
+                  "banner_image_url": {
+                    "type": "string"
+                  },
+                  "biography": {
+                    "type": "string"
+                  },
+                  "birthdate": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "summary": "自分を取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getSelf",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/timeline": {
+      "get": {
+        "summary": "タイムラインを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getTimeline",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "次のページを取得するためのキー",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "following",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Timeline"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/stream": {
+      "get": {
+        "summary": "WebSocket ストリーム",
+        "deprecated": false,
+        "description": "Note: This endpoint is designated for WebSocket gateway usage and cannot be used as a REST API.",
+        "operationId": "stream",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID番号",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "名前"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "avatar_image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "banner_image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "biography": {
+            "type": "string",
+            "nullable": true
+          },
+          "social_connection": {
+            "$ref": "#/components/schemas/SocialConnection"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "nickname",
+          "avatar_image_url",
+          "banner_image_url",
+          "biography",
+          "updated_at",
+          "created_at"
+        ]
+      },
+      "SocialConnection": {
+        "type": "object",
+        "properties": {
+          "following": {
+            "type": "boolean"
+          },
+          "followed_by": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "following",
+          "followed_by"
+        ]
+      },
+      "Users": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        },
+        "required": [
+          "users"
+        ]
+      },
+      "Authorization": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "access_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "is_new": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "user_id",
+          "access_token",
+          "refresh_token",
+          "is_new"
+        ]
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID番号",
+            "format": "uuid"
+          },
+          "author": {
+            "$ref": "#/components/schemas/User"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "favorited": {
+            "type": "boolean"
+          },
+          "favorites_count": {
+            "type": "integer"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "author",
+          "updated_at",
+          "created_at",
+          "text",
+          "favorites_count",
+          "favorited"
+        ]
+      },
+      "Timeline": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Post"
+            }
+          },
+          "next_cursor": {
+            "type": "string",
+            "description": "次のページを取得するためのキー",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "posts",
+          "next_cursor"
+        ]
+      },
+      "SocialSetting": {
+        "type": "object",
+        "properties": {
+          "lineId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "lineId"
+        ]
+      },
+      "Response": {
+        "title": "",
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "description": "正常に処理を終了したかどうか"
+          },
+          "code": {
+            "type": "integer",
+            "description": "レスポンスコード"
+          },
+          "data": {
+            "type": "object",
+            "properties": {},
+            "description": "データ"
+          }
+        },
+        "required": [
+          "ok",
+          "code",
+          "data"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "servers": []
+}

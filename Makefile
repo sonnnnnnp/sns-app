@@ -32,8 +32,8 @@ tidy:
 
 #? oapi: OpenAPI からコードを生成
 oapi:
-	docker compose run --rm api bash -c "cd pkg && oapi-codegen -package oapi /api/api/openapi.yaml > /api/pkg/oapi/server.go"
-	npx openapi-typescript ./api/openapi.yaml -o ./web/lib/api/client.ts
+	docker compose run --rm api bash -c "cd pkg && oapi-codegen -package oapi /api/api/openapi.json > /api/pkg/oapi/server.go"
+	npx openapi-typescript ./api/openapi.json -o ./web/lib/api/client.ts
 
 #? ent-new: ent エンティティの作成
 ent-new:
