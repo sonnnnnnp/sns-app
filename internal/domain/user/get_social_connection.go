@@ -4,24 +4,23 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 func (repo *UserRepository) GetSocialConnection(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialConnection, error) {
-	// isFollowedBy, err := ur.db.User.Query().Where(user.ID(targetUID)).QueryFollowing().Exist(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	queries := db.New(repo.pool)
 
-	// isFollowing, err := ur.db.User.Query().Where(user.ID(targetUID)).QueryFollowers().Exist(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	row, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+		SelfID:   selfID,
+		TargetID: targetUID,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	// return &oapi.SocialContext{
-	// 	FollowedBy: isFollowedBy,
-	// 	Following:  isFollowing,
-	// }, nil
-
-	return nil, nil
+	return &oapi.SocialConnection{
+		Following:  row.Following,
+		FollowedBy: row.FollowedBy,
+	}, nil
 }

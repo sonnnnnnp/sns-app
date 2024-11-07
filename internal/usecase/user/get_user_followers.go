@@ -4,33 +4,32 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 func (uu *UserUsecase) GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]oapi.User, error) {
-	if exists, err := uu.userRepo.GetUserExistence(ctx, uID); err != nil {
-		return nil, err
-	} else if !exists {
-		return nil, errors.ErrUserNotFound
-	}
+	// if exists, err := uu.userRepo.GetUserExistence(ctx, uID); err != nil {
+	// 	return nil, err
+	// } else if !exists {
+	// 	return nil, errors.ErrUserNotFound
+	// }
 
-	users, err := uu.userRepo.GetUserFollowers(ctx, uID)
+	rows, err := uu.userRepo.GetUserFollowers(ctx, uID)
 	if err != nil {
 		return nil, err
 	}
 
-	oapiUsers := make([]oapi.User, len(users))
-	for i, u := range users {
+	oapiUsers := make([]oapi.User, len(rows))
+	for i, r := range rows {
 		oapiUsers[i] = oapi.User{
-			AvatarImageUrl: &u.AvatarImageURL,
-			Biography:      &u.Biography,
-			BannerImageUrl: &u.BannerImageURL,
-			CreatedAt:      u.CreatedAt,
-			Nickname:       u.Nickname,
-			Id:             u.ID,
-			UpdatedAt:      u.UpdatedAt,
-			Name:           u.Name,
+			AvatarImageUrl: r.AvatarImageUrl,
+			Biography:      r.Biography,
+			BannerImageUrl: r.BannerImageUrl,
+			CreatedAt:      r.CreatedAt.Time,
+			Nickname:       r.Nickname,
+			Id:             r.ID,
+			UpdatedAt:      r.UpdatedAt.Time,
+			Name:           r.Name,
 		}
 	}
 

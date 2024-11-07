@@ -35,3 +35,9 @@ type User struct {
 	CreatedAt      pgtype.Timestamptz
 	UpdatedAt      pgtype.Timestamptz
 }
+
+type UserFollower struct {
+	FollowerID  uuid.UUID
+	FollowingID uuid.UUID
+	CreatedAt   pgtype.Timestamptz
+}

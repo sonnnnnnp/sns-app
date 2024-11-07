@@ -2,7 +2,9 @@ version: "2"
 sql:
   - engine: "postgresql"
     queries:
+      - ./pkg/db/queries/post_favorites
       - ./pkg/db/queries/posts
+      - ./pkg/db/queries/user_followers
       - ./pkg/db/queries/users
     schema: "./pkg/db/migrations"
     gen:

@@ -4,11 +4,16 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (repo *UserRepository) GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]*ent.User, error) {
-	// return ur.db.User.Query().Where(user.ID(uID)).QueryFollowers().All(ctx)
+func (repo *UserRepository) GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]db.GetUserFollowersRow, error) {
+	queries := db.New(repo.pool)
 
-	return nil, nil
+	rows, err := queries.GetUserFollowers(ctx, uID)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
 }
