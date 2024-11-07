@@ -50,7 +50,7 @@ func (c Controller) GetUserFollowing(ctx echo.Context, params oapi.GetUserFollow
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &oapi.Users{
+	return c.json(ctx, http.StatusOK, &oapi.UserFollowers{
 		Users: users,
 	})
 }
@@ -61,7 +61,7 @@ func (c Controller) GetUserFollowers(ctx echo.Context, params oapi.GetUserFollow
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &oapi.Users{
+	return c.json(ctx, http.StatusOK, &oapi.UserFollowers{
 		Users: users,
 	})
 }

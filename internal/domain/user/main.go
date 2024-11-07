@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
@@ -24,7 +23,7 @@ type IUserRepository interface {
 	FollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
 
 	GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]db.GetUserFollowersRow, error)
-	GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]*ent.User, error)
+	GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]db.GetUserFollowingRow, error)
 	GetSocialConnection(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialConnection, error)
 
 	UnfollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error

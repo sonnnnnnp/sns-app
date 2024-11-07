@@ -11,8 +11,8 @@ func (repo *UserRepository) UnfollowUser(ctx context.Context, selfUID uuid.UUID,
 	queries := db.New(repo.pool)
 
 	if err := queries.DeleteUserFollower(ctx, db.DeleteUserFollowerParams{
-		FollowerID:  targetUID,
-		FollowingID: selfUID,
+		FollowerID:  selfUID,
+		FollowingID: targetUID,
 	}); err != nil {
 		return err
 	}

@@ -12,8 +12,8 @@ import (
 type IUserUsecase interface {
 	GetUserByID(ctx context.Context, id uuid.UUID) (*oapi.User, error)
 	GetUserByName(ctx context.Context, name string) (*oapi.User, error)
-	GetUserFollowers(ctx context.Context, id uuid.UUID) ([]oapi.User, error)
-	GetUserFollowing(ctx context.Context, id uuid.UUID) ([]oapi.User, error)
+	GetUserFollowers(ctx context.Context, id uuid.UUID) ([]oapi.UserFollower, error)
+	GetUserFollowing(ctx context.Context, id uuid.UUID) ([]oapi.UserFollower, error)
 	FollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)
 	UnfollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)
 	RemoveUserFromFollowers(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)

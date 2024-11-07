@@ -566,7 +566,7 @@
                     },
                     "data": {
                       "description": "データ",
-                      "$ref": "#/components/schemas/Users"
+                      "$ref": "#/components/schemas/UserFollowers"
                     }
                   },
                   "required": [
@@ -1140,6 +1140,75 @@
         },
         "required": [
           "lineId"
+        ]
+      },
+      "UserFollower": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID番号",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "名前"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "avatar_image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "banner_image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "biography": {
+            "type": "string",
+            "nullable": true
+          },
+          "social_connection": {
+            "$ref": "#/components/schemas/SocialConnection"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "followed_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "followed_at",
+          "id",
+          "name",
+          "nickname",
+          "avatar_image_url",
+          "banner_image_url",
+          "biography",
+          "updated_at",
+          "created_at"
+        ]
+      },
+      "UserFollowers": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserFollower"
+            }
+          }
+        },
+        "required": [
+          "users"
         ]
       },
       "Response": {

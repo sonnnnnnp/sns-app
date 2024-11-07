@@ -11,8 +11,8 @@ func (repo *UserRepository) FollowUser(ctx context.Context, selfUID uuid.UUID, t
 	queries := db.New(repo.pool)
 
 	if err := queries.CreateUserFollower(ctx, db.CreateUserFollowerParams{
-		FollowerID:  targetUID,
-		FollowingID: selfUID,
+		FollowerID:  selfUID,
+		FollowingID: targetUID,
 	}); err != nil {
 		return err
 	}

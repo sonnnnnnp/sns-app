@@ -7,6 +7,6 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 )
 
-func (pu *PostUsecase) DeletePostFavorite(ctx context.Context, pID uuid.UUID) error {
-	return pu.postRepo.DeletePostFavorite(ctx, ctxhelper.GetUserID(ctx), pID)
+func (uc *PostUsecase) DeletePostFavorite(ctx context.Context, pID uuid.UUID) error {
+	return uc.postRepo.DeletePostFavorite(ctx, ctxhelper.GetUserID(ctx), pID)
 }

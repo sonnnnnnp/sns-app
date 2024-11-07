@@ -2,33 +2,33 @@ package authorize
 
 import (
 	"context"
-	"errors"
 
-	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (au *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) (u *db.User, isNew bool, err error) {
-	u, err = au.userRepo.GetUserByLineID(ctx, lineID)
+func (uc *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) (u *db.User, isNew bool, err error) {
+	u, err = uc.userRepo.GetUserByLineID(ctx, lineID)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrUserNotFound) {
-			u, err = au.userRepo.CreateUser(ctx, &lineID)
-			if err != nil {
-				return nil, false, err
-			}
-			return u, true, nil
-		}
 		return nil, false, err
 	}
+
+	if u == nil {
+		u, err = uc.userRepo.CreateUser(ctx, &lineID)
+		if err != nil {
+			return nil, false, err
+		}
+		return u, true, nil
+	}
+
 	return u, false, nil
 }
 
-func (au *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) (*oapi.Authorization, error) {
+func (uc *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) (*oapi.Authorization, error) {
 	cfg := ctxhelper.GetConfig(ctx)
 
-	resp, err := au.line.GetToken(
+	resp, err := uc.line.GetToken(
 		code,
 		cfg.LineAuthRedirectURL,
 		cfg.LineAuthClientID,
@@ -38,15 +38,15 @@ func (au *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) 
 		return nil, err
 	}
 
-	lineUser, err := au.line.GetUser(resp.AccessToken)
+	lineUser, err := uc.line.GetUser(resp.AccessToken)
 	if err != nil {
 		return nil, err
 	}
 
-	u, isNew, err := au.createOrGetUser(ctx, lineUser.UserID)
+	u, isNew, err := uc.createOrGetUser(ctx, lineUser.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	return au.generateAuthorization([]byte(cfg.JWTSecret), u.ID, isNew)
+	return uc.generateAuthorization([]byte(cfg.JWTSecret), u.ID, isNew)
 }

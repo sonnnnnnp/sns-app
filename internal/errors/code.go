@@ -12,8 +12,9 @@ var errorCodeMap = map[error]int{
 	ErrTokenExpired:      -1002,
 	ErrInvalidTokenScope: -1003,
 
-	ErrUserNotFound:     -1100,
-	ErrCannotFollowSelf: -1101,
+	ErrUserNotFound:         -1100,
+	ErrCannotFollowSelf:     -1101,
+	ErrUserAlreadyFollowing: -1102,
 
 	ErrPostAreadlyFavorited: -1201,
 	ErrPostFavoriteNotFound: -1202,

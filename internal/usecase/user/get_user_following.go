@@ -8,31 +8,35 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uu *UserUsecase) GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]oapi.User, error) {
-	if exists, err := uu.userRepo.GetUserExistence(ctx, uID); err != nil {
-		return nil, err
-	} else if !exists {
-		return nil, errors.ErrUserNotFound
-	}
-
-	users, err := uu.userRepo.GetUserFollowing(ctx, uID)
+func (uc *UserUsecase) GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]oapi.UserFollower, error) {
+	u, err := uc.userRepo.GetUserByID(ctx, uID)
 	if err != nil {
 		return nil, err
 	}
 
-	oapiUsers := make([]oapi.User, 0)
-	for i, u := range users {
-		oapiUsers[i] = oapi.User{
-			AvatarImageUrl: &u.AvatarImageURL,
-			Biography:      &u.Biography,
-			BannerImageUrl: &u.BannerImageURL,
-			CreatedAt:      u.CreatedAt,
-			Nickname:       u.Nickname,
-			Id:             u.ID,
-			UpdatedAt:      u.UpdatedAt,
-			Name:           u.Name,
-		}
+	if u == nil {
+		return nil, errors.ErrUserNotFound
 	}
 
-	return oapiUsers, nil
+	rows, err := uc.userRepo.GetUserFollowing(ctx, uID)
+	if err != nil {
+		return nil, err
+	}
+
+	following := make([]oapi.UserFollower, 0)
+	for _, u := range rows {
+		following = append(following, oapi.UserFollower{
+			AvatarImageUrl: u.AvatarImageUrl,
+			BannerImageUrl: u.BannerImageUrl,
+			Biography:      u.Biography,
+			CreatedAt:      u.CreatedAt.Time,
+			FollowedAt:     u.FollowedAt.Time,
+			Nickname:       u.Nickname,
+			Id:             u.ID,
+			UpdatedAt:      u.UpdatedAt.Time,
+			Name:           u.Name,
+		})
+	}
+
+	return following, nil
 }

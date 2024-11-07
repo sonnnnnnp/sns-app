@@ -347,6 +347,29 @@ export interface components {
         SocialSetting: {
             lineId: string | null;
         };
+        UserFollower: {
+            /**
+             * Format: uuid
+             * @description ID番号
+             */
+            id: string;
+            /** @description 名前 */
+            name: string;
+            nickname: string;
+            avatar_image_url: string | null;
+            banner_image_url: string | null;
+            biography: string | null;
+            social_connection?: components["schemas"]["SocialConnection"];
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            followed_at: string;
+        };
+        UserFollowers: {
+            users: components["schemas"]["UserFollower"][];
+        };
         Response: {
             /** @description 正常に処理を終了したかどうか */
             ok: boolean;
@@ -649,7 +672,7 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         /** @description データ */
-                        data: components["schemas"]["Users"];
+                        data: components["schemas"]["UserFollowers"];
                     };
                 };
             };

@@ -35,13 +35,13 @@ func New(
 
 var _ IAuthorizeUsecase = (*AuthorizeUsecase)(nil)
 
-func (au *AuthorizeUsecase) generateToken(jwtSecret []byte, claims jwt.Claims) (string, error) {
+func (uc *AuthorizeUsecase) generateToken(jwtSecret []byte, claims jwt.Claims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtSecret)
 }
 
-func (au *AuthorizeUsecase) generateAuthorization(jwtSecret []byte, uid uuid.UUID, IsNew bool) (*oapi.Authorization, error) {
-	atoken, err := au.generateToken(
+func (uc *AuthorizeUsecase) generateAuthorization(jwtSecret []byte, uid uuid.UUID, IsNew bool) (*oapi.Authorization, error) {
+	atoken, err := uc.generateToken(
 		jwtSecret,
 		jwt.MapClaims{
 			"sub":   uid.String(),
@@ -53,7 +53,7 @@ func (au *AuthorizeUsecase) generateAuthorization(jwtSecret []byte, uid uuid.UUI
 		return nil, err
 	}
 
-	rtoken, err := au.generateToken(
+	rtoken, err := uc.generateToken(
 		jwtSecret,
 		jwt.MapClaims{
 			"sub":   uid.String(),
