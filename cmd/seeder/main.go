@@ -15,7 +15,7 @@ func main() {
 	}
 
 	pool, err := db.Open(&db.ConnectionOptions{
-		ConnString:      cfg.DBURL,
+		ConnString:      cfg.DBDSN,
 		MaxConnLifetime: cfg.DBMaxConnLifetime,
 		MaxConnIdleTime: cfg.DBMaxConnIdleTime,
 		MaxConns:        cfg.DBMaxConns,
