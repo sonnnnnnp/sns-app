@@ -1,20 +1,20 @@
+# sns-app
+
+私は神ではない。
+
 ## Local Development
 
-<table>
-	<tbody>
-		<tr>
-			<td>Frontend</td>
-			<td><a href="http://localhost:3000">http://localhost:3000</a></td>
-		</tr>
-		<tr>
-			<td>Backend</td>
-			<td><a href="http://localhost:1323">http://localhost:1323</a></td>
-		</tr>
-		<tr>
-			<td>DB GUI</td>
-			<td><a href="http://localhost:8080">http://localhost:8888</a></td>
-		</tr>
-</table>
+###### Frontend
+
+[http://localhost:3000](http://localhost:3000)
+
+###### Backend
+
+[http://localhost:1323](http://localhost:1323)
+
+###### Database GUI
+
+[http://localhost:8888](http://localhost:8888)
 
 ### Requirements
 
@@ -23,7 +23,7 @@
 
 ### Getting Started
 
-#### Setup
+#### Setting Up
 
 アプリケーションの準備
 
@@ -37,10 +37,24 @@ make build
 make up
 ```
 
+データベースのマイグレーション
+
+```shell
+make migrate
+```
+
 初期データの投入
 
 ```shell
 make seed
+```
+
+#### Shutting Down
+
+データベースを初期化
+
+```shell
+make migrate-down
 ```
 
 アプリケーションの停止

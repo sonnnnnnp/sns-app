@@ -9,22 +9,27 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uu *UserUsecase) FollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialContext, error) {
+func (uc *UserUsecase) FollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error) {
 	uID := ctxhelper.GetUserID(ctx)
 
+	// 自分自身をフォローしようとした場合はエラー
 	if uID == targetUID {
 		return nil, errors.ErrCannotFollowSelf
 	}
 
-	if exists, err := uu.userRepo.GetUserExistence(ctx, targetUID); err != nil {
-		return nil, err
-	} else if !exists {
-		return nil, errors.ErrUserNotFound
-	}
-
-	if err := uu.userRepo.FollowUser(ctx, uID, targetUID); err != nil {
+	sc, err := uc.userRepo.GetSocialConnection(ctx, uID, targetUID)
+	if err != nil {
 		return nil, err
 	}
 
-	return uu.userRepo.GetSocialContext(ctx, uID, targetUID)
+	// 既にフォローしている場合はエラー
+	if sc.Following {
+		return nil, errors.ErrUserAlreadyFollowing
+	}
+
+	if err := uc.userRepo.FollowUser(ctx, uID, targetUID); err != nil {
+		return nil, err
+	}
+
+	return uc.userRepo.GetSocialConnection(ctx, uID, targetUID)
 }

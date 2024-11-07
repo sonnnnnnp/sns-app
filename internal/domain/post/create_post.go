@@ -4,22 +4,15 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
-	"github.com/sonnnnnnp/sns-app/pkg/ent/post"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (pr *PostRepository) CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (*ent.Post, error) {
-	query := pr.db.Post.Create().SetAuthorID(uID)
+func (repo *PostRepository) CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (pID uuid.UUID, err error) {
+	queries := db.New(repo.pool)
 
-	if body.Content != nil {
-		query.SetText(*body.Content)
-	}
-
-	sp, err := query.Save(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return pr.db.Post.Query().Where(post.ID(sp.ID)).WithAuthor().Only(ctx)
+	return queries.CreatePost(ctx, db.CreatePostParams{
+		AuthorID: uID,
+		Text:     body.Content,
+	})
 }

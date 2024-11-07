@@ -7,7 +7,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 )
 
-func (su *StreamUsecase) OnSubscribe(ctx context.Context, client *ws.Client, msg ws.Message) error {
+func (uc *StreamUsecase) OnSubscribe(ctx context.Context, client *ws.Client, msg ws.Message) error {
 	if err := client.Subscribe(msg.Channel); err != nil {
 		return err
 	}
@@ -18,7 +18,7 @@ func (su *StreamUsecase) OnSubscribe(ctx context.Context, client *ws.Client, msg
 	})
 }
 
-func (su *StreamUsecase) OnUnsubscribe(ctx context.Context, client *ws.Client, msg ws.Message) error {
+func (uc *StreamUsecase) OnUnsubscribe(ctx context.Context, client *ws.Client, msg ws.Message) error {
 	if err := client.Unsubscribe(msg.Channel); err != nil {
 		return err
 	}

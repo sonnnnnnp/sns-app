@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 	"github.com/sonnnnnnp/sns-app/pkg/server"
 )
@@ -8,7 +10,7 @@ import (
 func main() {
 	cfg, err := config.New()
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed initializing config: %v", err)
 	}
 
 	server.Run(cfg)

@@ -9,7 +9,7 @@ import (
 )
 
 // if uIDs is nil, broadcasts to all users with the given channel
-func (su *StreamUsecase) Broadcast(ctx context.Context, channel string, msg ws.Message, uIDs []uuid.UUID) {
+func (uc *StreamUsecase) Broadcast(ctx context.Context, channel string, msg ws.Message, uIDs []uuid.UUID) {
 	hub := ctxhelper.GetWebSocketHub(ctx)
 
 	msg.Channel = channel

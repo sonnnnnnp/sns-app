@@ -5,20 +5,27 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/domain/user"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type IUserUsecase interface {
+	// users
+	CreateUser(ctx context.Context) (*db.User, error)
+
 	GetUserByID(ctx context.Context, id uuid.UUID) (*oapi.User, error)
 	GetUserByName(ctx context.Context, name string) (*oapi.User, error)
-	GetUserFollowers(ctx context.Context, id uuid.UUID) ([]oapi.User, error)
-	GetUserFollowing(ctx context.Context, id uuid.UUID) ([]oapi.User, error)
-	FollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialContext, error)
-	UnfollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialContext, error)
-	RemoveUserFromFollowers(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialContext, error)
-	CreateUser(ctx context.Context) (*ent.User, error)
+
 	UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*oapi.User, error)
+
+	// followers
+	FollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)
+
+	GetUserFollowers(ctx context.Context, id uuid.UUID) ([]oapi.UserFollower, error)
+	GetUserFollowing(ctx context.Context, id uuid.UUID) ([]oapi.UserFollower, error)
+
+	UnfollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)
+	RemoveUserFromFollowers(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)
 }
 
 type UserUsecase struct {

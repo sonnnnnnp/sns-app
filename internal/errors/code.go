@@ -6,19 +6,25 @@ import (
 )
 
 var errorCodeMap = map[error]int{
-	// API errors
+	// auth
 	ErrUnauthorized:      -1000,
 	ErrInvalidToken:      -1001,
 	ErrTokenExpired:      -1002,
 	ErrInvalidTokenScope: -1003,
 
-	ErrUserNotFound:     -1100,
-	ErrCannotFollowSelf: -1101,
+	// user
+	ErrUserNotFound:         -1100,
+	ErrCannotFollowSelf:     -1101,
+	ErrUserAlreadyFollowing: -1102,
 
+	// post
+	ErrPostNotFound:         -1200,
 	ErrPostAreadlyFavorited: -1201,
+	ErrPostFavoriteNotFound: -1202,
 
-	// Network errors
-	ErrWebsocketProtocolRequired: -10000,
+	// other
+	ErrCursorNotFound:            -10000,
+	ErrWebsocketProtocolRequired: -10001,
 }
 
 func getErrorCode(err error) int {

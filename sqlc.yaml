@@ -1,0 +1,40 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries:
+      - ./pkg/db/queries/post_favorites
+      - ./pkg/db/queries/posts
+      - ./pkg/db/queries/user_followers
+      - ./pkg/db/queries/users
+    schema: "./pkg/db/migrations"
+    gen:
+      go:
+        package: "db"
+        out: "./pkg/db"
+        sql_package: pgx/v5
+        emit_interface: true
+        emit_empty_slices: true
+        emit_pointers_for_null_types: true
+        overrides:
+          - db_type: uuid
+            go_type:
+              import: github.com/google/uuid
+              type: UUID
+          - db_type: uuid
+            go_type:
+              import: github.com/google/uuid
+              type: UUID
+              pointer: true
+            nullable: true
+          - db_type: timestamptz
+            go_type:
+              import: time
+              type: Time
+          - db_type: timestamptz
+            go_type:
+              import: time
+              type: Time
+              pointer: true
+            nullable: true
+    database:
+      uri: "postgresql://user:password@db:5432/db"

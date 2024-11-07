@@ -2,22 +2,22 @@ package user
 
 import (
 	"context"
+	"errors"
 
-	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
-	"github.com/sonnnnnnp/sns-app/pkg/ent/user"
+	"github.com/jackc/pgx/v5"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (ur *UserRepository) GetUserByLineID(ctx context.Context, lineID string) (*ent.User, error) {
-	u, err := ur.db.User.Query().Where(user.LineID(lineID)).First(ctx)
+func (repo *UserRepository) GetUserByLineID(ctx context.Context, lineID string) (*db.User, error) {
+	queries := db.New(repo.pool)
+
+	u, err := queries.GetUserByLineID(ctx, &lineID)
 	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return nil, errors.ErrUserNotFound
-		default:
-			return nil, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
 		}
+		return nil, err
 	}
 
-	return u, nil
+	return &u, nil
 }

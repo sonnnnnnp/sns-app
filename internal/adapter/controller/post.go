@@ -3,9 +3,19 @@ package controller
 import (
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
+
+func (c Controller) GetPostByID(ctx echo.Context, id uuid.UUID) error {
+	p, err := c.postUsecase.GetPostByID(ctx.Request().Context(), id)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, p)
+}
 
 func (c Controller) CreatePost(ctx echo.Context) error {
 	var body oapi.CreatePostJSONBody
@@ -27,7 +37,7 @@ func (c Controller) FavoritePost(ctx echo.Context) error {
 		return err
 	}
 
-	err := c.postUsecase.FavoritePost(ctx.Request().Context(), body.PostId)
+	err := c.postUsecase.CreatePostFavorite(ctx.Request().Context(), body.PostId)
 	if err != nil {
 		return err
 	}
@@ -41,10 +51,31 @@ func (c Controller) UnfavoritePost(ctx echo.Context) error {
 		return err
 	}
 
-	err := c.postUsecase.UnavoritePost(ctx.Request().Context(), body.PostId)
+	err := c.postUsecase.DeletePostFavorite(ctx.Request().Context(), body.PostId)
 	if err != nil {
 		return err
 	}
 
 	return c.json(ctx, http.StatusOK, nil)
+}
+
+func (c Controller) GetPostFavorites(ctx echo.Context, params oapi.GetPostFavoritesParams) error {
+	favorites, err := c.postUsecase.GetPostFavorites(ctx.Request().Context(), params.PostId)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, favorites)
+}
+
+func (c Controller) GetTimeline(ctx echo.Context, params oapi.GetTimelineParams) error {
+	posts, nextCursor, err := c.postUsecase.GetTimeline(ctx.Request().Context(), &params)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, &oapi.Timeline{
+		Posts:      posts,
+		NextCursor: nextCursor,
+	})
 }

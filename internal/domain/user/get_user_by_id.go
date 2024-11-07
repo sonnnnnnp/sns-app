@@ -2,22 +2,23 @@ package user
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
+	"github.com/jackc/pgx/v5"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (ur *UserRepository) GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error) {
-	u, err := ur.db.User.Get(ctx, id)
+func (repo *UserRepository) GetUserByID(ctx context.Context, id uuid.UUID) (*db.User, error) {
+	queries := db.New(repo.pool)
+
+	u, err := queries.GetUserByID(ctx, id)
 	if err != nil {
-		switch {
-		case ent.IsNotFound(err):
-			return nil, errors.ErrUserNotFound
-		default:
-			return nil, err
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
 		}
+		return nil, err
 	}
 
-	return u, nil
+	return &u, nil
 }

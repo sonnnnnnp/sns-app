@@ -72,6 +72,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/posts/favorites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 投稿にいいねしたユーザーを取得する */
+        get: operations["GetPostFavorites"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/posts/create": {
         parameters: {
             query?: never;
@@ -83,6 +100,23 @@ export interface paths {
         put?: never;
         /** 投稿を作成する */
         post: operations["createPost"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/posts/{post_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 投稿を取得する */
+        get: operations["getPostByID"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -278,13 +312,13 @@ export interface components {
             avatar_image_url: string | null;
             banner_image_url: string | null;
             biography: string | null;
-            social_context?: components["schemas"]["SocialContext"];
+            social_connection?: components["schemas"]["SocialConnection"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
             created_at: string;
         };
-        SocialContext: {
+        SocialConnection: {
             following: boolean;
             followed_by: boolean;
         };
@@ -312,6 +346,13 @@ export interface components {
             /** Format: date-time */
             created_at: string;
         };
+        PostFavorite: {
+            /** Format: uuid */
+            post_id: string;
+            /** Format: date-time */
+            created_at: string;
+            user: components["schemas"]["User"];
+        };
         Timeline: {
             posts: components["schemas"]["Post"][];
             /**
@@ -322,6 +363,29 @@ export interface components {
         };
         SocialSetting: {
             lineId: string | null;
+        };
+        UserFollower: {
+            /**
+             * Format: uuid
+             * @description ID番号
+             */
+            id: string;
+            /** @description 名前 */
+            name: string;
+            nickname: string;
+            avatar_image_url: string | null;
+            banner_image_url: string | null;
+            biography: string | null;
+            social_connection?: components["schemas"]["SocialConnection"];
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            followed_at: string;
+        };
+        UserFollowers: {
+            users: components["schemas"]["UserFollower"][];
         };
         Response: {
             /** @description 正常に処理を終了したかどうか */
@@ -452,6 +516,34 @@ export interface operations {
             };
         };
     };
+    GetPostFavorites: {
+        parameters: {
+            query: {
+                post_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["PostFavorite"][];
+                    };
+                };
+            };
+        };
+    };
     createPost: {
         parameters: {
             query?: never;
@@ -466,6 +558,33 @@ export interface operations {
                 };
             };
         };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["Post"];
+                    };
+                };
+            };
+        };
+    };
+    getPostByID: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
@@ -509,7 +628,7 @@ export interface operations {
                         ok: boolean;
                         /** @description レスポンスコード */
                         code: number;
-                        data: components["schemas"]["SocialContext"];
+                        data: components["schemas"]["SocialConnection"];
                     };
                 };
             };
@@ -541,7 +660,7 @@ export interface operations {
                         ok: boolean;
                         /** @description レスポンスコード */
                         code: number;
-                        data: components["schemas"]["SocialContext"];
+                        data: components["schemas"]["SocialConnection"];
                     };
                 };
             };
@@ -597,7 +716,7 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         /** @description データ */
-                        data: components["schemas"]["Users"];
+                        data: components["schemas"]["UserFollowers"];
                     };
                 };
             };
@@ -629,7 +748,7 @@ export interface operations {
                         ok: boolean;
                         /** @description レスポンスコード */
                         code: number;
-                        data: components["schemas"]["SocialContext"];
+                        data: components["schemas"]["SocialConnection"];
                     };
                 };
             };

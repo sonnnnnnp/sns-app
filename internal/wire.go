@@ -7,29 +7,27 @@
 package internal
 
 import (
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	"github.com/sonnnnnnp/sns-app/internal/domain/post"
 	"github.com/sonnnnnnp/sns-app/internal/domain/user"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
 	post2 "github.com/sonnnnnnp/sns-app/internal/usecase/post"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
 	user2 "github.com/sonnnnnnp/sns-app/internal/usecase/user"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 )
 
 // Injectors from wire.go:
 
-func Wire(db *ent.Client) *controller.Controller {
+func Wire(pool *pgxpool.Pool) *controller.Controller {
 	client := line.New()
-	userRepository := user.New(db)
+	userRepository := user.New(pool)
 	authorizeUsecase := authorize.New(client, userRepository)
-	postRepository := post.New(db)
+	postRepository := post.New(pool)
 	streamUsecase := stream.New()
 	postUsecase := post2.New(postRepository, userRepository, streamUsecase)
-	timelineUsecase := timeline.New(postRepository)
 	userUsecase := user2.New(userRepository)
-	controllerController := controller.New(authorizeUsecase, postUsecase, streamUsecase, timelineUsecase, userUsecase)
+	controllerController := controller.New(authorizeUsecase, postUsecase, streamUsecase, userUsecase)
 	return controllerController
 }

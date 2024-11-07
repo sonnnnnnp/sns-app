@@ -4,30 +4,38 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/pkg/ent"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type IUserRepository interface {
-	CreateUser(ctx context.Context, lineID *string) (*ent.User, error)
+	// user
+	CreateUser(ctx context.Context, lineID *string) (*db.User, error)
+
+	GetUserByID(ctx context.Context, id uuid.UUID) (*db.User, error)
+	GetUserByLineID(ctx context.Context, lineID string) (*db.User, error)
+	GetUserByName(ctx context.Context, name string) (*db.User, error)
+
+	UpdateUser(ctx context.Context, id uuid.UUID, data *oapi.UpdateUserJSONBody) error
+
+	// followers
 	FollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
-	GetSocialContext(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialContext, error)
-	GetUserByID(ctx context.Context, id uuid.UUID) (*ent.User, error)
-	GetUserByLineID(ctx context.Context, lineID string) (*ent.User, error)
-	GetUserByName(ctx context.Context, name string) (*ent.User, error)
-	GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]*ent.User, error)
-	GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]*ent.User, error)
+
+	GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]db.GetUserFollowersRow, error)
+	GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]db.GetUserFollowingRow, error)
+	GetSocialConnection(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialConnection, error)
+
 	UnfollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
-	UpdateUser(ctx context.Context, id uuid.UUID, data *oapi.UpdateUserJSONBody) (*ent.User, error)
 }
 
 type UserRepository struct {
-	db *ent.Client
+	pool *pgxpool.Pool
 }
 
-func New(db *ent.Client) *UserRepository {
+func New(pool *pgxpool.Pool) *UserRepository {
 	return &UserRepository{
-		db: db,
+		pool: pool,
 	}
 }
 

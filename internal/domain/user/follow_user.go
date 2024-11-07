@@ -4,8 +4,18 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (ur *UserRepository) FollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error {
-	return ur.db.User.UpdateOneID(selfUID).AddFollowingIDs(targetUID).Exec(ctx)
+func (repo *UserRepository) FollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error {
+	queries := db.New(repo.pool)
+
+	if err := queries.CreateUserFollower(ctx, db.CreateUserFollowerParams{
+		FollowerID:  selfUID,
+		FollowingID: targetUID,
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }

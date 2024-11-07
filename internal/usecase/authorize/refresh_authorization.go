@@ -8,7 +8,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (au *AuthorizeUsecase) RefreshAuthorization(ctx context.Context, body *oapi.RefreshAuthorizationJSONBody) (*oapi.Authorization, error) {
+func (uc *AuthorizeUsecase) RefreshAuthorization(ctx context.Context, body *oapi.RefreshAuthorizationJSONBody) (*oapi.Authorization, error) {
 	cfg := ctxhelper.GetConfig(ctx)
 
 	uID, err := jwter.Verify(body.RefreshToken, "refresh", []byte(cfg.JWTSecret))
@@ -16,5 +16,5 @@ func (au *AuthorizeUsecase) RefreshAuthorization(ctx context.Context, body *oapi
 		return nil, err
 	}
 
-	return au.generateAuthorization([]byte(cfg.JWTSecret), uID, false)
+	return uc.generateAuthorization([]byte(cfg.JWTSecret), uID, false)
 }
