@@ -12,19 +12,60 @@ import (
 )
 
 const getPostByID = `-- name: GetPostByID :one
-SELECT id, author_id, text, created_at, updated_at FROM posts
-WHERE id = $1
+SELECT
+    posts.id, posts.author_id, posts.text, posts.created_at, posts.updated_at,
+    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    (
+        SELECT COUNT(*)
+        FROM post_favorites
+        WHERE post_favorites.post_id = posts.id
+    ) AS favorites_count,
+    EXISTS (
+        SELECT 1
+        FROM post_favorites
+        WHERE post_favorites.post_id = posts.id AND (
+            post_favorites.user_id = COALESCE($1, $1)::uuid
+        )
+    ) AS favorited
+FROM posts
+JOIN users ON posts.author_id = users.id
+WHERE
+    posts.id = $2::uuid
 `
 
-func (q *Queries) GetPostByID(ctx context.Context, id uuid.UUID) (Post, error) {
-	row := q.db.QueryRow(ctx, getPostByID, id)
-	var i Post
+type GetPostByIDParams struct {
+	UserID *uuid.UUID
+	ID     uuid.UUID
+}
+
+type GetPostByIDRow struct {
+	Post           Post
+	User           User
+	FavoritesCount int64
+	Favorited      bool
+}
+
+func (q *Queries) GetPostByID(ctx context.Context, arg GetPostByIDParams) (GetPostByIDRow, error) {
+	row := q.db.QueryRow(ctx, getPostByID, arg.UserID, arg.ID)
+	var i GetPostByIDRow
 	err := row.Scan(
-		&i.ID,
-		&i.AuthorID,
-		&i.Text,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+		&i.Post.ID,
+		&i.Post.AuthorID,
+		&i.Post.Text,
+		&i.Post.CreatedAt,
+		&i.Post.UpdatedAt,
+		&i.User.ID,
+		&i.User.Name,
+		&i.User.Nickname,
+		&i.User.Biography,
+		&i.User.AvatarImageUrl,
+		&i.User.BannerImageUrl,
+		&i.User.Birthdate,
+		&i.User.LineID,
+		&i.User.CreatedAt,
+		&i.User.UpdatedAt,
+		&i.FavoritesCount,
+		&i.Favorited,
 	)
 	return i, err
 }

@@ -3,21 +3,19 @@ package post
 import (
 	"context"
 
-	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*oapi.Post, error) {
-	uID := ctxhelper.GetUserID(ctx)
-
-	pID, err := uc.postRepo.CreatePost(ctx, uID, body)
+func (uc *PostUsecase) GetPostByID(ctx context.Context, id uuid.UUID) (*oapi.Post, error) {
+	r, err := uc.postRepo.GetPostByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	r, err := uc.postRepo.GetPostByID(ctx, pID)
-	if err != nil {
-		return nil, err
+	if r == nil {
+		return nil, errors.ErrPostNotFound
 	}
 
 	return &oapi.Post{
@@ -33,8 +31,8 @@ func (uc *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSON
 		},
 		Id:             r.Post.ID,
 		Text:           r.Post.Text,
-		Favorited:      false,
-		FavoritesCount: 0,
+		Favorited:      r.Favorited,
+		FavoritesCount: int(r.FavoritesCount),
 		CreatedAt:      r.Post.CreatedAt.Time,
 		UpdatedAt:      r.Post.UpdatedAt.Time,
 	}, nil

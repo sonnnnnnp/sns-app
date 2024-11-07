@@ -17,7 +17,7 @@ INSERT INTO posts (
 ) VALUES (
   $1, $2
 )
-RETURNING id, author_id, text, created_at, updated_at
+RETURNING posts.id
 `
 
 type CreatePostParams struct {
@@ -25,15 +25,9 @@ type CreatePostParams struct {
 	Text     *string
 }
 
-func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
+func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error) {
 	row := q.db.QueryRow(ctx, createPost, arg.AuthorID, arg.Text)
-	var i Post
-	err := row.Scan(
-		&i.ID,
-		&i.AuthorID,
-		&i.Text,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }

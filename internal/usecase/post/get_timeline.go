@@ -1,16 +1,30 @@
-package timeline
+package post
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimelineParams) (posts []oapi.Post, nextCursor uuid.UUID, err error) {
+func (uc *PostUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimelineParams) (posts []oapi.Post, nextCursor uuid.UUID, err error) {
 	// if parmas.UserId is not nil, check if not blocked by the target user
 
-	rows, nextCursor, err := uc.postRepo.GetTimeline(ctx, params.Limit, params.Cursor, params.UserId)
+	var fromCursor *time.Time
+	if params.Cursor != nil {
+		r, err := uc.postRepo.GetPostByID(ctx, *params.Cursor)
+		if err != nil {
+			return nil, uuid.Nil, err
+		}
+		if r == nil {
+			return nil, uuid.Nil, errors.ErrCursorNotFound
+		}
+		fromCursor = &r.Post.CreatedAt.Time
+	}
+
+	rows, err := uc.postRepo.GetTimeline(ctx, params.Limit, fromCursor, params.UserId)
 	if err != nil {
 		return nil, uuid.Nil, err
 	}
@@ -37,5 +51,9 @@ func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *oapi.GetTime
 		})
 	}
 
-	return posts, nextCursor, nil
+	if len(posts) == 0 {
+		return posts, uuid.Nil, nil
+	}
+
+	return posts, posts[len(posts)-1].Id, nil
 }

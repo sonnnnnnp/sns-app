@@ -11,10 +11,20 @@ import (
 )
 
 type IPostUsecase interface {
+	// posts
 	CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*oapi.Post, error)
+
+	GetPostByID(ctx context.Context, id uuid.UUID) (*oapi.Post, error)
+
+	// favorites
 	CreatePostFavorite(ctx context.Context, pID uuid.UUID) error
-	DeletePostFavorite(ctx context.Context, pID uuid.UUID) error
+
 	GetPostFavorites(ctx context.Context, pID uuid.UUID) (favorites []oapi.PostFavorite, err error)
+
+	DeletePostFavorite(ctx context.Context, pID uuid.UUID) error
+
+	// timeline
+	GetTimeline(ctx context.Context, params *oapi.GetTimelineParams) (posts []oapi.Post, nextCursor uuid.UUID, err error)
 }
 
 type PostUsecase struct {

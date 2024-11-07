@@ -2,6 +2,7 @@ package post
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -10,12 +11,21 @@ import (
 )
 
 type IPostRepository interface {
-	GetTimeline(ctx context.Context, limit *int, fromCursor *uuid.UUID, uID *uuid.UUID) (rows []db.GetPostsRow, nextCursor uuid.UUID, err error)
-	CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (*db.Post, error)
+	// posts
+	CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (pID uuid.UUID, err error)
+
+	GetPostByID(ctx context.Context, id uuid.UUID) (*db.GetPostByIDRow, error)
+
+	// favorites
 	CreatePostFavorite(ctx context.Context, uID uuid.UUID, pID uuid.UUID) error
-	DeletePostFavorite(ctx context.Context, uID uuid.UUID, pID uuid.UUID) error
+
 	GetPostFavorite(ctx context.Context, uID uuid.UUID, pID uuid.UUID) (*db.GetPostFavoriteRow, error)
 	GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]db.GetPostFavoritesRow, error)
+
+	DeletePostFavorite(ctx context.Context, uID uuid.UUID, pID uuid.UUID) error
+
+	// timeline
+	GetTimeline(ctx context.Context, limit *int, fromCursor *time.Time, targetUID *uuid.UUID) (rows []db.GetPostsRow, err error)
 }
 
 type PostRepository struct {

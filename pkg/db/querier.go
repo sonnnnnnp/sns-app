@@ -11,13 +11,13 @@ import (
 )
 
 type Querier interface {
-	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
+	CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error)
 	CreatePostFavorite(ctx context.Context, arg CreatePostFavoriteParams) error
 	CreateUser(ctx context.Context, lineID *string) (User, error)
 	CreateUserFollower(ctx context.Context, arg CreateUserFollowerParams) error
 	DeletePostFavorite(ctx context.Context, arg DeletePostFavoriteParams) error
 	DeleteUserFollower(ctx context.Context, arg DeleteUserFollowerParams) error
-	GetPostByID(ctx context.Context, id uuid.UUID) (Post, error)
+	GetPostByID(ctx context.Context, arg GetPostByIDParams) (GetPostByIDRow, error)
 	GetPostFavorite(ctx context.Context, arg GetPostFavoriteParams) (GetPostFavoriteRow, error)
 	GetPostFavorites(ctx context.Context, postID uuid.UUID) ([]GetPostFavoritesRow, error)
 	GetPosts(ctx context.Context, arg GetPostsParams) ([]GetPostsRow, error)

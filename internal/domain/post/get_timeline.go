@@ -14,8 +14,8 @@ var (
 	maxLimit     = 100
 )
 
-func (repo *PostRepository) GetTimeline(ctx context.Context, limit *int, fromCursor *uuid.UUID, uID *uuid.UUID) (rows []db.GetPostsRow, nextCursor uuid.UUID, err error) {
-	queries := db.New(repo.pool)
+func (repo *PostRepository) GetTimeline(ctx context.Context, limit *int, fromCursor *time.Time, targetUID *uuid.UUID) (rows []db.GetPostsRow, err error) {
+	uID := ctxhelper.GetUserID(ctx)
 
 	if limit == nil {
 		limit = &defaultLimit
@@ -24,30 +24,15 @@ func (repo *PostRepository) GetTimeline(ctx context.Context, limit *int, fromCur
 		limit = &maxLimit
 	}
 
-	var cursorTime *time.Time
-	if fromCursor != nil {
-		cursorPost, err := queries.GetPostByID(ctx, *fromCursor)
-		if err != nil {
-			return nil, uuid.Nil, err
-		}
-		cursorTime = &cursorPost.CreatedAt.Time
-	}
-
-	rows, err = queries.GetPosts(ctx, db.GetPostsParams{
-		UserID:    ctxhelper.GetUserID(ctx),
-		AuthorID:  uID,
-		CreatedAt: cursorTime,
+	rows, err = db.New(repo.pool).GetPosts(ctx, db.GetPostsParams{
+		UserID:    &uID,
+		AuthorID:  targetUID,
+		CreatedAt: fromCursor,
 		Limit:     int64(*limit),
 	})
 	if err != nil {
-		return nil, uuid.Nil, err
+		return nil, err
 	}
 
-	if len(rows) == 0 {
-		return rows, uuid.Nil, nil
-	}
-
-	nextCursor = rows[len(rows)-1].Post.ID
-
-	return rows, nextCursor, nil
+	return rows, nil
 }

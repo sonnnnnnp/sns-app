@@ -343,6 +343,63 @@
         ]
       }
     },
+    "/posts/{post_id}": {
+      "get": {
+        "summary": "投稿を取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getPostByID",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Post"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/users/following/delete": {
       "post": {
         "summary": "ユーザーをアンフォローする",

@@ -24,7 +24,9 @@ SELECT
     EXISTS (
         SELECT 1
         FROM post_favorites
-        WHERE post_favorites.post_id = posts.id AND post_favorites.user_id = $2
+        WHERE post_favorites.post_id = posts.id AND (
+            post_favorites.user_id = COALESCE($2, $2)::uuid
+        )
     ) AS favorited
 FROM posts
 JOIN users ON posts.author_id = users.id
@@ -37,7 +39,7 @@ LIMIT $1
 
 type GetPostsParams struct {
 	Limit     int64
-	UserID    uuid.UUID
+	UserID    *uuid.UUID
 	AuthorID  *uuid.UUID
 	CreatedAt *time.Time
 }

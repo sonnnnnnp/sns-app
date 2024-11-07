@@ -327,6 +327,9 @@ type ClientInterface interface {
 
 	UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetPostByID request
+	GetPostByID(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// Stream request
 	Stream(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -476,6 +479,18 @@ func (c *Client) UnfavoritePostWithBody(ctx context.Context, contentType string,
 
 func (c *Client) UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUnfavoritePostRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetPostByID(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetPostByIDRequest(c.Server, postId)
 	if err != nil {
 		return nil, err
 	}
@@ -900,6 +915,40 @@ func NewUnfavoritePostRequestWithBody(server string, contentType string, body io
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetPostByIDRequest generates requests for GetPostByID
+func NewGetPostByIDRequest(server string, postId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "post_id", runtime.ParamLocationPath, postId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/posts/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -1419,6 +1468,9 @@ type ClientWithResponsesInterface interface {
 
 	UnfavoritePostWithResponse(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
 
+	// GetPostByIDWithResponse request
+	GetPostByIDWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetPostByIDResponse, error)
+
 	// StreamWithResponse request
 	StreamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*StreamResponse, error)
 
@@ -1614,6 +1666,35 @@ func (r UnfavoritePostResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UnfavoritePostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetPostByIDResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int  `json:"code"`
+		Data Post `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetPostByIDResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetPostByIDResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1989,6 +2070,15 @@ func (c *ClientWithResponses) UnfavoritePostWithResponse(ctx context.Context, bo
 	return ParseUnfavoritePostResponse(rsp)
 }
 
+// GetPostByIDWithResponse request returning *GetPostByIDResponse
+func (c *ClientWithResponses) GetPostByIDWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetPostByIDResponse, error) {
+	rsp, err := c.GetPostByID(ctx, postId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetPostByIDResponse(rsp)
+}
+
 // StreamWithResponse request returning *StreamResponse
 func (c *ClientWithResponses) StreamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*StreamResponse, error) {
 	rsp, err := c.Stream(ctx, reqEditors...)
@@ -2287,6 +2377,39 @@ func ParseUnfavoritePostResponse(rsp *http.Response) (*UnfavoritePostResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Response
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetPostByIDResponse parses an HTTP response from a GetPostByIDWithResponse call
+func ParseGetPostByIDResponse(rsp *http.Response) (*GetPostByIDResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetPostByIDResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int  `json:"code"`
+			Data Post `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2640,6 +2763,9 @@ type ServerInterface interface {
 	// 投稿のいいねを解除する
 	// (POST /posts/favorites/delete)
 	UnfavoritePost(ctx echo.Context) error
+	// 投稿を取得する
+	// (GET /posts/{post_id})
+	GetPostByID(ctx echo.Context, postId openapi_types.UUID) error
 	// WebSocket ストリーム
 	// (GET /stream)
 	Stream(ctx echo.Context) error
@@ -2756,6 +2882,24 @@ func (w *ServerInterfaceWrapper) UnfavoritePost(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.UnfavoritePost(ctx)
+	return err
+}
+
+// GetPostByID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetPostByID(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "post_id" -------------
+	var postId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "post_id", ctx.Param("post_id"), &postId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter post_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetPostByID(ctx, postId)
 	return err
 }
 
@@ -2960,6 +3104,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/posts/favorites", wrapper.GetPostFavorites)
 	router.POST(baseURL+"/posts/favorites/create", wrapper.FavoritePost)
 	router.POST(baseURL+"/posts/favorites/delete", wrapper.UnfavoritePost)
+	router.GET(baseURL+"/posts/:post_id", wrapper.GetPostByID)
 	router.GET(baseURL+"/stream", wrapper.Stream)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
 	router.GET(baseURL+"/users", wrapper.GetUserByName)
@@ -2976,34 +3121,34 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xa3W8TuRb/V0a+9zE05d63vAEXriohhFoqHqoqcmZOEtPMeLA9hVzUh0yuSkuFQJUA",
-	"sR9adkF8FApI7Ae76i5/jEnL/hersZPJJHGSKQkLjSIhFNX28fHv/Hy+xteQTV2feuAJjnLXELfL4GL1",
-	"80QgypSR/2FBqBf9wWfUByYIqGFs28B5XtAVUKOi6gPKIS4Y8UpoLYMIz3twJTFUoLQC2IvGGBQZ8PKA",
-	"1QEHlieOYUwtvxwQBg7KLcUTM50ade8R67OcaQmkhUtgi2iz85QLwwkVANGvfzIoohz6R7YNVraJVHaR",
-	"A4tk2AywACePlaQiZW70CzlYwDFBXECZ3kMW8SplRIBjRqk1zPM2DTyRmEQ8ASW9r8bIAW4z4mtTobn/",
-	"HNzZadz6BWXaigSBAqlHBwFXlWQvqFRwoQIoJ1gAhomB7xzygF2W0kbSoHaI6wCvqVHv6ZNw9TPimeaM",
-	"XmN+jHl8ykWTg0NhjGiYjipdqLQ26QJByTMdcx64Tz1uOiJ1oJcLsv5Chr/K+rey/ib6Eb6R9T1Z32wf",
-	"IkEmBwtsEnE9WhO+QwZ96Ervgv3dh423b2XteeP644Pb6zLcPvgpfP/buqzdk7XvZG1L1p7J2rqsbbUl",
-	"xrzvwoeuRNBER2uqZwJlgdoEV05RzwPb7K6KtFKhV8DJF6p9LpuaEFnTMNylU3tupkOwSbULxIUK8Qz2",
-	"8uCqyNsB49rJdEH44ntZeynrXynk38pwu3HrbuOPe7J2X4ZbEYphLZoQ7sr6Xpp7HvFMbUsEuHwYVZVH",
-	"XIvFYMZw1UhdjjIdBzFBsNi8G13udRULzPLExSXIB6ySygkVsOfBoRcRWmLYL1dTzf4YTzGqE/awa7i6",
-	"jds3G5s3jfOJvdJa0zPI1WXI2x23YZCxe27P2Ly90jGhbqbX6gabJi3WP1D0Y9oZfSEnnHGx25nSdCSa",
-	"JnHMfH7S8l7WRplAesfdcQOGOXAtup9OY9Hlo3WIGAJ2wIioLkTytAIFwExfbbWJCtL6T7GAshA+WovW",
-	"E69IFfWIqCgKePwY9n2UQavAuCbv8ZnZmVmVx/jgYZ+gHPr3zOzMcZRBPhZltWkWN0shyMaRvFkxROCo",
-	"AmnOQbm4ZIKLRJTPRlMjKQy7IBRuS9cQiTa9HACrtpiWa2U3bVS0n9Awmiqg5WiyTgOVgv+andUJoCdA",
-	"1wnY9yvEVpplL3F9t9ryPlneOIgNnfXkl5E5Rks6FeggHsotLWcQD1wXsyrKobNz505bsvZE1ndl+FqG",
-	"j2T9jVqQYEiz7OxPknk9oRMOrTlwcZI61RFsOayw7oKoc7oJn7Up1f4uqrW929LyWgfvPuzc/PB0T9Y3",
-	"VDHwSsG0vf/1j/t3X2v6qUw8q+NMf+adUuMqtR8X3xLLepk2GWRqlUJHnEP7N+4cPH0nw+33v3+zv3Fb",
-	"15FJ9sT9luiYJTDw578gkk0Wni66tRsc/QPckMzzyw14/RslqcvsuGfVkylNCudqz2Xt/+rfblPJ+mOF",
-	"08/q/47OhpGRQz1bC8Ox+rb07b8+Lb1PEU8HsSluDY7daP0t40AFBllm0StObTN227xs2ybc/vDk4Z/3",
-	"HyWNxAUD7Cb8eOd+56iAnHWhTLgFnuNT4gmLcMsBTkpeVKlaRcqsi1BYoPYKCKuEBVzBVSvguAQW9hzL",
-	"xp5HhVUAK+DgWJhb2Jo/vXDBOnF+bgZlujiwoNUZEd0x+qX20ZTH35D1HeXrH2j4RKJl2y8Qxm3dnhg4",
-	"Wh/XWB/q1uphAmbGHIsrxCUCGUrLOLT1W9n+zDayEsnueY8i7Uh1JIvcmBZHP3jL8J2qcB/I+jNd6hpD",
-	"ddwS6ndTFjmwk9VzupOWIl9s9twmvBvS6o0ddZIMy+QUPbLFZHtzEFHafdBUXGl7pQmsLdK2efmk8SiK",
-	"l3dk+EzWd2X9VUpmDc1E58Glq6CAY9RNEm08KWnixcrhUtLWwolpv5k+1EyWn+vmZ21LhpuNzRtdeXiS",
-	"os2XBcOdn06Mps5vsPObbKc33OMRrzS8K6Jmqkxj6uSmTm4EJ7c3iIYpWkBTIk6JOAIRwx8isAbS0R3Y",
-	"rVmAShFNy8TP9wHz+k5jY31AUNPvZRTMgcmFqOGxOhDTY7BUj78GP/YyjDJRbh0u3TOtvk+mBrynmpjP",
-	"rZPZGNEf62Per639FQAA//8PzQnAeTEAAA==",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
