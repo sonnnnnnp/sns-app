@@ -19,7 +19,7 @@ func (uu *UserUsecase) GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]o
 		return nil, err
 	}
 
-	oapiUsers := make([]oapi.User, len(rows))
+	oapiUsers := make([]oapi.User, 0)
 	for i, r := range rows {
 		oapiUsers[i] = oapi.User{
 			AvatarImageUrl: r.AvatarImageUrl,

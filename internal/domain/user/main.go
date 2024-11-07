@@ -18,7 +18,7 @@ type IUserRepository interface {
 	GetUserByLineID(ctx context.Context, lineID string) (*db.User, error)
 	GetUserByName(ctx context.Context, name string) (*db.User, error)
 
-	UpdateUser(ctx context.Context, id uuid.UUID, data *oapi.UpdateUserJSONBody) (*ent.User, error)
+	UpdateUser(ctx context.Context, id uuid.UUID, data *oapi.UpdateUserJSONBody) error
 
 	// followers
 	FollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error

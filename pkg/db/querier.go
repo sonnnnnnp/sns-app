@@ -26,6 +26,7 @@ type Querier interface {
 	GetUserByLineID(ctx context.Context, lineID *string) (User, error)
 	GetUserByName(ctx context.Context, name string) (User, error)
 	GetUserFollowers(ctx context.Context, userID uuid.UUID) ([]GetUserFollowersRow, error)
+	UpdateUser(ctx context.Context, arg UpdateUserParams) error
 }
 
 var _ Querier = (*Queries)(nil)

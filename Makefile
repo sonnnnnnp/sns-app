@@ -1,4 +1,4 @@
-.PHONY: help setup up down tidy
+.PHONY: help setup up down shell tidy
 
 #? help: ヘルプコマンド
 help: Makefile
@@ -23,6 +23,10 @@ up:
 #? down: アプリケーションの停止
 down:
 	docker compose down
+
+#? shell: API コンテナのシェルを起動
+shell:
+	docker compose exec -it api bash
 
 #? tidy: Go モジュールの依存関係を整理
 tidy:
@@ -59,7 +63,7 @@ migrate-down:
 
 #? seed: データベースへ初期データを投入
 seed:
-	docker compose run --rm api bash -c "go run ./cmd/seed"
+	docker compose run --rm api bash -c "go run ./cmd/seeder"
 
 #? sql-gen: SQL クエリから Go コードを生成
 sql-gen:

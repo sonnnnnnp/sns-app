@@ -8,18 +8,23 @@ import (
 )
 
 func (uu *UserUsecase) UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*oapi.User, error) {
-	u, err := uu.userRepo.UpdateUser(ctx, id, body)
+	if err := uu.userRepo.UpdateUser(ctx, id, body); err != nil {
+		return nil, err
+	}
+
+	u, err := uu.userRepo.GetUserByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
 	return &oapi.User{
-		AvatarImageUrl: &u.AvatarImageURL,
-		BannerImageUrl: &u.BannerImageURL,
-		Biography:      &u.Biography,
-		CreatedAt:      u.CreatedAt,
+		AvatarImageUrl: u.AvatarImageUrl,
+		BannerImageUrl: u.BannerImageUrl,
+		Biography:      u.Biography,
+		CreatedAt:      u.CreatedAt.Time,
+		Name:           u.Name,
 		Nickname:       u.Nickname,
 		Id:             u.ID,
-		UpdatedAt:      u.UpdatedAt,
+		UpdatedAt:      u.UpdatedAt.Time,
 	}, nil
 }

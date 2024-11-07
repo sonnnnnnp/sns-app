@@ -15,7 +15,7 @@ func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *oapi.GetTime
 		return nil, uuid.Nil, err
 	}
 
-	posts = make([]oapi.Post, len(rows))
+	posts = make([]oapi.Post, 0)
 	for _, r := range rows {
 		posts = append(posts, oapi.Post{
 			Author: oapi.User{
@@ -25,6 +25,7 @@ func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *oapi.GetTime
 				CreatedAt:      r.User.CreatedAt.Time,
 				Id:             r.User.ID,
 				Name:           r.User.Name,
+				Nickname:       r.User.Nickname,
 				UpdatedAt:      r.User.UpdatedAt.Time,
 			},
 			CreatedAt:      r.Post.CreatedAt.Time,
