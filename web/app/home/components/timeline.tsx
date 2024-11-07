@@ -1,28 +1,10 @@
 "use client";
 
-import { Images, Pencil, Type } from "lucide-react";
-
-import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
+import { Pencil } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostList } from "./post-list";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Textarea } from "@/components/ui/textarea";
-import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import { ChangeEvent, useEffect, useState } from "react";
 import client from "@/lib/api";
 import { toast } from "sonner";

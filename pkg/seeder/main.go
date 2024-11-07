@@ -24,3 +24,5 @@ func (s *Seeder) Run() error {
 
 	return nil
 }
+
+func ptr(s string) *string { return &s }

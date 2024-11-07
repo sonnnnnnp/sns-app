@@ -12,9 +12,12 @@ func (repo *UserRepository) UpdateUser(ctx context.Context, id uuid.UUID, body *
 	queries := db.New(repo.pool)
 
 	return queries.UpdateUser(ctx, db.UpdateUserParams{
-		UserID:    id,
-		Name:      body.Name,
-		Nickname:  body.Nickname,
-		Biography: body.Biography,
+		UserID:         id,
+		Name:           body.Name,
+		Nickname:       body.Nickname,
+		Biography:      body.Biography,
+		AvatarImageUrl: body.AvatarImageUrl,
+		BannerImageUrl: body.BannerImageUrl,
+		Birthdate:      body.Birthdate,
 	})
 }
