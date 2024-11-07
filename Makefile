@@ -32,20 +32,12 @@ shell:
 tidy:
 	docker compose run --rm api bash -c "go mod tidy"
 
-.PHONY: openapi ent-new ent-gen wire
+.PHONY: openapi wire
 
 #? oapi: OpenAPI からコードを生成
 oapi:
 	docker compose run --rm api bash -c "cd pkg && oapi-codegen -package oapi /api/api/openapi.json > /api/pkg/oapi/server.go"
 	npx openapi-typescript ./api/openapi.json -o ./web/lib/api/client.ts
-
-#? ent-new: ent エンティティの作成
-ent-new:
-	docker compose run --rm api bash -c "cd /api/pkg && go run -mod=mod entgo.io/ent/cmd/ent new $(name)"
-
-#? ent-gen: ent エンティティからコードを生成
-ent-gen:
-	docker compose run --rm api bash -c "go generate /api/pkg/ent"
 
 #? wire: 依存関係の自動生成
 wire:
