@@ -1,5 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- users
+
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(36) NOT NULL UNIQUE DEFAULT  uuid_generate_v4(),
@@ -19,6 +21,8 @@ CREATE TABLE IF NOT EXISTS user_followers (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     PRIMARY KEY (follower_id, following_id)
 );
+
+--  posts
 
 CREATE TABLE IF NOT EXISTS posts (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
