@@ -13,6 +13,7 @@ func (uc *PostUsecase) GetPostFavorites(ctx context.Context, pID uuid.UUID) (fav
 		return nil, err
 	}
 
+	favorites = make([]oapi.PostFavorite, len(rows))
 	for _, r := range rows {
 		favorites = append(favorites, oapi.PostFavorite{
 			CreatedAt: r.PostFavorite.CreatedAt.Time,
