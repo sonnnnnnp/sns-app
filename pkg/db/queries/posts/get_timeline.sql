@@ -19,12 +19,12 @@ INNER JOIN users ON posts.author_id = users.id
 LEFT JOIN user_followers ON users.id = user_followers.following_id
 WHERE
     (
-        sqlc.narg('author_id')::uuid IS NULL
-        OR posts.author_id = sqlc.narg('author_id')::uuid
+        sqlc.narg(author_id)::uuid IS NULL
+        OR posts.author_id = sqlc.narg(author_id)::uuid
     )
     AND (
-        sqlc.narg('created_at')::timestamptz IS NULL
-        OR posts.created_at < sqlc.narg('created_at')::timestamptz
+        sqlc.narg(created_at)::timestamptz IS NULL
+        OR posts.created_at < sqlc.narg(created_at)::timestamptz
     )
     AND (
         NOT @only_following::boolean
