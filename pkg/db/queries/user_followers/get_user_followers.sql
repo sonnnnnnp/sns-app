@@ -3,6 +3,6 @@ SELECT
     users.*,
     user_followers.created_at AS followed_at
 FROM users
-JOIN user_followers ON users.id = user_followers.follower_id
-WHERE user_followers.following_id = @user_id
+INNER JOIN user_followers ON users.id = user_followers.follower_id
+WHERE user_followers.following_id = @user_id::uuid
 ORDER BY user_followers.created_at DESC;

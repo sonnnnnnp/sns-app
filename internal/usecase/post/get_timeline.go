@@ -24,7 +24,7 @@ func (uc *PostUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimeline
 		fromCursor = &r.Post.CreatedAt.Time
 	}
 
-	rows, err := uc.postRepo.GetTimeline(ctx, params.Limit, fromCursor, params.UserId)
+	rows, err := uc.postRepo.GetTimeline(ctx, params.Limit, fromCursor, params.UserId, params.Following)
 	if err != nil {
 		return nil, uuid.Nil, err
 	}

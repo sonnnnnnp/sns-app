@@ -11,7 +11,7 @@ import (
 
 const getUserByName = `-- name: GetUserByName :one
 SELECT id, name, nickname, biography, avatar_image_url, banner_image_url, birthdate, line_id, created_at, updated_at FROM users
-WHERE name = $1
+WHERE name = $1::text
 `
 
 func (q *Queries) GetUserByName(ctx context.Context, name string) (User, error) {

@@ -25,7 +25,7 @@ type IPostRepository interface {
 	DeletePostFavorite(ctx context.Context, uID uuid.UUID, pID uuid.UUID) error
 
 	// timeline
-	GetTimeline(ctx context.Context, limit *int, fromCursor *time.Time, targetUID *uuid.UUID) (rows []db.GetPostsRow, err error)
+	GetTimeline(ctx context.Context, limit *int, fromCursor *time.Time, targetUID *uuid.UUID, following *bool) (rows []db.GetTimelineRow, err error)
 }
 
 type PostRepository struct {

@@ -37,6 +37,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ConfirmActionDialog } from "@/components/dialog/confirm-action-dialog";
 import { useRouter } from "next/navigation";
+import { convertNewlinesToBr } from "@/utils/text";
 
 export function Profile() {
   const router = useRouter();
@@ -63,7 +64,7 @@ export function Profile() {
       }
 
       setUser(user.data.data);
-      setIsFollowing(user.data.data.social_context?.following ?? false);
+      setIsFollowing(user.data.data.social_connection?.following ?? false);
 
       const timeline = await client.GET("/timeline", {
         params: {
@@ -129,13 +130,15 @@ export function Profile() {
           <div className="flex flex-col space-y-4 w-full p-4">
             <Card className="p-0 overflow-hidden">
               <div className="relative">
-                <img
-                  src={
-                    "https://i.pinimg.com/enabled_lo/564x/06/57/90/065790b2ab543db53a960ea21f5227f4.jpg"
-                  }
-                  alt="banner"
-                  className="object-cover w-full h-64"
-                />
+                {user?.banner_image_url ? (
+                  <img
+                    src={user.banner_image_url}
+                    alt="banner"
+                    className="object-cover w-full h-64"
+                  />
+                ) : (
+                  <div className="w-full h-64 bg-accent" />
+                )}
                 <div className="absolute top-4 right-4">
                   <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
                     <ConfirmActionDialog
@@ -225,7 +228,7 @@ export function Profile() {
                 <span className="absolute top-40 left-4">
                   <Avatar className="h-32 w-32">
                     {user?.avatar_image_url ? (
-                      <AvatarImage src={user.avatar_image_url} />
+                      <AvatarImage src={user.avatar_image_url} className="object-cover" />
                     ) : (
                       <AvatarImage src="/users/placeholder-profile.svg" />
                     )}
@@ -240,7 +243,7 @@ export function Profile() {
                   <span className="text-2xl">{user?.nickname}</span>
                   <span className="text-muted-foreground">{`@${user?.name}`}</span>
                 </div>
-                <p>{user?.biography}</p>
+                <p>{convertNewlinesToBr(user?.biography ?? "")}</p>
               </div>
               <div className="flex justify-center min-h-14 text-muted-foreground">
                 <div className="flex justify-between w-3/4">

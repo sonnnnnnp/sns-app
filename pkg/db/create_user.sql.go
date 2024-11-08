@@ -13,7 +13,7 @@ const createUser = `-- name: CreateUser :one
 INSERT INTO users (
   line_id
 ) VALUES (
-  $1
+  $1::text
 )
 RETURNING id, name, nickname, biography, avatar_image_url, banner_image_url, birthdate, line_id, created_at, updated_at
 `

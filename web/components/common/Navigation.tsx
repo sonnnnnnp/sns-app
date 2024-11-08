@@ -82,7 +82,7 @@ export function Navigation() {
                 className="w-full justify-start px-3 py-8"
               >
                 <Avatar className="mr-2 h-10 w-10">
-                  <AvatarImage src="/users/placeholder-profile.svg" />
+                  <AvatarImage src="/users/placeholder-profile.svg" className="object-cover" />
                 </Avatar>
                 <p className="text-muted-foreground">@username</p>
               </Button>

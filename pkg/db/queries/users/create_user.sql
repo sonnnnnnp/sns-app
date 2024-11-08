@@ -2,6 +2,6 @@
 INSERT INTO users (
   line_id
 ) VALUES (
-  $1
+  sqlc.narg(line_id)::text
 )
 RETURNING *;

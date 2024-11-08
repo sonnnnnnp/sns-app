@@ -2,6 +2,6 @@
 INSERT INTO posts (
   author_id, text
 ) VALUES (
-  $1, $2
+  @author_id::uuid, sqlc.narg(text)::text
 )
 RETURNING posts.id;

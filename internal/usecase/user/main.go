@@ -5,14 +5,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/domain/user"
-	"github.com/sonnnnnnp/sns-app/pkg/db"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type IUserUsecase interface {
 	// users
-	CreateUser(ctx context.Context) (*db.User, error)
-
 	GetUserByID(ctx context.Context, id uuid.UUID) (*oapi.User, error)
 	GetUserByName(ctx context.Context, name string) (*oapi.User, error)
 

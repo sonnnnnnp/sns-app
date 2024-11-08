@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
-import { Heart, MessageCircle, Repeat2, Share } from "lucide-react";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Heart, MessageCircle, Repeat2 } from "lucide-react";
 import { PostHandler } from "./post-handler";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -11,16 +10,7 @@ import { getTimeAgo } from "@/utils/date";
 import { components } from "@/lib/api/client";
 import { useState } from "react";
 import client from "@/lib/api";
-
-export const convertNewlinesToBr = (text: string) => {
-  const lines = text.split("\n");
-  return lines.map((line, index) => (
-    <React.Fragment key={index}>
-      {line}
-      {index < lines.length - 1 && <br />}
-    </React.Fragment>
-  ));
-};
+import { convertNewlinesToBr } from "@/utils/text";
 
 type Props = {
   post: components["schemas"]["Post"];
@@ -65,7 +55,7 @@ export function Post({ post }: Props) {
         <Link href={`/users/${post.author.name}`}>
           <Avatar>
             {post.author.avatar_image_url ? (
-              <AvatarImage src={post.author.avatar_image_url} />
+              <AvatarImage src={post.author.avatar_image_url} className="object-cover" />
             ) : (
               <AvatarImage src="/users/placeholder-profile.svg" />
             )}

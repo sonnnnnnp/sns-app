@@ -16,8 +16,8 @@ SELECT
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
     post_favorites.user_id, post_favorites.post_id, post_favorites.created_at
 FROM post_favorites
-JOIN users ON post_favorites.user_id = users.id
-WHERE post_favorites.post_id = $1 AND post_favorites.user_id = $2
+INNER JOIN users ON post_favorites.user_id = users.id
+WHERE post_favorites.post_id = $1::uuid AND post_favorites.user_id = $2::uuid
 `
 
 type GetPostFavoriteParams struct {

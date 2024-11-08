@@ -7,7 +7,7 @@ import (
 )
 
 type Config struct {
-	DBURL             string        `env:"DB_URL" envDefault:"postgres://user:password@db:5432/db"`
+	DBDSN             string        `env:"DB_DSN" envDefault:"postgres://user:password@db:5432/db"`
 	DBMaxConnLifetime time.Duration `env:"DB_MAX_CONN_LIFETIME" envDefault:"30m"`
 	DBMaxConnIdleTime time.Duration `env:"DB_MAX_CONN_IDLE_TIME" envDefault:"5m"`
 	DBMaxConns        int32         `env:"DB_MAX_CONNS" envDefault:"10"`

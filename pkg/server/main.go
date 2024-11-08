@@ -10,7 +10,7 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/middleware"
-	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
+	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
@@ -20,7 +20,7 @@ import (
 
 func Run(cfg *config.Config) {
 	pool, err := db.Open(&db.ConnectionOptions{
-		ConnString:      cfg.DBURL,
+		ConnString:      cfg.DBDSN,
 		MaxConnLifetime: cfg.DBMaxConnLifetime,
 		MaxConnIdleTime: cfg.DBMaxConnIdleTime,
 		MaxConns:        cfg.DBMaxConns,
@@ -33,7 +33,7 @@ func Run(cfg *config.Config) {
 
 	e := echo.New()
 
-	e.HTTPErrorHandler = internal_errors.ErrorHandler
+	e.HTTPErrorHandler = errors.ErrorHandler
 
 	middlewarecfg := echomiddleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000"},
