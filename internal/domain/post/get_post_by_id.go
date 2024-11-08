@@ -14,8 +14,8 @@ func (repo *PostRepository) GetPostByID(ctx context.Context, id uuid.UUID) (*db.
 	uID := ctxhelper.GetUserID(ctx)
 
 	r, err := db.New(repo.pool).GetPostByID(ctx, db.GetPostByIDParams{
-		ID:     id,
-		UserID: &uID,
+		SelfID: &uID,
+		PostID: id,
 	})
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

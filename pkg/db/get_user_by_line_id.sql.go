@@ -11,10 +11,10 @@ import (
 
 const getUserByLineID = `-- name: GetUserByLineID :one
 SELECT id, name, nickname, biography, avatar_image_url, banner_image_url, birthdate, line_id, created_at, updated_at FROM users
-WHERE line_id = $1
+WHERE line_id = $1::text
 `
 
-func (q *Queries) GetUserByLineID(ctx context.Context, lineID *string) (User, error) {
+func (q *Queries) GetUserByLineID(ctx context.Context, lineID string) (User, error) {
 	row := q.db.QueryRow(ctx, getUserByLineID, lineID)
 	var i User
 	err := row.Scan(

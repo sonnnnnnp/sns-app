@@ -2,5 +2,5 @@
 INSERT INTO post_favorites (
   user_id, post_id
 ) VALUES (
-  $1, $2
+  @user_id::uuid, @post_id::uuid
 );

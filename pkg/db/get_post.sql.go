@@ -24,18 +24,18 @@ SELECT
         SELECT 1
         FROM post_favorites
         WHERE post_favorites.post_id = posts.id AND (
-            post_favorites.user_id = COALESCE($1, $1)::uuid
+            post_favorites.user_id = $1::uuid
         )
     ) AS favorited
 FROM posts
-JOIN users ON posts.author_id = users.id
+INNER JOIN users ON posts.author_id = users.id
 WHERE
     posts.id = $2::uuid
 `
 
 type GetPostByIDParams struct {
-	UserID *uuid.UUID
-	ID     uuid.UUID
+	SelfID *uuid.UUID
+	PostID uuid.UUID
 }
 
 type GetPostByIDRow struct {
@@ -46,7 +46,7 @@ type GetPostByIDRow struct {
 }
 
 func (q *Queries) GetPostByID(ctx context.Context, arg GetPostByIDParams) (GetPostByIDRow, error) {
-	row := q.db.QueryRow(ctx, getPostByID, arg.UserID, arg.ID)
+	row := q.db.QueryRow(ctx, getPostByID, arg.SelfID, arg.PostID)
 	var i GetPostByIDRow
 	err := row.Scan(
 		&i.Post.ID,

@@ -15,7 +15,7 @@ const createUserFollower = `-- name: CreateUserFollower :exec
 INSERT INTO user_followers (
   follower_id, following_id
 ) VALUES (
-  $1, $2
+  $1::uuid, $2::uuid
 )
 `
 

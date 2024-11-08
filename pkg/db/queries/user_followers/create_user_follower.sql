@@ -2,5 +2,5 @@
 INSERT INTO user_followers (
   follower_id, following_id
 ) VALUES (
-  $1, $2
+  @follower_id::uuid, @following_id::uuid
 );

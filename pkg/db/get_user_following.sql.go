@@ -17,8 +17,8 @@ SELECT
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
     user_followers.created_at AS followed_at
 FROM users
-JOIN user_followers ON users.id = user_followers.following_id
-WHERE user_followers.follower_id = $1
+INNER JOIN user_followers ON users.id = user_followers.following_id
+WHERE user_followers.follower_id = $1::uuid
 ORDER BY user_followers.created_at DESC
 `
 

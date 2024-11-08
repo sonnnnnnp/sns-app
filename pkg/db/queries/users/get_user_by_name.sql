@@ -1,3 +1,3 @@
 -- name: GetUserByName :one
 SELECT * FROM users
-WHERE name = $1;
+WHERE name = @name::text;

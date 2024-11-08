@@ -4,17 +4,17 @@ import { Pencil } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PostList } from "./post-list";
-import { ChangeEvent, useEffect, useState } from "react";
 import client from "@/lib/api";
+import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { PostList } from "./post-list";
 
-import twitterText from "twitter-text";
-import { components } from "@/lib/api/client";
-import { Card } from "@/components/ui/card";
-import { CallData, CallList } from "./call-list";
-import { MainCard } from "@/components/main-card";
 import { PostDialog } from "@/components/dialog/post-dialog";
+import { MainCard } from "@/components/main-card";
+import { Card } from "@/components/ui/card";
+import { components } from "@/lib/api/client";
+import twitterText from "twitter-text";
+import { CallData, CallList } from "./call-list";
 
 export const iframeHeight = "938px";
 
@@ -367,7 +367,13 @@ export function Timeline() {
   const onTabChange = async (value: string) => {
     setTabValue(value);
 
-    const { data } = await client.GET("/timeline");
+    const { data } = await client.GET("/timeline", {
+      params: {
+        query: {
+          following: value === "following",
+        },
+      },
+    });
     if (!data?.ok) {
       return console.error("error fetching timeline");
     }
