@@ -3,10 +3,13 @@ package controller
 import (
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
+
+// user
 
 func (c Controller) GetSelf(ctx echo.Context) error {
 	uID := ctxhelper.GetUserID(ctx.Request().Context())
@@ -19,8 +22,8 @@ func (c Controller) GetSelf(ctx echo.Context) error {
 	return c.json(ctx, http.StatusOK, u)
 }
 
-func (c Controller) GetUserByName(ctx echo.Context, params oapi.GetUserByNameParams) error {
-	u, err := c.userUsecase.GetUserByName(ctx.Request().Context(), params.Name)
+func (c Controller) GetUserByName(ctx echo.Context, name string) error {
+	u, err := c.userUsecase.GetUserByName(ctx.Request().Context(), name)
 	if err != nil {
 		return err
 	}
@@ -44,8 +47,41 @@ func (c Controller) UpdateUser(ctx echo.Context) error {
 	return c.json(ctx, http.StatusOK, u)
 }
 
-func (c Controller) GetUserFollowing(ctx echo.Context, params oapi.GetUserFollowingParams) error {
-	users, err := c.userUsecase.GetUserFollowing(ctx.Request().Context(), params.UserId)
+// block
+
+func (c Controller) BlockUser(ctx echo.Context, uID uuid.UUID) error {
+	err := c.userUsecase.BlockUser(ctx.Request().Context(), uID)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
+}
+
+func (c Controller) GetUserBlocking(ctx echo.Context) error {
+	users, err := c.userUsecase.GetUserBlocking(ctx.Request().Context())
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, &oapi.Users{
+		Users: users,
+	})
+}
+
+func (c Controller) UnblockUser(ctx echo.Context, uID uuid.UUID) error {
+	err := c.userUsecase.UnblockUser(ctx.Request().Context(), uID)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
+}
+
+// follow
+
+func (c Controller) GetUserFollowing(ctx echo.Context, uID uuid.UUID) error {
+	users, err := c.userUsecase.GetUserFollowing(ctx.Request().Context(), uID)
 	if err != nil {
 		return err
 	}
@@ -55,8 +91,8 @@ func (c Controller) GetUserFollowing(ctx echo.Context, params oapi.GetUserFollow
 	})
 }
 
-func (c Controller) GetUserFollowers(ctx echo.Context, params oapi.GetUserFollowersParams) error {
-	users, err := c.userUsecase.GetUserFollowers(ctx.Request().Context(), params.UserId)
+func (c Controller) GetUserFollowers(ctx echo.Context, uID uuid.UUID) error {
+	users, err := c.userUsecase.GetUserFollowers(ctx.Request().Context(), uID)
 	if err != nil {
 		return err
 	}
@@ -66,13 +102,8 @@ func (c Controller) GetUserFollowers(ctx echo.Context, params oapi.GetUserFollow
 	})
 }
 
-func (c Controller) FollowUser(ctx echo.Context) error {
-	var body oapi.FollowUserJSONBody
-	if err := ctx.Bind(&body); err != nil {
-		return err
-	}
-
-	sc, err := c.userUsecase.FollowUser(ctx.Request().Context(), body.UserId)
+func (c Controller) FollowUser(ctx echo.Context, uID uuid.UUID) error {
+	sc, err := c.userUsecase.FollowUser(ctx.Request().Context(), uID)
 	if err != nil {
 		return err
 	}
@@ -80,13 +111,8 @@ func (c Controller) FollowUser(ctx echo.Context) error {
 	return c.json(ctx, http.StatusOK, sc)
 }
 
-func (c Controller) UnfollowUser(ctx echo.Context) error {
-	var body oapi.UnfollowUserJSONBody
-	if err := ctx.Bind(&body); err != nil {
-		return err
-	}
-
-	sc, err := c.userUsecase.UnfollowUser(ctx.Request().Context(), body.UserId)
+func (c Controller) UnfollowUser(ctx echo.Context, uID uuid.UUID) error {
+	sc, err := c.userUsecase.UnfollowUser(ctx.Request().Context(), uID)
 	if err != nil {
 		return err
 	}
@@ -94,13 +120,8 @@ func (c Controller) UnfollowUser(ctx echo.Context) error {
 	return c.json(ctx, http.StatusOK, sc)
 }
 
-func (c Controller) RemoveUserFromFollowers(ctx echo.Context) error {
-	var body oapi.RemoveUserFromFollowersJSONBody
-	if err := ctx.Bind(&body); err != nil {
-		return err
-	}
-
-	sc, err := c.userUsecase.RemoveUserFromFollowers(ctx.Request().Context(), body.UserId)
+func (c Controller) RemoveUserFromFollowers(ctx echo.Context, uID uuid.UUID) error {
+	sc, err := c.userUsecase.RemoveUserFromFollowers(ctx.Request().Context(), uID)
 	if err != nil {
 		return err
 	}

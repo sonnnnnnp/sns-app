@@ -10,7 +10,7 @@ import (
 )
 
 type IUserRepository interface {
-	// user
+	// users
 	CreateUser(ctx context.Context, lineID *string) (*db.User, error)
 
 	GetUserByID(ctx context.Context, id uuid.UUID) (*db.User, error)
@@ -19,12 +19,20 @@ type IUserRepository interface {
 
 	UpdateUser(ctx context.Context, id uuid.UUID, data *oapi.UpdateUserJSONBody) error
 
-	// followers
+	// blocks
+	BlockUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
+
+	GetUserBlocking(ctx context.Context, uID uuid.UUID) ([]db.GetUserBlockingRow, error)
+	GetBlockStatus(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) (db.GetBlockStatusRow, error)
+
+	UnblockUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
+
+	// follows
 	FollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
 
 	GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]db.GetUserFollowersRow, error)
 	GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]db.GetUserFollowingRow, error)
-	GetSocialConnection(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialConnection, error)
+	GetSocialConnection(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialConnection, error)
 
 	UnfollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
 }

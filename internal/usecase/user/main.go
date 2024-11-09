@@ -15,7 +15,14 @@ type IUserUsecase interface {
 
 	UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*oapi.User, error)
 
-	// followers
+	// blocks
+	BlockUser(ctx context.Context, uID uuid.UUID) error
+
+	GetUserBlocking(ctx context.Context) ([]oapi.User, error)
+
+	UnblockUser(ctx context.Context, uID uuid.UUID) error
+
+	// follows
 	FollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)
 
 	GetUserFollowers(ctx context.Context, id uuid.UUID) ([]oapi.UserFollower, error)

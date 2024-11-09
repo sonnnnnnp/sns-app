@@ -30,7 +30,7 @@ SELECT
     ) AS favorited
 FROM posts
 INNER JOIN users ON posts.author_id = users.id
-LEFT JOIN user_followers ON users.id = user_followers.following_id
+LEFT JOIN user_follows ON users.id = user_follows.following_id
 WHERE
     (
         $3::uuid IS NULL
@@ -42,7 +42,7 @@ WHERE
     )
     AND (
         NOT $5::boolean
-        OR user_followers.follower_id = $2::uuid
+        OR user_follows.follower_id = $2::uuid
         OR posts.author_id = $2::uuid
     )
 ORDER BY posts.created_at DESC

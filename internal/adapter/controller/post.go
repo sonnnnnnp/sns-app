@@ -37,39 +37,29 @@ func (c Controller) DeletePost(ctx echo.Context, pID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, nil)
+	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
 }
 
-func (c Controller) FavoritePost(ctx echo.Context) error {
-	var body oapi.FavoritePostJSONBody
-	if err := ctx.Bind(&body); err != nil {
-		return err
-	}
-
-	err := c.postUsecase.CreatePostFavorite(ctx.Request().Context(), body.PostId)
+func (c Controller) FavoritePost(ctx echo.Context, pID uuid.UUID) error {
+	err := c.postUsecase.CreatePostFavorite(ctx.Request().Context(), pID)
 	if err != nil {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, nil)
+	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
 }
 
-func (c Controller) UnfavoritePost(ctx echo.Context) error {
-	var body oapi.UnfavoritePostJSONBody
-	if err := ctx.Bind(&body); err != nil {
-		return err
-	}
-
-	err := c.postUsecase.DeletePostFavorite(ctx.Request().Context(), body.PostId)
+func (c Controller) UnfavoritePost(ctx echo.Context, pID uuid.UUID) error {
+	err := c.postUsecase.DeletePostFavorite(ctx.Request().Context(), pID)
 	if err != nil {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, nil)
+	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
 }
 
-func (c Controller) GetPostFavorites(ctx echo.Context, params oapi.GetPostFavoritesParams) error {
-	favorites, err := c.postUsecase.GetPostFavorites(ctx.Request().Context(), params.PostId)
+func (c Controller) GetPostFavorites(ctx echo.Context, pID uuid.UUID) error {
+	favorites, err := c.postUsecase.GetPostFavorites(ctx.Request().Context(), pID)
 	if err != nil {
 		return err
 	}
