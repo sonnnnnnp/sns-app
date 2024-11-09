@@ -2,29 +2,36 @@ package user
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
+	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *UserUsecase) GetUserByID(ctx context.Context, uID uuid.UUID) (*api.User, error) {
+	queries := db.New(uc.pool)
+
 	selfUID := ctxhelper.GetUserID(ctx)
 
-	u, err := uc.userRepo.GetUserByID(ctx, uID)
+	u, err := queries.GetUserByID(ctx, uID)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, internal_errors.ErrUserNotFound
+		}
 		return nil, err
-	}
-
-	if u == nil {
-		return nil, errors.ErrUserNotFound
 	}
 
 	var sc *api.SocialConnection
 	var bs *api.BlockStatus
 	if u.ID != selfUID {
-		scRow, err := uc.userRepo.GetSocialConnection(ctx, selfUID, u.ID)
+		scRow, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+			SelfID:   selfUID,
+			TargetID: u.ID,
+		})
 		if err != nil {
 			return nil, err
 		}
@@ -33,7 +40,10 @@ func (uc *UserUsecase) GetUserByID(ctx context.Context, uID uuid.UUID) (*api.Use
 			FollowedBy: scRow.FollowedBy,
 		}
 
-		bsRow, err := uc.userRepo.GetBlockStatus(ctx, selfUID, u.ID)
+		bsRow, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+			SelfID:   selfUID,
+			TargetID: u.ID,
+		})
 		if err != nil {
 			return nil, err
 		}

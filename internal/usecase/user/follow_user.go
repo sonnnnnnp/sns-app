@@ -7,9 +7,12 @@ import (
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*api.SocialConnection, error) {
+	queries := db.New(uc.pool)
+
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	// 自分自身をフォローしようとした場合はエラー
@@ -18,7 +21,10 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*api.Soci
 	}
 
 	// ブロックされている場合はエラー
-	bs, err := uc.userRepo.GetBlockStatus(ctx, selfUID, uID)
+	bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+		SelfID:   selfUID,
+		TargetID: uID,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +33,10 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*api.Soci
 		return nil, errors.ErrUserBlockingOrBlockedBy
 	}
 
-	sc, err := uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
+	sc, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+		SelfID:   selfUID,
+		TargetID: uID,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -37,11 +46,17 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*api.Soci
 		return nil, errors.ErrUserAlreadyFollowing
 	}
 
-	if err := uc.userRepo.FollowUser(ctx, selfUID, uID); err != nil {
+	if err := queries.CreateUserFollow(ctx, db.CreateUserFollowParams{
+		FollowerID:  selfUID,
+		FollowingID: uID,
+	}); err != nil {
 		return nil, err
 	}
 
-	scRow, err := uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
+	scRow, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+		SelfID:   selfUID,
+		TargetID: uID,
+	})
 	if err != nil {
 		return nil, err
 	}

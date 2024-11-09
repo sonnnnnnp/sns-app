@@ -6,8 +6,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
 )
 
@@ -17,19 +17,17 @@ type IAuthorizeUsecase interface {
 }
 
 type AuthorizeUsecase struct {
+	pool *pgxpool.Pool
 	line *line.Client
-
-	userRepo *user_repository.UserRepository
 }
 
 func New(
+	pool *pgxpool.Pool,
 	line *line.Client,
-	userRepo *user_repository.UserRepository,
 ) *AuthorizeUsecase {
 	return &AuthorizeUsecase{
+		pool: pool,
 		line: line,
-
-		userRepo: userRepo,
 	}
 }
 

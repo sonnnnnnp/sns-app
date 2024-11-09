@@ -6,11 +6,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *UserUsecase) BlockUser(ctx context.Context, uID uuid.UUID) error {
 	// TODO: どちらかがフォロー中の場合はフォロー解除する
 	// トランザクションを利用する
+
+	queries := db.New(uc.pool)
 
 	selfUID := ctxhelper.GetUserID(ctx)
 
@@ -19,7 +22,10 @@ func (uc *UserUsecase) BlockUser(ctx context.Context, uID uuid.UUID) error {
 		return errors.ErrCannotBlockYourself
 	}
 
-	bs, err := uc.userRepo.GetBlockStatus(ctx, selfUID, uID)
+	bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+		SelfID:   selfUID,
+		TargetID: uID,
+	})
 	if err != nil {
 		return err
 	}
@@ -29,5 +35,8 @@ func (uc *UserUsecase) BlockUser(ctx context.Context, uID uuid.UUID) error {
 		return errors.ErrUserAlreadyBlocking
 	}
 
-	return uc.userRepo.BlockUser(ctx, selfUID, uID)
+	return queries.CreateUserBlock(ctx, db.CreateUserBlockParams{
+		BlockerID:  selfUID,
+		BlockingID: uID,
+	})
 }

@@ -4,9 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/domain/post"
-	"github.com/sonnnnnnp/sns-app/internal/domain/user"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
 )
 
@@ -30,20 +29,17 @@ type IPostUsecase interface {
 }
 
 type PostUsecase struct {
-	postRepo *post.PostRepository
-	userRepo *user.UserRepository
+	pool *pgxpool.Pool
 
 	streamUsecase *stream.StreamUsecase
 }
 
 func New(
-	postRepo *post.PostRepository,
-	userRepo *user.UserRepository,
+	pool *pgxpool.Pool,
 	streamUsecase *stream.StreamUsecase,
 ) *PostUsecase {
 	return &PostUsecase{
-		postRepo: postRepo,
-		userRepo: userRepo,
+		pool: pool,
 
 		streamUsecase: streamUsecase,
 	}

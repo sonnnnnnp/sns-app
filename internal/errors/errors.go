@@ -13,7 +13,7 @@ var (
 	ErrUserNotFound            = errors.New("user not found")
 	ErrCannotBlockYourself     = errors.New("cannot block yourself")
 	ErrUserAlreadyBlocking     = errors.New("user already blocking")
-	ErrUserBlockingOrBlockedBy = errors.New("blocking or blocked the user")
+	ErrUserBlockingOrBlockedBy = errors.New("blocking or blocked by the user")
 	ErrCannotFollowYourself    = errors.New("cannot follow yourself")
 	ErrUserAlreadyFollowing    = errors.New("user already following")
 

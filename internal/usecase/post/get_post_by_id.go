@@ -2,20 +2,28 @@ package post
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
+	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*api.Post, error) {
-	r, err := uc.postRepo.GetPostByID(ctx, pID)
-	if err != nil {
-		return nil, err
-	}
+	selfUID := ctxhelper.GetUserID(ctx)
 
-	if r == nil {
-		return nil, errors.ErrPostNotFound
+	r, err := db.New(uc.pool).GetPostByID(ctx, db.GetPostByIDParams{
+		SelfID: &selfUID,
+		PostID: pID,
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, internal_errors.ErrPostNotFound
+		}
+		return nil, err
 	}
 
 	return &api.Post{

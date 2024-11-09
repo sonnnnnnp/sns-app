@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/domain/user"
 )
 
 type IUserUsecase interface {
@@ -33,14 +33,14 @@ type IUserUsecase interface {
 }
 
 type UserUsecase struct {
-	userRepo *user.UserRepository
+	pool *pgxpool.Pool
 }
 
 func New(
-	userRepo *user.UserRepository,
+	pool *pgxpool.Pool,
 ) *UserUsecase {
 	return &UserUsecase{
-		userRepo: userRepo,
+		pool: pool,
 	}
 }
 

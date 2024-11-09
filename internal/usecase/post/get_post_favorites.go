@@ -5,10 +5,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *PostUsecase) GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]api.PostFavorite, error) {
-	rows, err := uc.postRepo.GetPostFavorites(ctx, pID)
+	rows, err := db.New(uc.pool).GetPostFavorites(ctx, pID)
 	if err != nil {
 		return nil, err
 	}

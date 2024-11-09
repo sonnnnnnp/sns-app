@@ -5,10 +5,11 @@ import (
 
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *UserUsecase) GetUserBlocking(ctx context.Context) ([]api.User, error) {
-	rows, err := uc.userRepo.GetUserBlocking(ctx, ctxhelper.GetUserID(ctx))
+	rows, err := db.New(uc.pool).GetUserBlocking(ctx, ctxhelper.GetUserID(ctx))
 	if err != nil {
 		return nil, err
 	}

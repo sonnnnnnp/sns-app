@@ -5,17 +5,26 @@ import (
 
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *PostUsecase) CreatePost(ctx context.Context, body *api.CreatePostJSONBody) (*api.Post, error) {
-	uID := ctxhelper.GetUserID(ctx)
+	queries := db.New(uc.pool)
 
-	pID, err := uc.postRepo.CreatePost(ctx, uID, body)
+	selfUID := ctxhelper.GetUserID(ctx)
+
+	pID, err := queries.CreatePost(ctx, db.CreatePostParams{
+		AuthorID: selfUID,
+		Text:     body.Content,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	r, err := uc.postRepo.GetPostByID(ctx, pID)
+	r, err := queries.GetPostByID(ctx, db.GetPostByIDParams{
+		SelfID: &selfUID,
+		PostID: pID,
+	})
 	if err != nil {
 		return nil, err
 	}

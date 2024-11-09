@@ -5,16 +5,27 @@ import (
 
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *UserUsecase) UpdateUser(ctx context.Context, body *api.UpdateUserJSONBody) (*api.User, error) {
+	queries := db.New(uc.pool)
+
 	selfUID := ctxhelper.GetUserID(ctx)
 
-	if err := uc.userRepo.UpdateUser(ctx, selfUID, body); err != nil {
+	if err := queries.UpdateUser(ctx, db.UpdateUserParams{
+		UserID:         selfUID,
+		Name:           body.Name,
+		Nickname:       body.Nickname,
+		Biography:      body.Biography,
+		AvatarImageUrl: body.AvatarImageUrl,
+		BannerImageUrl: body.BannerImageUrl,
+		Birthdate:      body.Birthdate,
+	}); err != nil {
 		return nil, err
 	}
 
-	u, err := uc.userRepo.GetUserByID(ctx, selfUID)
+	u, err := queries.GetUserByID(ctx, selfUID)
 	if err != nil {
 		return nil, err
 	}

@@ -2,34 +2,42 @@ package user
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
+	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *UserUsecase) GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]api.UserFollower, error) {
-	u, err := uc.userRepo.GetUserByID(ctx, uID)
+	queries := db.New(uc.pool)
+
+	// TODO: これいる？
+	_, err := queries.GetUserByID(ctx, uID)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, internal_errors.ErrUserNotFound
+		}
 		return nil, err
 	}
 
-	if u == nil {
-		return nil, errors.ErrUserNotFound
-	}
-
 	// ブロックされている場合はエラー
-	bs, err := uc.userRepo.GetBlockStatus(ctx, ctxhelper.GetUserID(ctx), uID)
+	bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+		SelfID:   ctxhelper.GetUserID(ctx),
+		TargetID: uID,
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	if bs.Blocking || bs.BlockedBy {
-		return nil, errors.ErrUserBlockingOrBlockedBy
+		return nil, internal_errors.ErrUserBlockingOrBlockedBy
 	}
 
-	rows, err := uc.userRepo.GetUserFollowers(ctx, uID)
+	rows, err := queries.GetUserFollowers(ctx, uID)
 	if err != nil {
 		return nil, err
 	}
