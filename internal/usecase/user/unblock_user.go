@@ -12,7 +12,7 @@ func (uc *UserUsecase) UnblockUser(ctx context.Context, uID uuid.UUID) error {
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	if uID == selfUID {
-		return errors.ErrCannotBlockSelf
+		return errors.ErrCannotBlockYourself
 	}
 
 	return uc.userRepo.UnblockUser(ctx, selfUID, uID)

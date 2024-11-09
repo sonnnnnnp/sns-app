@@ -14,7 +14,7 @@ type IPostRepository interface {
 	// posts
 	CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (pID uuid.UUID, err error)
 
-	GetPostByID(ctx context.Context, id uuid.UUID) (*db.GetPostByIDRow, error)
+	GetPostByID(ctx context.Context, pID uuid.UUID) (*db.GetPostByIDRow, error)
 
 	DeletePost(ctx context.Context, pID uuid.UUID) error
 

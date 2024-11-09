@@ -8,8 +8,8 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (c Controller) GetPostByID(ctx echo.Context, id uuid.UUID) error {
-	p, err := c.postUsecase.GetPostByID(ctx.Request().Context(), id)
+func (c Controller) GetPostByID(ctx echo.Context, pID uuid.UUID) error {
+	p, err := c.postUsecase.GetPostByID(ctx.Request().Context(), pID)
 	if err != nil {
 		return err
 	}

@@ -6,11 +6,26 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 func (uc *PostUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimelineParams) (posts []oapi.Post, nextCursor uuid.UUID, err error) {
-	// if parmas.UserId is not nil, check if not blocked by the target user
+	selfUID := ctxhelper.GetUserID(ctx)
+
+	if params.UserId != nil {
+		bs, err := uc.userRepo.GetBlockStatus(ctx, selfUID, *params.UserId)
+		if err != nil {
+			return nil, uuid.Nil, err
+		}
+
+		if bs.Blocking {
+			return nil, uuid.Nil, errors.ErrUserBlockedByYou
+		}
+		if bs.BlockedBy {
+			return nil, uuid.Nil, errors.ErrUserBlockingYou
+		}
+	}
 
 	var fromCursor *time.Time
 	if params.Cursor != nil {

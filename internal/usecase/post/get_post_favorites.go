@@ -7,13 +7,13 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *PostUsecase) GetPostFavorites(ctx context.Context, pID uuid.UUID) (favorites []oapi.PostFavorite, err error) {
+func (uc *PostUsecase) GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]oapi.PostFavorite, error) {
 	rows, err := uc.postRepo.GetPostFavorites(ctx, pID)
 	if err != nil {
 		return nil, err
 	}
 
-	favorites = make([]oapi.PostFavorite, 0)
+	favorites := make([]oapi.PostFavorite, 0)
 	for _, r := range rows {
 		favorites = append(favorites, oapi.PostFavorite{
 			CreatedAt: r.PostFavorite.CreatedAt.Time,

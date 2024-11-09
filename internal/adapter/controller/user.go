@@ -32,14 +32,12 @@ func (c Controller) GetUserByName(ctx echo.Context, name string) error {
 }
 
 func (c Controller) UpdateUser(ctx echo.Context) error {
-	uID := ctxhelper.GetUserID(ctx.Request().Context())
-
 	var body oapi.UpdateUserJSONBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}
 
-	u, err := c.userUsecase.UpdateUser(ctx.Request().Context(), uID, &body)
+	u, err := c.userUsecase.UpdateUser(ctx.Request().Context(), &body)
 	if err != nil {
 		return err
 	}

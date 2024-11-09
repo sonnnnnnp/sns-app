@@ -8,8 +8,8 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *PostUsecase) GetPostByID(ctx context.Context, id uuid.UUID) (*oapi.Post, error) {
-	r, err := uc.postRepo.GetPostByID(ctx, id)
+func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*oapi.Post, error) {
+	r, err := uc.postRepo.GetPostByID(ctx, pID)
 	if err != nil {
 		return nil, err
 	}

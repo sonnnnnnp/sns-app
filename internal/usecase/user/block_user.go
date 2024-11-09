@@ -13,7 +13,7 @@ func (uc *UserUsecase) BlockUser(ctx context.Context, uID uuid.UUID) error {
 
 	// 自分自身をブロックしようとした場合はエラー
 	if uID == selfUID {
-		return errors.ErrCannotBlockSelf
+		return errors.ErrCannotBlockYourself
 	}
 
 	bs, err := uc.userRepo.GetBlockStatus(ctx, selfUID, uID)

@@ -14,10 +14,12 @@ var errorCodeMap = map[error]int{
 
 	// user
 	ErrUserNotFound:         -1100,
-	ErrCannotBlockSelf:      -1101,
+	ErrCannotBlockYourself:  -1101,
 	ErrUserAlreadyBlocking:  -1102,
-	ErrCannotFollowSelf:     -1103,
-	ErrUserAlreadyFollowing: -1104,
+	ErrUserBlockedByYou:     -1103,
+	ErrUserBlockingYou:      -1104,
+	ErrCannotFollowYourself: -1105,
+	ErrUserAlreadyFollowing: -1106,
 
 	// post
 	ErrPostNotFound:         -1200,
