@@ -14,15 +14,19 @@ type Querier interface {
 	CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error)
 	CreatePostFavorite(ctx context.Context, arg CreatePostFavoriteParams) error
 	CreateUser(ctx context.Context, lineID *string) (User, error)
-	CreateUserFollower(ctx context.Context, arg CreateUserFollowerParams) error
+	CreateUserBlock(ctx context.Context, arg CreateUserBlockParams) error
+	CreateUserFollow(ctx context.Context, arg CreateUserFollowParams) error
 	DeletePost(ctx context.Context, postID uuid.UUID) error
 	DeletePostFavorite(ctx context.Context, arg DeletePostFavoriteParams) error
-	DeleteUserFollower(ctx context.Context, arg DeleteUserFollowerParams) error
+	DeleteUserBlock(ctx context.Context, arg DeleteUserBlockParams) error
+	DeleteUserFollow(ctx context.Context, arg DeleteUserFollowParams) error
+	GetBlockStatus(ctx context.Context, arg GetBlockStatusParams) (GetBlockStatusRow, error)
 	GetPostByID(ctx context.Context, arg GetPostByIDParams) (GetPostByIDRow, error)
 	GetPostFavorite(ctx context.Context, arg GetPostFavoriteParams) (GetPostFavoriteRow, error)
 	GetPostFavorites(ctx context.Context, postID uuid.UUID) ([]GetPostFavoritesRow, error)
 	GetSocialConnection(ctx context.Context, arg GetSocialConnectionParams) (GetSocialConnectionRow, error)
 	GetTimeline(ctx context.Context, arg GetTimelineParams) ([]GetTimelineRow, error)
+	GetUserBlocking(ctx context.Context, userID uuid.UUID) ([]GetUserBlockingRow, error)
 	GetUserByID(ctx context.Context, userID uuid.UUID) (User, error)
 	GetUserByLineID(ctx context.Context, lineID string) (User, error)
 	GetUserByName(ctx context.Context, name string) (User, error)

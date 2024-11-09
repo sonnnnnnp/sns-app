@@ -13,9 +13,12 @@ var errorCodeMap = map[error]int{
 	ErrInvalidTokenScope: -1003,
 
 	// user
-	ErrUserNotFound:         -1100,
-	ErrCannotFollowSelf:     -1101,
-	ErrUserAlreadyFollowing: -1102,
+	ErrUserNotFound:            -1100,
+	ErrCannotBlockYourself:     -1101,
+	ErrUserAlreadyBlocking:     -1102,
+	ErrUserBlockingOrBlockedBy: -1103,
+	ErrCannotFollowYourself:    -1104,
+	ErrUserAlreadyFollowing:    -1105,
 
 	// post
 	ErrPostNotFound:         -1200,

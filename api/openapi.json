@@ -124,32 +124,25 @@
         "security": []
       }
     },
-    "/posts/favorites/create": {
+    "/posts/{post_id}/favorites": {
       "post": {
         "summary": "投稿にいいねする",
         "deprecated": false,
         "description": "",
         "operationId": "favoritePost",
         "tags": [],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "post_id": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "post_id"
-                ]
-              }
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -171,34 +164,25 @@
             "bearer": []
           }
         ]
-      }
-    },
-    "/posts/favorites/delete": {
-      "post": {
+      },
+      "delete": {
         "summary": "投稿のいいねを解除する",
         "deprecated": false,
         "description": "",
         "operationId": "unfavoritePost",
         "tags": [],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "post_id": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "post_id"
-                ]
-              }
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -220,9 +204,7 @@
             "bearer": []
           }
         ]
-      }
-    },
-    "/posts/favorites": {
+      },
       "get": {
         "summary": "投稿にいいねしたユーザーを取得する",
         "deprecated": false,
@@ -232,7 +214,7 @@
         "parameters": [
           {
             "name": "post_id",
-            "in": "query",
+            "in": "path",
             "description": "",
             "required": true,
             "schema": {
@@ -283,7 +265,7 @@
         ]
       }
     },
-    "/posts/create": {
+    "/posts": {
       "post": {
         "summary": "投稿を作成する",
         "deprecated": false,
@@ -457,32 +439,25 @@
         ]
       }
     },
-    "/users/following/delete": {
-      "post": {
+    "/users/{user_id}/follows": {
+      "delete": {
         "summary": "ユーザーをアンフォローする",
         "deprecated": false,
         "description": "",
         "operationId": "unfollowUser",
         "tags": [],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_id": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "user_id"
-                ]
-              }
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -519,34 +494,25 @@
             "bearer": []
           }
         ]
-      }
-    },
-    "/users/following/create": {
+      },
       "post": {
         "summary": "ユーザーをフォローする",
         "deprecated": false,
         "description": "",
         "operationId": "followUser",
         "tags": [],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_id": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "user_id"
-                ]
-              }
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -585,9 +551,9 @@
         ]
       }
     },
-    "/users/following": {
+    "/users/{user_id}/following": {
       "get": {
-        "summary": "ユーザーのフォローを取得する",
+        "summary": "ユーザーのフォロー一覧を取得する",
         "deprecated": false,
         "description": "",
         "operationId": "getUserFollowing",
@@ -595,7 +561,7 @@
         "parameters": [
           {
             "name": "user_id",
-            "in": "query",
+            "in": "path",
             "description": "",
             "required": true,
             "schema": {
@@ -641,11 +607,66 @@
             "bearer": []
           }
         ]
+      },
+      "delete": {
+        "summary": "ユーザーをフォロワーから削除する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "removeUserFromFollowers",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/SocialConnection"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
       }
     },
-    "/users/followers": {
+    "/users/{user_id}/followers": {
       "get": {
-        "summary": "ユーザーのフォロワーを取得する",
+        "summary": "ユーザーのフォロワー一覧を取得する",
         "deprecated": false,
         "description": "",
         "operationId": "getUserFollowers",
@@ -653,7 +674,7 @@
         "parameters": [
           {
             "name": "user_id",
-            "in": "query",
+            "in": "path",
             "description": "",
             "required": true,
             "schema": {
@@ -701,32 +722,96 @@
         ]
       }
     },
-    "/users/followers/delete": {
+    "/users/{user_id}/blocks": {
       "post": {
-        "summary": "ユーザーをフォロワーから削除する",
+        "summary": "ユーザーをブロックする",
         "deprecated": false,
         "description": "",
-        "operationId": "removeUserFromFollowers",
+        "operationId": "blockUser",
         "tags": [],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_id": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "user_id"
-                ]
-              }
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response",
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "summary": "ユーザーをアンブロックする",
+        "deprecated": false,
+        "description": "",
+        "operationId": "unblockUser",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response",
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/users/blocks": {
+      "get": {
+        "summary": "ユーザーのブロック一覧を取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getUserBlocking",
+        "tags": [],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "",
@@ -744,7 +829,8 @@
                       "description": "レスポンスコード"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/SocialConnection"
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Users"
                     }
                   },
                   "required": [
@@ -765,7 +851,7 @@
         ]
       }
     },
-    "/users": {
+    "/users/{name}": {
       "get": {
         "summary": "ユーザーを取得する",
         "deprecated": false,
@@ -775,7 +861,7 @@
         "parameters": [
           {
             "name": "name",
-            "in": "query",
+            "in": "path",
             "description": "",
             "required": true,
             "schema": {
@@ -1091,6 +1177,9 @@
           "social_connection": {
             "$ref": "#/components/schemas/SocialConnection"
           },
+          "block_status": {
+            "$ref": "#/components/schemas/BlockStatus"
+          },
           "updated_at": {
             "type": "string",
             "format": "date-time"
@@ -1138,6 +1227,21 @@
         },
         "required": [
           "users"
+        ]
+      },
+      "BlockStatus": {
+        "type": "object",
+        "properties": {
+          "blocking": {
+            "type": "boolean"
+          },
+          "blocked_by": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "blocking",
+          "blocked_by"
         ]
       },
       "Authorization": {
@@ -1285,6 +1389,9 @@
           },
           "social_connection": {
             "$ref": "#/components/schemas/SocialConnection"
+          },
+          "block_status": {
+            "$ref": "#/components/schemas/BlockStatus"
           },
           "updated_at": {
             "type": "string",

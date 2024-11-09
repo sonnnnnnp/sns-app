@@ -396,7 +396,7 @@ export function Timeline() {
   };
 
   const handleCreatePost = async () => {
-    const { data } = await client.POST("/posts/create", {
+    const { data } = await client.POST("/posts", {
       body: {
         content: postContent,
       },

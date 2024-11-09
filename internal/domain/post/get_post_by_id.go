@@ -10,12 +10,12 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (repo *PostRepository) GetPostByID(ctx context.Context, id uuid.UUID) (*db.GetPostByIDRow, error) {
+func (repo *PostRepository) GetPostByID(ctx context.Context, pID uuid.UUID) (*db.GetPostByIDRow, error) {
 	uID := ctxhelper.GetUserID(ctx)
 
 	r, err := db.New(repo.pool).GetPostByID(ctx, db.GetPostByIDParams{
 		SelfID: &uID,
-		PostID: id,
+		PostID: pID,
 	})
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

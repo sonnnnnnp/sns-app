@@ -36,7 +36,13 @@ type User struct {
 	UpdatedAt      pgtype.Timestamptz
 }
 
-type UserFollower struct {
+type UserBlock struct {
+	BlockerID  uuid.UUID
+	BlockingID uuid.UUID
+	CreatedAt  pgtype.Timestamptz
+}
+
+type UserFollow struct {
 	FollowerID  uuid.UUID
 	FollowingID uuid.UUID
 	CreatedAt   pgtype.Timestamptz

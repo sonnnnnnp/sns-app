@@ -2,6 +2,7 @@
 "use client";
 
 import { PostList } from "@/app/home/components/post-list";
+import { ConfirmActionDialog } from "@/components/dialog/confirm-action-dialog";
 import { MainCard } from "@/components/main-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import client from "@/lib/api";
 import { components } from "@/lib/api/client";
+import { convertNewlinesToBr } from "@/utils/text";
 import {
   AtSignIcon,
   BanIcon,
@@ -33,11 +35,8 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ConfirmActionDialog } from "@/components/dialog/confirm-action-dialog";
-import { useRouter } from "next/navigation";
-import { convertNewlinesToBr } from "@/utils/text";
 
 export function Profile() {
   const router = useRouter();
@@ -51,9 +50,9 @@ export function Profile() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const user = await client.GET("/users", {
+      const user = await client.GET("/users/{name}", {
         params: {
-          query: {
+          path: {
             name: pathParams.username,
           },
         },
@@ -90,18 +89,22 @@ export function Profile() {
     }
 
     if (isFollowing) {
-      const { data } = await client.POST("/users/following/delete", {
-        body: {
-          user_id: user.id,
+      const { data } = await client.DELETE("/users/{user_id}/follows", {
+        params: {
+          path: {
+            user_id: user.id,
+          },
         },
       });
       if (!data?.ok) {
         return;
       }
     } else {
-      const { data } = await client.POST("/users/following/create", {
-        body: {
-          user_id: user.id,
+      const { data } = await client.POST("/users/{user_id}/follows", {
+        params: {
+          path: {
+            user_id: user.id,
+          },
         },
       });
       if (!data?.ok) {
@@ -228,7 +231,10 @@ export function Profile() {
                 <span className="absolute top-40 left-4">
                   <Avatar className="h-32 w-32">
                     {user?.avatar_image_url ? (
-                      <AvatarImage src={user.avatar_image_url} className="object-cover" />
+                      <AvatarImage
+                        src={user.avatar_image_url}
+                        className="object-cover"
+                      />
                     ) : (
                       <AvatarImage src="/users/placeholder-profile.svg" />
                     )}

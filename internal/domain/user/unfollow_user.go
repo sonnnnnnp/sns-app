@@ -10,7 +10,7 @@ import (
 func (repo *UserRepository) UnfollowUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error {
 	queries := db.New(repo.pool)
 
-	if err := queries.DeleteUserFollower(ctx, db.DeleteUserFollowerParams{
+	if err := queries.DeleteUserFollow(ctx, db.DeleteUserFollowParams{
 		FollowerID:  selfUID,
 		FollowingID: targetUID,
 	}); err != nil {

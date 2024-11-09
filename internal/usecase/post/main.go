@@ -14,14 +14,14 @@ type IPostUsecase interface {
 	// posts
 	CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*oapi.Post, error)
 
-	GetPostByID(ctx context.Context, id uuid.UUID) (*oapi.Post, error)
+	GetPostByID(ctx context.Context, pID uuid.UUID) (*oapi.Post, error)
 
 	DeletePost(ctx context.Context, pID uuid.UUID) error
 
 	// favorites
 	CreatePostFavorite(ctx context.Context, pID uuid.UUID) error
 
-	GetPostFavorites(ctx context.Context, pID uuid.UUID) (favorites []oapi.PostFavorite, err error)
+	GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]oapi.PostFavorite, error)
 
 	DeletePostFavorite(ctx context.Context, pID uuid.UUID) error
 

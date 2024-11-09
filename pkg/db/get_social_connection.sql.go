@@ -15,12 +15,12 @@ const getSocialConnection = `-- name: GetSocialConnection :one
 SELECT
     EXISTS (
         SELECT 1
-        FROM user_followers
+        FROM user_follows
         WHERE follower_id = $1::uuid AND following_id = $2::uuid
     ) AS following,
     EXISTS (
         SELECT 1
-        FROM user_followers
+        FROM user_follows
         WHERE follower_id = $2::uuid AND following_id = $1::uuid
     ) AS followed_by
 `

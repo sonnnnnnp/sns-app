@@ -2,30 +2,29 @@
 
 import React from "react";
 
+import client from "@/lib/api";
 import {
   Bell,
   Blocks,
   Home,
-  LoaderPinwheel,
   MessagesSquare,
   PencilIcon,
   Search,
   Settings,
 } from "lucide-react";
-import { Button } from "../ui/button";
 import Link from "next/link";
+import { toast } from "sonner";
+import { PostDialog } from "../dialog/post-dialog";
+import { Avatar, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { Avatar, AvatarImage } from "../ui/avatar";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { PostDialog } from "../dialog/post-dialog";
-import { toast } from "sonner";
-import client from "@/lib/api";
 
 import twitterText from "twitter-text";
 import { Separator } from "../ui/separator";
@@ -51,7 +50,7 @@ export function Navigation() {
   };
 
   const handleCreatePost = async () => {
-    const { data } = await client.POST("/posts/create", {
+    const { data } = await client.POST("/posts", {
       body: {
         content: postContent,
       },
@@ -82,7 +81,10 @@ export function Navigation() {
                 className="w-full justify-start px-3 py-8"
               >
                 <Avatar className="mr-2 h-10 w-10">
-                  <AvatarImage src="/users/placeholder-profile.svg" className="object-cover" />
+                  <AvatarImage
+                    src="/users/placeholder-profile.svg"
+                    className="object-cover"
+                  />
                 </Avatar>
                 <p className="text-muted-foreground">@username</p>
               </Button>

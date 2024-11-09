@@ -9,7 +9,7 @@ import (
 )
 
 func (uc *UserUsecase) GetUserByName(ctx context.Context, name string) (*oapi.User, error) {
-	uID := ctxhelper.GetUserID(ctx)
+	selfUID := ctxhelper.GetUserID(ctx)
 
 	u, err := uc.userRepo.GetUserByName(ctx, name)
 	if err != nil {
@@ -21,10 +21,24 @@ func (uc *UserUsecase) GetUserByName(ctx context.Context, name string) (*oapi.Us
 	}
 
 	var sc *oapi.SocialConnection
-	if u.ID != uID {
-		sc, err = uc.userRepo.GetSocialConnection(ctx, uID, u.ID)
+	var bs *oapi.BlockStatus
+	if u.ID != selfUID {
+		scRow, err := uc.userRepo.GetSocialConnection(ctx, selfUID, u.ID)
 		if err != nil {
 			return nil, err
+		}
+		sc = &oapi.SocialConnection{
+			Following:  scRow.Following,
+			FollowedBy: scRow.FollowedBy,
+		}
+
+		bsRow, err := uc.userRepo.GetBlockStatus(ctx, selfUID, u.ID)
+		if err != nil {
+			return nil, err
+		}
+		bs = &oapi.BlockStatus{
+			BlockedBy: bsRow.BlockedBy,
+			Blocking:  bsRow.Blocking,
 		}
 	}
 
@@ -36,6 +50,7 @@ func (uc *UserUsecase) GetUserByName(ctx context.Context, name string) (*oapi.Us
 		BannerImageUrl:   u.BannerImageUrl,
 		Biography:        u.Biography,
 		SocialConnection: sc,
+		BlockStatus:      bs,
 		UpdatedAt:        u.UpdatedAt.Time,
 		CreatedAt:        u.CreatedAt.Time,
 	}, nil

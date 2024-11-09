@@ -15,11 +15,11 @@ import (
 const getUserFollowers = `-- name: GetUserFollowers :many
 SELECT
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
-    user_followers.created_at AS followed_at
+    user_follows.created_at AS followed_at
 FROM users
-INNER JOIN user_followers ON users.id = user_followers.follower_id
-WHERE user_followers.following_id = $1::uuid
-ORDER BY user_followers.created_at DESC
+INNER JOIN user_follows ON users.id = user_follows.follower_id
+WHERE user_follows.following_id = $1::uuid
+ORDER BY user_follows.created_at DESC
 `
 
 type GetUserFollowersRow struct {

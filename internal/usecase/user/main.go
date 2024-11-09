@@ -10,19 +10,26 @@ import (
 
 type IUserUsecase interface {
 	// users
-	GetUserByID(ctx context.Context, id uuid.UUID) (*oapi.User, error)
+	GetUserByID(ctx context.Context, uID uuid.UUID) (*oapi.User, error)
 	GetUserByName(ctx context.Context, name string) (*oapi.User, error)
 
-	UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) (*oapi.User, error)
+	UpdateUser(ctx context.Context, body *oapi.UpdateUserJSONBody) (*oapi.User, error)
 
-	// followers
-	FollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)
+	// blocks
+	BlockUser(ctx context.Context, uID uuid.UUID) error
 
-	GetUserFollowers(ctx context.Context, id uuid.UUID) ([]oapi.UserFollower, error)
-	GetUserFollowing(ctx context.Context, id uuid.UUID) ([]oapi.UserFollower, error)
+	GetUserBlocking(ctx context.Context) ([]oapi.User, error)
 
-	UnfollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)
-	RemoveUserFromFollowers(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error)
+	UnblockUser(ctx context.Context, uID uuid.UUID) error
+
+	// follows
+	FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error)
+
+	GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]oapi.UserFollower, error)
+	GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]oapi.UserFollower, error)
+
+	UnfollowUser(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error)
+	RemoveUserFromFollowers(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error)
 }
 
 type UserUsecase struct {

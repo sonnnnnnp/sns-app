@@ -1,16 +1,15 @@
 "use client";
 
-import React from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Repeat2 } from "lucide-react";
-import { PostHandler } from "./post-handler";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { getTimeAgo } from "@/utils/date";
-import { components } from "@/lib/api/client";
-import { useState } from "react";
 import client from "@/lib/api";
+import { components } from "@/lib/api/client";
+import { getTimeAgo } from "@/utils/date";
 import { convertNewlinesToBr } from "@/utils/text";
+import { Heart, MessageCircle, Repeat2 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { PostHandler } from "./post-handler";
 
 type Props = {
   post: components["schemas"]["Post"];
@@ -29,18 +28,22 @@ export function Post({ post }: Props) {
 
   const handleFavorite = async () => {
     if (isFavorited) {
-      await client.POST("/posts/favorites/delete", {
-        body: {
-          post_id: post.id,
+      await client.DELETE("/posts/{post_id}/favorites", {
+        params: {
+          path: {
+            post_id: post.id,
+          },
         },
       });
       setFavoritesCount((prevCount) => prevCount - 1);
     } else {
       playFavoriteSound();
 
-      await client.POST("/posts/favorites/create", {
-        body: {
-          post_id: post.id,
+      await client.POST("/posts/{post_id}/favorites", {
+        params: {
+          path: {
+            post_id: post.id,
+          },
         },
       });
       setFavoritesCount((prevCount) => prevCount + 1);
@@ -55,7 +58,10 @@ export function Post({ post }: Props) {
         <Link href={`/users/${post.author.name}`}>
           <Avatar>
             {post.author.avatar_image_url ? (
-              <AvatarImage src={post.author.avatar_image_url} className="object-cover" />
+              <AvatarImage
+                src={post.author.avatar_image_url}
+                className="object-cover"
+              />
             ) : (
               <AvatarImage src="/users/placeholder-profile.svg" />
             )}

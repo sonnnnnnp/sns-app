@@ -28,9 +28,20 @@ SELECT
             post_favorites.user_id = $2::uuid
         )
     ) AS favorited
-FROM posts
-INNER JOIN users ON posts.author_id = users.id
-LEFT JOIN user_followers ON users.id = user_followers.following_id
+FROM
+    posts
+INNER JOIN
+    users ON posts.author_id = users.id
+LEFT JOIN
+    user_follows ON users.id = user_follows.following_id
+LEFT JOIN
+    user_blocks AS blocker ON
+    users.id = blocker.blocking_id
+    AND blocker.blocker_id = $2::uuid
+LEFT JOIN
+    user_blocks AS blocking ON
+    users.id = blocking.blocker_id
+    AND blocking.blocking_id = $2::uuid
 WHERE
     (
         $3::uuid IS NULL
@@ -42,10 +53,13 @@ WHERE
     )
     AND (
         NOT $5::boolean
-        OR user_followers.follower_id = $2::uuid
+        OR user_follows.follower_id = $2::uuid
         OR posts.author_id = $2::uuid
     )
-ORDER BY posts.created_at DESC
+    AND blocker.blocking_id IS NULL
+    AND blocking.blocker_id IS NULL
+ORDER BY
+    posts.created_at DESC
 LIMIT $1
 `
 

@@ -5,22 +5,13 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (repo *UserRepository) GetSocialConnection(ctx context.Context, selfID uuid.UUID, targetUID uuid.UUID) (*oapi.SocialConnection, error) {
+func (repo *UserRepository) GetSocialConnection(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) (db.GetSocialConnectionRow, error) {
 	queries := db.New(repo.pool)
 
-	row, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
-		SelfID:   selfID,
+	return queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+		SelfID:   selfUID,
 		TargetID: targetUID,
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &oapi.SocialConnection{
-		Following:  row.Following,
-		FollowedBy: row.FollowedBy,
-	}, nil
 }

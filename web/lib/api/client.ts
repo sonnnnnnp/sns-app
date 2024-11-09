@@ -38,41 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/posts/favorites/create": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 投稿にいいねする */
-        post: operations["favoritePost"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/posts/favorites/delete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** 投稿のいいねを解除する */
-        post: operations["unfavoritePost"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/posts/favorites": {
+    "/posts/{post_id}/favorites": {
         parameters: {
             query?: never;
             header?: never;
@@ -82,14 +48,16 @@ export interface paths {
         /** 投稿にいいねしたユーザーを取得する */
         get: operations["GetPostFavorites"];
         put?: never;
-        post?: never;
-        delete?: never;
+        /** 投稿にいいねする */
+        post: operations["favoritePost"];
+        /** 投稿のいいねを解除する */
+        delete: operations["unfavoritePost"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/posts/create": {
+    "/posts": {
         parameters: {
             query?: never;
             header?: never;
@@ -124,24 +92,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/following/delete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** ユーザーをアンフォローする */
-        post: operations["unfollowUser"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/users/following/create": {
+    "/users/{user_id}/follows": {
         parameters: {
             query?: never;
             header?: never;
@@ -152,37 +103,39 @@ export interface paths {
         put?: never;
         /** ユーザーをフォローする */
         post: operations["followUser"];
-        delete?: never;
+        /** ユーザーをアンフォローする */
+        delete: operations["unfollowUser"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/users/following": {
+    "/users/{user_id}/following": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** ユーザーのフォローを取得する */
+        /** ユーザーのフォロー一覧を取得する */
         get: operations["getUserFollowing"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** ユーザーをフォロワーから削除する */
+        delete: operations["removeUserFromFollowers"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/users/followers": {
+    "/users/{user_id}/followers": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** ユーザーのフォロワーを取得する */
+        /** ユーザーのフォロワー一覧を取得する */
         get: operations["getUserFollowers"];
         put?: never;
         post?: never;
@@ -192,7 +145,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/followers/delete": {
+    "/users/{user_id}/blocks": {
         parameters: {
             query?: never;
             header?: never;
@@ -201,15 +154,33 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** ユーザーをフォロワーから削除する */
-        post: operations["removeUserFromFollowers"];
+        /** ユーザーをブロックする */
+        post: operations["blockUser"];
+        /** ユーザーをアンブロックする */
+        delete: operations["unblockUser"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/blocks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ユーザーのブロック一覧を取得する */
+        get: operations["getUserBlocking"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/users": {
+    "/users/{name}": {
         parameters: {
             query?: never;
             header?: never;
@@ -314,6 +285,7 @@ export interface components {
             banner_image_url: string | null;
             biography: string | null;
             social_connection?: components["schemas"]["SocialConnection"];
+            block_status?: components["schemas"]["BlockStatus"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
@@ -325,6 +297,10 @@ export interface components {
         };
         Users: {
             users: components["schemas"]["User"][];
+        };
+        BlockStatus: {
+            blocking: boolean;
+            blocked_by: boolean;
         };
         Authorization: {
             user_id: string;
@@ -378,6 +354,7 @@ export interface components {
             banner_image_url: string | null;
             biography: string | null;
             social_connection?: components["schemas"]["SocialConnection"];
+            block_status?: components["schemas"]["BlockStatus"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
@@ -465,65 +442,13 @@ export interface operations {
             };
         };
     };
-    favoritePost: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    post_id: string;
-                };
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Response"];
-                };
-            };
-        };
-    };
-    unfavoritePost: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    post_id: string;
-                };
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Response"];
-                };
-            };
-        };
-    };
     GetPostFavorites: {
         parameters: {
-            query: {
+            query?: never;
+            header?: never;
+            path: {
                 post_id: string;
             };
-            header?: never;
-            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -541,6 +466,48 @@ export interface operations {
                         /** @description データ */
                         data: components["schemas"]["PostFavorite"][];
                     };
+                };
+            };
+        };
+    };
+    favoritePost: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Response"];
+                };
+            };
+        };
+    };
+    unfavoritePost: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Response"];
                 };
             };
         };
@@ -631,21 +598,16 @@ export interface operations {
             };
         };
     };
-    unfollowUser: {
+    followUser: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                user_id: string;
+            };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    user_id: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
@@ -663,21 +625,16 @@ export interface operations {
             };
         };
     };
-    followUser: {
+    unfollowUser: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                user_id: string;
+            };
             cookie?: never;
         };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    user_id: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
@@ -697,9 +654,132 @@ export interface operations {
     };
     getUserFollowing: {
         parameters: {
-            query: {
+            query?: never;
+            header?: never;
+            path: {
                 user_id: string;
             };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["Users"];
+                    };
+                };
+            };
+        };
+    };
+    removeUserFromFollowers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["SocialConnection"];
+                    };
+                };
+            };
+        };
+    };
+    getUserFollowers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["UserFollowers"];
+                    };
+                };
+            };
+        };
+    };
+    blockUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Response"];
+                };
+            };
+        };
+    };
+    unblockUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Response"];
+                };
+            };
+        };
+    };
+    getUserBlocking: {
+        parameters: {
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -723,73 +803,13 @@ export interface operations {
             };
         };
     };
-    getUserFollowers: {
-        parameters: {
-            query: {
-                user_id: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @description 正常に処理を終了したかどうか */
-                        ok: boolean;
-                        /** @description レスポンスコード */
-                        code: number;
-                        /** @description データ */
-                        data: components["schemas"]["UserFollowers"];
-                    };
-                };
-            };
-        };
-    };
-    removeUserFromFollowers: {
+    getUserByName: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": {
-                    /** Format: uuid */
-                    user_id: string;
-                };
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @description 正常に処理を終了したかどうか */
-                        ok: boolean;
-                        /** @description レスポンスコード */
-                        code: number;
-                        data: components["schemas"]["SocialConnection"];
-                    };
-                };
-            };
-        };
-    };
-    getUserByName: {
-        parameters: {
-            query: {
+            path: {
                 name: string;
             };
-            header?: never;
-            path?: never;
             cookie?: never;
         };
         requestBody?: never;

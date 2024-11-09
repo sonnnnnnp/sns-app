@@ -9,16 +9,24 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *UserUsecase) UnfollowUser(ctx context.Context, targetUID uuid.UUID) (*oapi.SocialConnection, error) {
-	uID := ctxhelper.GetUserID(ctx)
+func (uc *UserUsecase) UnfollowUser(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error) {
+	selfUID := ctxhelper.GetUserID(ctx)
 
-	if uID == targetUID {
-		return nil, errors.ErrCannotFollowSelf
+	if selfUID == uID {
+		return nil, errors.ErrCannotFollowYourself
 	}
 
-	if err := uc.userRepo.UnfollowUser(ctx, uID, targetUID); err != nil {
+	if err := uc.userRepo.UnfollowUser(ctx, selfUID, uID); err != nil {
 		return nil, err
 	}
 
-	return uc.userRepo.GetSocialConnection(ctx, uID, targetUID)
+	scRow, err := uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oapi.SocialConnection{
+		Following:  scRow.Following,
+		FollowedBy: scRow.FollowedBy,
+	}, nil
 }
