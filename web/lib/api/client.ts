@@ -117,7 +117,8 @@ export interface paths {
         get: operations["getPostByID"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** 投稿を削除する */
+        delete: operations["deletePost"];
         options?: never;
         head?: never;
         patch?: never;
@@ -597,6 +598,34 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         data: components["schemas"]["Post"];
+                    };
+                };
+            };
+        };
+    };
+    deletePost: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: Record<string, never>;
                     };
                 };
             };

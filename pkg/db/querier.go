@@ -15,6 +15,7 @@ type Querier interface {
 	CreatePostFavorite(ctx context.Context, arg CreatePostFavoriteParams) error
 	CreateUser(ctx context.Context, lineID *string) (User, error)
 	CreateUserFollower(ctx context.Context, arg CreateUserFollowerParams) error
+	DeletePost(ctx context.Context, postID uuid.UUID) error
 	DeletePostFavorite(ctx context.Context, arg DeletePostFavoriteParams) error
 	DeleteUserFollower(ctx context.Context, arg DeleteUserFollowerParams) error
 	GetPostByID(ctx context.Context, arg GetPostByIDParams) (GetPostByIDRow, error)

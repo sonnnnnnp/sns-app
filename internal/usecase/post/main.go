@@ -16,6 +16,8 @@ type IPostUsecase interface {
 
 	GetPostByID(ctx context.Context, id uuid.UUID) (*oapi.Post, error)
 
+	DeletePost(ctx context.Context, pID uuid.UUID) error
+
 	// favorites
 	CreatePostFavorite(ctx context.Context, pID uuid.UUID) error
 

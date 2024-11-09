@@ -327,6 +327,9 @@ type ClientInterface interface {
 
 	UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeletePost request
+	DeletePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetPostByID request
 	GetPostByID(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -479,6 +482,18 @@ func (c *Client) UnfavoritePostWithBody(ctx context.Context, contentType string,
 
 func (c *Client) UnfavoritePost(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUnfavoritePostRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeletePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeletePostRequest(c.Server, postId)
 	if err != nil {
 		return nil, err
 	}
@@ -915,6 +930,40 @@ func NewUnfavoritePostRequestWithBody(server string, contentType string, body io
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeletePostRequest generates requests for DeletePost
+func NewDeletePostRequest(server string, postId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "post_id", runtime.ParamLocationPath, postId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/posts/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -1468,6 +1517,9 @@ type ClientWithResponsesInterface interface {
 
 	UnfavoritePostWithResponse(ctx context.Context, body UnfavoritePostJSONRequestBody, reqEditors ...RequestEditorFn) (*UnfavoritePostResponse, error)
 
+	// DeletePostWithResponse request
+	DeletePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*DeletePostResponse, error)
+
 	// GetPostByIDWithResponse request
 	GetPostByIDWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetPostByIDResponse, error)
 
@@ -1666,6 +1718,37 @@ func (r UnfavoritePostResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UnfavoritePostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeletePostResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int `json:"code"`
+
+		// Data データ
+		Data map[string]interface{} `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r DeletePostResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeletePostResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2070,6 +2153,15 @@ func (c *ClientWithResponses) UnfavoritePostWithResponse(ctx context.Context, bo
 	return ParseUnfavoritePostResponse(rsp)
 }
 
+// DeletePostWithResponse request returning *DeletePostResponse
+func (c *ClientWithResponses) DeletePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*DeletePostResponse, error) {
+	rsp, err := c.DeletePost(ctx, postId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeletePostResponse(rsp)
+}
+
 // GetPostByIDWithResponse request returning *GetPostByIDResponse
 func (c *ClientWithResponses) GetPostByIDWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetPostByIDResponse, error) {
 	rsp, err := c.GetPostByID(ctx, postId, reqEditors...)
@@ -2377,6 +2469,41 @@ func ParseUnfavoritePostResponse(rsp *http.Response) (*UnfavoritePostResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Response
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeletePostResponse parses an HTTP response from a DeletePostWithResponse call
+func ParseDeletePostResponse(rsp *http.Response) (*DeletePostResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeletePostResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int `json:"code"`
+
+			// Data データ
+			Data map[string]interface{} `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -2763,6 +2890,9 @@ type ServerInterface interface {
 	// 投稿のいいねを解除する
 	// (POST /posts/favorites/delete)
 	UnfavoritePost(ctx echo.Context) error
+	// 投稿を削除する
+	// (DELETE /posts/{post_id})
+	DeletePost(ctx echo.Context, postId openapi_types.UUID) error
 	// 投稿を取得する
 	// (GET /posts/{post_id})
 	GetPostByID(ctx echo.Context, postId openapi_types.UUID) error
@@ -2882,6 +3012,24 @@ func (w *ServerInterfaceWrapper) UnfavoritePost(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.UnfavoritePost(ctx)
+	return err
+}
+
+// DeletePost converts echo context to params.
+func (w *ServerInterfaceWrapper) DeletePost(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "post_id" -------------
+	var postId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "post_id", ctx.Param("post_id"), &postId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter post_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.DeletePost(ctx, postId)
 	return err
 }
 
@@ -3104,6 +3252,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/posts/favorites", wrapper.GetPostFavorites)
 	router.POST(baseURL+"/posts/favorites/create", wrapper.FavoritePost)
 	router.POST(baseURL+"/posts/favorites/delete", wrapper.UnfavoritePost)
+	router.DELETE(baseURL+"/posts/:post_id", wrapper.DeletePost)
 	router.GET(baseURL+"/posts/:post_id", wrapper.GetPostByID)
 	router.GET(baseURL+"/stream", wrapper.Stream)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
@@ -3121,34 +3270,35 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"a7U/AwAA//8Xdr4m0zUAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
