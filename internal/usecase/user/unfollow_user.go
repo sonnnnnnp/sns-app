@@ -20,5 +20,13 @@ func (uc *UserUsecase) UnfollowUser(ctx context.Context, uID uuid.UUID) (*oapi.S
 		return nil, err
 	}
 
-	return uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
+	scRow, err := uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oapi.SocialConnection{
+		Following:  scRow.Following,
+		FollowedBy: scRow.FollowedBy,
+	}, nil
 }

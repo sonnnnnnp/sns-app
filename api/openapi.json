@@ -1177,6 +1177,9 @@
           "social_connection": {
             "$ref": "#/components/schemas/SocialConnection"
           },
+          "block_status": {
+            "$ref": "#/components/schemas/BlockStatus"
+          },
           "updated_at": {
             "type": "string",
             "format": "date-time"
@@ -1224,6 +1227,21 @@
         },
         "required": [
           "users"
+        ]
+      },
+      "BlockStatus": {
+        "type": "object",
+        "properties": {
+          "blocking": {
+            "type": "boolean"
+          },
+          "blocked_by": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "blocking",
+          "blocked_by"
         ]
       },
       "Authorization": {
@@ -1371,6 +1389,9 @@
           },
           "social_connection": {
             "$ref": "#/components/schemas/SocialConnection"
+          },
+          "block_status": {
+            "$ref": "#/components/schemas/BlockStatus"
           },
           "updated_at": {
             "type": "string",

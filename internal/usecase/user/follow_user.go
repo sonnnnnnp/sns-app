@@ -17,6 +17,16 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.Soc
 		return nil, errors.ErrCannotFollowYourself
 	}
 
+	// ブロックされている場合はエラー
+	bs, err := uc.userRepo.GetBlockStatus(ctx, selfUID, uID)
+	if err != nil {
+		return nil, err
+	}
+
+	if bs.Blocking || bs.BlockedBy {
+		return nil, errors.ErrUserBlockingOrBlockedBy
+	}
+
 	sc, err := uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
 	if err != nil {
 		return nil, err
@@ -31,5 +41,13 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.Soc
 		return nil, err
 	}
 
-	return uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
+	scRow, err := uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oapi.SocialConnection{
+		Following:  scRow.Following,
+		FollowedBy: scRow.FollowedBy,
+	}, nil
 }

@@ -9,6 +9,9 @@ import (
 )
 
 func (uc *UserUsecase) BlockUser(ctx context.Context, uID uuid.UUID) error {
+	// TODO: どちらかがフォロー中の場合はフォロー解除する
+	// トランザクションを利用する
+
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	// 自分自身をブロックしようとした場合はエラー

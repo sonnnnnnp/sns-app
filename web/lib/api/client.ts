@@ -285,6 +285,7 @@ export interface components {
             banner_image_url: string | null;
             biography: string | null;
             social_connection?: components["schemas"]["SocialConnection"];
+            block_status?: components["schemas"]["BlockStatus"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
@@ -296,6 +297,10 @@ export interface components {
         };
         Users: {
             users: components["schemas"]["User"][];
+        };
+        BlockStatus: {
+            blocking: boolean;
+            blocked_by: boolean;
         };
         Authorization: {
             user_id: string;
@@ -349,6 +354,7 @@ export interface components {
             banner_image_url: string | null;
             biography: string | null;
             social_connection?: components["schemas"]["SocialConnection"];
+            block_status?: components["schemas"]["BlockStatus"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */

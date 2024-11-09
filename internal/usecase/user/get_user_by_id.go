@@ -22,10 +22,24 @@ func (uc *UserUsecase) GetUserByID(ctx context.Context, uID uuid.UUID) (*oapi.Us
 	}
 
 	var sc *oapi.SocialConnection
+	var bs *oapi.BlockStatus
 	if u.ID != selfUID {
-		sc, err = uc.userRepo.GetSocialConnection(ctx, selfUID, u.ID)
+		scRow, err := uc.userRepo.GetSocialConnection(ctx, selfUID, u.ID)
 		if err != nil {
 			return nil, err
+		}
+		sc = &oapi.SocialConnection{
+			Following:  scRow.Following,
+			FollowedBy: scRow.FollowedBy,
+		}
+
+		bsRow, err := uc.userRepo.GetBlockStatus(ctx, selfUID, u.ID)
+		if err != nil {
+			return nil, err
+		}
+		bs = &oapi.BlockStatus{
+			BlockedBy: bsRow.BlockedBy,
+			Blocking:  bsRow.Blocking,
 		}
 	}
 
@@ -37,6 +51,7 @@ func (uc *UserUsecase) GetUserByID(ctx context.Context, uID uuid.UUID) (*oapi.Us
 		BannerImageUrl:   u.BannerImageUrl,
 		Biography:        u.Biography,
 		SocialConnection: sc,
+		BlockStatus:      bs,
 		UpdatedAt:        u.UpdatedAt.Time,
 		CreatedAt:        u.CreatedAt.Time,
 	}, nil

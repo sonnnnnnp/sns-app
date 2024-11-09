@@ -19,11 +19,8 @@ func (uc *PostUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimeline
 			return nil, uuid.Nil, err
 		}
 
-		if bs.Blocking {
-			return nil, uuid.Nil, errors.ErrUserBlockedByYou
-		}
-		if bs.BlockedBy {
-			return nil, uuid.Nil, errors.ErrUserBlockingYou
+		if bs.Blocking || bs.BlockedBy {
+			return nil, uuid.Nil, errors.ErrUserBlockingOrBlockedBy
 		}
 	}
 
