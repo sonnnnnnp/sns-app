@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (repo *PostRepository) CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (pID uuid.UUID, err error) {
+func (repo *PostRepository) CreatePost(ctx context.Context, uID uuid.UUID, body *api.CreatePostJSONBody) (pID uuid.UUID, err error) {
 	queries := db.New(repo.pool)
 
 	return queries.CreatePost(ctx, db.CreatePostParams{

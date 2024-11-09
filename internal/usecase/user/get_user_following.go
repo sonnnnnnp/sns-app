@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 )
 
-func (uc *UserUsecase) GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]oapi.UserFollower, error) {
+func (uc *UserUsecase) GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]api.UserFollower, error) {
 	u, err := uc.userRepo.GetUserByID(ctx, uID)
 	if err != nil {
 		return nil, err
@@ -18,14 +19,24 @@ func (uc *UserUsecase) GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]o
 		return nil, errors.ErrUserNotFound
 	}
 
+	// ブロックされている場合はエラー
+	bs, err := uc.userRepo.GetBlockStatus(ctx, ctxhelper.GetUserID(ctx), uID)
+	if err != nil {
+		return nil, err
+	}
+
+	if bs.Blocking || bs.BlockedBy {
+		return nil, errors.ErrUserBlockingOrBlockedBy
+	}
+
 	rows, err := uc.userRepo.GetUserFollowing(ctx, uID)
 	if err != nil {
 		return nil, err
 	}
 
-	following := make([]oapi.UserFollower, 0)
+	following := make([]api.UserFollower, 0)
 	for _, u := range rows {
-		following = append(following, oapi.UserFollower{
+		following = append(following, api.UserFollower{
 			AvatarImageUrl: u.AvatarImageUrl,
 			BannerImageUrl: u.BannerImageUrl,
 			Biography:      u.Biography,

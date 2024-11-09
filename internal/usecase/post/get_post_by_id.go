@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*oapi.Post, error) {
+func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*api.Post, error) {
 	r, err := uc.postRepo.GetPostByID(ctx, pID)
 	if err != nil {
 		return nil, err
@@ -18,8 +18,8 @@ func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*oapi.Po
 		return nil, errors.ErrPostNotFound
 	}
 
-	return &oapi.Post{
-		Author: oapi.User{
+	return &api.Post{
+		Author: api.User{
 			AvatarImageUrl: r.User.AvatarImageUrl,
 			BannerImageUrl: r.User.BannerImageUrl,
 			Biography:      r.User.Biography,

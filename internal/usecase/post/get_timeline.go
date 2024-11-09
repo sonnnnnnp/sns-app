@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *PostUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimelineParams) (posts []oapi.Post, nextCursor uuid.UUID, err error) {
+func (uc *PostUsecase) GetTimeline(ctx context.Context, params *api.GetTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	if params.UserId != nil {
@@ -41,10 +41,10 @@ func (uc *PostUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimeline
 		return nil, uuid.Nil, err
 	}
 
-	posts = make([]oapi.Post, 0)
+	posts = make([]api.Post, 0)
 	for _, r := range rows {
-		posts = append(posts, oapi.Post{
-			Author: oapi.User{
+		posts = append(posts, api.Post{
+			Author: api.User{
 				AvatarImageUrl: r.User.AvatarImageUrl,
 				BannerImageUrl: r.User.BannerImageUrl,
 				Biography:      r.User.Biography,

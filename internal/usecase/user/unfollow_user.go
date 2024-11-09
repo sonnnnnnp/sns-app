@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *UserUsecase) UnfollowUser(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error) {
+func (uc *UserUsecase) UnfollowUser(ctx context.Context, uID uuid.UUID) (*api.SocialConnection, error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	if selfUID == uID {
@@ -25,7 +25,7 @@ func (uc *UserUsecase) UnfollowUser(ctx context.Context, uID uuid.UUID) (*oapi.S
 		return nil, err
 	}
 
-	return &oapi.SocialConnection{
+	return &api.SocialConnection{
 		Following:  scRow.Following,
 		FollowedBy: scRow.FollowedBy,
 	}, nil

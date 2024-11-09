@@ -6,13 +6,13 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type IPostRepository interface {
 	// posts
-	CreatePost(ctx context.Context, uID uuid.UUID, body *oapi.CreatePostJSONBody) (pID uuid.UUID, err error)
+	CreatePost(ctx context.Context, uID uuid.UUID, body *api.CreatePostJSONBody) (pID uuid.UUID, err error)
 
 	GetPostByID(ctx context.Context, pID uuid.UUID) (*db.GetPostByIDRow, error)
 

@@ -3,9 +3,9 @@ package authorize
 import (
 	"context"
 
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 func (uc *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) (u *db.User, isNew bool, err error) {
@@ -25,7 +25,7 @@ func (uc *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) 
 	return u, false, nil
 }
 
-func (uc *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) (*oapi.Authorization, error) {
+func (uc *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) (*api.Authorization, error) {
 	cfg := ctxhelper.GetConfig(ctx)
 
 	resp, err := uc.line.GetToken(

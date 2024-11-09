@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error) {
+func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*api.SocialConnection, error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	// 自分自身をフォローしようとした場合はエラー
@@ -46,7 +46,7 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.Soc
 		return nil, err
 	}
 
-	return &oapi.SocialConnection{
+	return &api.SocialConnection{
 		Following:  scRow.Following,
 		FollowedBy: scRow.FollowedBy,
 	}, nil

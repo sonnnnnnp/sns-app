@@ -3,11 +3,11 @@ package post
 import (
 	"context"
 
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSONBody) (*oapi.Post, error) {
+func (uc *PostUsecase) CreatePost(ctx context.Context, body *api.CreatePostJSONBody) (*api.Post, error) {
 	uID := ctxhelper.GetUserID(ctx)
 
 	pID, err := uc.postRepo.CreatePost(ctx, uID, body)
@@ -20,8 +20,8 @@ func (uc *PostUsecase) CreatePost(ctx context.Context, body *oapi.CreatePostJSON
 		return nil, err
 	}
 
-	return &oapi.Post{
-		Author: oapi.User{
+	return &api.Post{
+		Author: api.User{
 			AvatarImageUrl: r.User.AvatarImageUrl,
 			BannerImageUrl: r.User.BannerImageUrl,
 			Biography:      r.User.Biography,

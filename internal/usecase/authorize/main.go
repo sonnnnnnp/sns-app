@@ -6,14 +6,14 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
 	"github.com/sonnnnnnp/sns-app/pkg/line"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type IAuthorizeUsecase interface {
-	AuthorizeWithLine(ctx context.Context, code string) (*oapi.Authorization, error)
-	RefreshAuthorization(ctx context.Context, body *oapi.RefreshAuthorizationJSONBody) (*oapi.Authorization, error)
+	AuthorizeWithLine(ctx context.Context, code string) (*api.Authorization, error)
+	RefreshAuthorization(ctx context.Context, body *api.RefreshAuthorizationJSONBody) (*api.Authorization, error)
 }
 
 type AuthorizeUsecase struct {
@@ -40,7 +40,7 @@ func (uc *AuthorizeUsecase) generateToken(jwtSecret []byte, claims jwt.Claims) (
 	return token.SignedString(jwtSecret)
 }
 
-func (uc *AuthorizeUsecase) generateAuthorization(jwtSecret []byte, uid uuid.UUID, IsNew bool) (*oapi.Authorization, error) {
+func (uc *AuthorizeUsecase) generateAuthorization(jwtSecret []byte, uid uuid.UUID, IsNew bool) (*api.Authorization, error) {
 	atoken, err := uc.generateToken(
 		jwtSecret,
 		jwt.MapClaims{
@@ -65,7 +65,7 @@ func (uc *AuthorizeUsecase) generateAuthorization(jwtSecret []byte, uid uuid.UUI
 		return nil, err
 	}
 
-	return &oapi.Authorization{
+	return &api.Authorization{
 		AccessToken:  atoken,
 		RefreshToken: rtoken,
 		UserId:       uid.String(),

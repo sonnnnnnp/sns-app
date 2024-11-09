@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 )
 
-func (c Controller) AuthorizeWithLine(ctx echo.Context, params oapi.AuthorizeWithLineParams) error {
+func (c Controller) AuthorizeWithLine(ctx echo.Context, params api.AuthorizeWithLineParams) error {
 	auth, err := c.authUsecase.AuthorizeWithLine(ctx.Request().Context(), params.Code)
 	if err != nil {
 		return err
@@ -17,7 +17,7 @@ func (c Controller) AuthorizeWithLine(ctx echo.Context, params oapi.AuthorizeWit
 }
 
 func (c Controller) RefreshAuthorization(ctx echo.Context) error {
-	var body oapi.RefreshAuthorizationJSONBody
+	var body api.RefreshAuthorizationJSONBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}

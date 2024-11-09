@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
+	"github.com/sonnnnnnp/sns-app/pkg/ws"
 )
 
 // context キーの衝突を防止するため非公開独自キーを定義

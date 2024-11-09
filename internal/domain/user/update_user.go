@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (repo *UserRepository) UpdateUser(ctx context.Context, id uuid.UUID, body *oapi.UpdateUserJSONBody) error {
+func (repo *UserRepository) UpdateUser(ctx context.Context, id uuid.UUID, body *api.UpdateUserJSONBody) error {
 	queries := db.New(repo.pool)
 
 	return queries.UpdateUser(ctx, db.UpdateUserParams{

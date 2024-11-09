@@ -4,21 +4,21 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 )
 
-func (uc *PostUsecase) GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]oapi.PostFavorite, error) {
+func (uc *PostUsecase) GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]api.PostFavorite, error) {
 	rows, err := uc.postRepo.GetPostFavorites(ctx, pID)
 	if err != nil {
 		return nil, err
 	}
 
-	favorites := make([]oapi.PostFavorite, 0)
+	favorites := make([]api.PostFavorite, 0)
 	for _, r := range rows {
-		favorites = append(favorites, oapi.PostFavorite{
+		favorites = append(favorites, api.PostFavorite{
 			CreatedAt: r.PostFavorite.CreatedAt.Time,
 			PostId:    r.PostFavorite.PostID,
-			User: oapi.User{
+			User: api.User{
 				Id:             r.User.ID,
 				Name:           r.User.Name,
 				Nickname:       r.User.Nickname,

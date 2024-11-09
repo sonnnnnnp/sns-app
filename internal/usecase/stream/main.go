@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
+	"github.com/sonnnnnnp/sns-app/pkg/ws"
 )
 
 type IStreamUsecase interface {

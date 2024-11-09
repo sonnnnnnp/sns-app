@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 )
 
 func (c Controller) GetPostByID(ctx echo.Context, pID uuid.UUID) error {
@@ -18,7 +18,7 @@ func (c Controller) GetPostByID(ctx echo.Context, pID uuid.UUID) error {
 }
 
 func (c Controller) CreatePost(ctx echo.Context) error {
-	var body oapi.CreatePostJSONBody
+	var body api.CreatePostJSONBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}
@@ -67,13 +67,13 @@ func (c Controller) GetPostFavorites(ctx echo.Context, pID uuid.UUID) error {
 	return c.json(ctx, http.StatusOK, favorites)
 }
 
-func (c Controller) GetTimeline(ctx echo.Context, params oapi.GetTimelineParams) error {
+func (c Controller) GetTimeline(ctx echo.Context, params api.GetTimelineParams) error {
 	posts, nextCursor, err := c.postUsecase.GetTimeline(ctx.Request().Context(), &params)
 	if err != nil {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &oapi.Timeline{
+	return c.json(ctx, http.StatusOK, &api.Timeline{
 		Posts:      posts,
 		NextCursor: nextCursor,
 	})

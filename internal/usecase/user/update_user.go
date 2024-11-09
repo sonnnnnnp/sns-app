@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *UserUsecase) UpdateUser(ctx context.Context, body *oapi.UpdateUserJSONBody) (*oapi.User, error) {
+func (uc *UserUsecase) UpdateUser(ctx context.Context, body *api.UpdateUserJSONBody) (*api.User, error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	if err := uc.userRepo.UpdateUser(ctx, selfUID, body); err != nil {
@@ -19,7 +19,7 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, body *oapi.UpdateUserJSON
 		return nil, err
 	}
 
-	return &oapi.User{
+	return &api.User{
 		AvatarImageUrl: u.AvatarImageUrl,
 		BannerImageUrl: u.BannerImageUrl,
 		Biography:      u.Biography,

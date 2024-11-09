@@ -5,8 +5,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type IUserRepository interface {
@@ -17,7 +17,7 @@ type IUserRepository interface {
 	GetUserByLineID(ctx context.Context, lineID string) (*db.User, error)
 	GetUserByName(ctx context.Context, name string) (*db.User, error)
 
-	UpdateUser(ctx context.Context, id uuid.UUID, data *oapi.UpdateUserJSONBody) error
+	UpdateUser(ctx context.Context, id uuid.UUID, data *api.UpdateUserJSONBody) error
 
 	// blocks
 	BlockUser(ctx context.Context, selfUID uuid.UUID, targetUID uuid.UUID) error
