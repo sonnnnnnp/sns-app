@@ -5,8 +5,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 // user
@@ -32,7 +32,7 @@ func (c Controller) GetUserByName(ctx echo.Context, name string) error {
 }
 
 func (c Controller) UpdateUser(ctx echo.Context) error {
-	var body oapi.UpdateUserJSONBody
+	var body api.UpdateUserJSONBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (c Controller) GetUserBlocking(ctx echo.Context) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &oapi.Users{
+	return c.json(ctx, http.StatusOK, &api.Users{
 		Users: users,
 	})
 }
@@ -84,7 +84,7 @@ func (c Controller) GetUserFollowing(ctx echo.Context, uID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &oapi.UserFollowers{
+	return c.json(ctx, http.StatusOK, &api.UserFollowers{
 		Users: users,
 	})
 }
@@ -95,7 +95,7 @@ func (c Controller) GetUserFollowers(ctx echo.Context, uID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &oapi.UserFollowers{
+	return c.json(ctx, http.StatusOK, &api.UserFollowers{
 		Users: users,
 	})
 }

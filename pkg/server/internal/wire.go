@@ -4,8 +4,6 @@ import (
 	"github.com/google/wire"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
-	post_repository "github.com/sonnnnnnp/sns-app/internal/domain/post"
-	user_repository "github.com/sonnnnnnp/sns-app/internal/domain/user"
 	authorize_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
 	post_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/post"
 	stream_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/stream"
@@ -16,9 +14,6 @@ import (
 func Wire(pool *pgxpool.Pool) *controller.Controller {
 	wire.Build(
 		line.New,
-
-		post_repository.New,
-		user_repository.New,
 
 		authorize_usecase.New,
 		post_usecase.New,

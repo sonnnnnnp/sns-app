@@ -8,12 +8,12 @@ import (
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 
 	"github.com/sonnnnnnp/sns-app/internal"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/middleware"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
 	"github.com/sonnnnnnp/sns-app/pkg/config"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/pkg/ws"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
@@ -48,7 +48,7 @@ func Run(cfg *config.Config) {
 	websocket := ws.NewHub()
 	go websocket.Listen()
 
-	swagger, err := oapi.GetSwagger()
+	swagger, err := api.GetSwagger()
 	if err != nil {
 		panic(err)
 	}
@@ -60,7 +60,7 @@ func Run(cfg *config.Config) {
 	e.Use(middleware.WebSocket(websocket))
 	e.Use(middleware.RequestValidator(swagger))
 
-	oapi.RegisterHandlers(e, internal.Wire(pool))
+	api.RegisterHandlers(e, internal.Wire(pool))
 
 	e.Logger.Fatal(e.Start(":1323"))
 }

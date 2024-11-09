@@ -3,19 +3,20 @@ package user
 import (
 	"context"
 
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (uc *UserUsecase) GetUserBlocking(ctx context.Context) ([]oapi.User, error) {
-	rows, err := uc.userRepo.GetUserBlocking(ctx, ctxhelper.GetUserID(ctx))
+func (uc *UserUsecase) GetUserBlocking(ctx context.Context) ([]api.User, error) {
+	rows, err := db.New(uc.pool).GetUserBlocking(ctx, ctxhelper.GetUserID(ctx))
 	if err != nil {
 		return nil, err
 	}
 
-	blocking := make([]oapi.User, 0)
+	blocking := make([]api.User, 0)
 	for _, u := range rows {
-		blocking = append(blocking, oapi.User{
+		blocking = append(blocking, api.User{
 			AvatarImageUrl: u.AvatarImageUrl,
 			BannerImageUrl: u.BannerImageUrl,
 			Biography:      u.Biography,

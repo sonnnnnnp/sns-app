@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sonnnnnnp/sns-app/internal/tools/ws"
+	"github.com/sonnnnnnp/sns-app/pkg/ws"
 )
 
 func (uc *StreamUsecase) OnSubscribe(ctx context.Context, client *ws.Client, msg ws.Message) error {

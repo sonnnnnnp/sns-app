@@ -2,49 +2,87 @@ package post
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
+	"github.com/jackc/pgx/v5"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
+	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (uc *PostUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimelineParams) (posts []oapi.Post, nextCursor uuid.UUID, err error) {
+var (
+	defaultLimit = 25
+	maxLimit     = 100
+)
+
+func (uc *PostUsecase) GetTimeline(ctx context.Context, params *api.GetTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {
+	queries := db.New(uc.pool)
+
 	selfUID := ctxhelper.GetUserID(ctx)
 
+	// 特定ユーザーのタイムラインの場合はブロックしていないかを検証
 	if params.UserId != nil {
-		bs, err := uc.userRepo.GetBlockStatus(ctx, selfUID, *params.UserId)
+		bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+			SelfID:   selfUID,
+			TargetID: *params.UserId,
+		})
 		if err != nil {
 			return nil, uuid.Nil, err
 		}
 
 		if bs.Blocking || bs.BlockedBy {
-			return nil, uuid.Nil, errors.ErrUserBlockingOrBlockedBy
+			return nil, uuid.Nil, internal_errors.ErrUserBlockingOrBlockedBy
 		}
 	}
 
+	// 指定されたカーソル投稿 ID から検索用日時を取得する
 	var fromCursor *time.Time
 	if params.Cursor != nil {
-		r, err := uc.postRepo.GetPostByID(ctx, *params.Cursor)
+		r, err := queries.GetPostByID(ctx, db.GetPostByIDParams{
+			SelfID: &selfUID,
+			PostID: *params.Cursor,
+		})
 		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return nil, uuid.Nil, internal_errors.ErrCursorNotFound
+			}
 			return nil, uuid.Nil, err
-		}
-		if r == nil {
-			return nil, uuid.Nil, errors.ErrCursorNotFound
 		}
 		fromCursor = &r.Post.CreatedAt.Time
 	}
 
-	rows, err := uc.postRepo.GetTimeline(ctx, params.Limit, fromCursor, params.UserId, params.Following)
+	// リミットの初期値と上限値を設定
+	if params.Limit == nil {
+		params.Limit = &defaultLimit
+	}
+	if *params.Limit > maxLimit {
+		params.Limit = &maxLimit
+	}
+
+	var onlyFollowing bool
+	if params.Following != nil {
+		onlyFollowing = *params.Following
+	}
+
+	// タイムラインを取得
+	rows, err := queries.GetTimeline(ctx, db.GetTimelineParams{
+		SelfID:        &selfUID,
+		AuthorID:      params.UserId,
+		CreatedAt:     fromCursor,
+		Limit:         int64(*params.Limit),
+		OnlyFollowing: onlyFollowing,
+	})
 	if err != nil {
 		return nil, uuid.Nil, err
 	}
 
-	posts = make([]oapi.Post, 0)
+	posts = make([]api.Post, 0)
 	for _, r := range rows {
-		posts = append(posts, oapi.Post{
-			Author: oapi.User{
+		posts = append(posts, api.Post{
+			Author: api.User{
 				AvatarImageUrl: r.User.AvatarImageUrl,
 				BannerImageUrl: r.User.BannerImageUrl,
 				Biography:      r.User.Biography,
@@ -67,5 +105,6 @@ func (uc *PostUsecase) GetTimeline(ctx context.Context, params *oapi.GetTimeline
 		return posts, uuid.Nil, nil
 	}
 
+	// 最後の投稿 ID を次のカーソルとして返却する
 	return posts, posts[len(posts)-1].Id, nil
 }

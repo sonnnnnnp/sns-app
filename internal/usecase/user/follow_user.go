@@ -4,12 +4,15 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error) {
+func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*api.SocialConnection, error) {
+	queries := db.New(uc.pool)
+
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	// 自分自身をフォローしようとした場合はエラー
@@ -18,7 +21,10 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.Soc
 	}
 
 	// ブロックされている場合はエラー
-	bs, err := uc.userRepo.GetBlockStatus(ctx, selfUID, uID)
+	bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+		SelfID:   selfUID,
+		TargetID: uID,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +33,10 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.Soc
 		return nil, errors.ErrUserBlockingOrBlockedBy
 	}
 
-	sc, err := uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
+	sc, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+		SelfID:   selfUID,
+		TargetID: uID,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -37,16 +46,22 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.Soc
 		return nil, errors.ErrUserAlreadyFollowing
 	}
 
-	if err := uc.userRepo.FollowUser(ctx, selfUID, uID); err != nil {
+	if err := queries.CreateUserFollow(ctx, db.CreateUserFollowParams{
+		FollowerID:  selfUID,
+		FollowingID: uID,
+	}); err != nil {
 		return nil, err
 	}
 
-	scRow, err := uc.userRepo.GetSocialConnection(ctx, selfUID, uID)
+	scRow, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+		SelfID:   selfUID,
+		TargetID: uID,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &oapi.SocialConnection{
+	return &api.SocialConnection{
 		Following:  scRow.Following,
 		FollowedBy: scRow.FollowedBy,
 	}, nil

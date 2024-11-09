@@ -2,30 +2,48 @@ package user
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/jackc/pgx/v5"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
+	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (uc *UserUsecase) GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]oapi.UserFollower, error) {
-	u, err := uc.userRepo.GetUserByID(ctx, uID)
+func (uc *UserUsecase) GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]api.UserFollower, error) {
+	queries := db.New(uc.pool)
+
+	_, err := queries.GetUserByID(ctx, uID)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, internal_errors.ErrUserNotFound
+		}
+		return nil, err
+	}
+
+	// ブロックされている場合はエラー
+	bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+		SelfID:   ctxhelper.GetUserID(ctx),
+		TargetID: uID,
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	if u == nil {
-		return nil, errors.ErrUserNotFound
+	if bs.Blocking || bs.BlockedBy {
+		return nil, internal_errors.ErrUserBlockingOrBlockedBy
 	}
 
-	rows, err := uc.userRepo.GetUserFollowing(ctx, uID)
+	rows, err := queries.GetUserFollowers(ctx, uID)
 	if err != nil {
 		return nil, err
 	}
 
-	following := make([]oapi.UserFollower, 0)
+	following := make([]api.UserFollower, 0)
 	for _, u := range rows {
-		following = append(following, oapi.UserFollower{
+		following = append(following, api.UserFollower{
 			AvatarImageUrl: u.AvatarImageUrl,
 			BannerImageUrl: u.BannerImageUrl,
 			Biography:      u.Biography,

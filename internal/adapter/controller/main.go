@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	authorize_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
 	post_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/post"
 	stream_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/stream"
 	user_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/user"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
 type Response struct {
@@ -46,4 +46,4 @@ func (c *Controller) json(ctx echo.Context, code int, data interface{}) error {
 	})
 }
 
-var _ oapi.ServerInterface = (*Controller)(nil)
+var _ api.ServerInterface = (*Controller)(nil)

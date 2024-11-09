@@ -5,17 +5,27 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
 func (uc *PostUsecase) CreatePostFavorite(ctx context.Context, pID uuid.UUID) error {
-	uID := ctxhelper.GetUserID(ctx)
+	queries := db.New(uc.pool)
 
-	_, err := uc.postRepo.GetPostFavorite(ctx, uID, pID)
+	selfUID := ctxhelper.GetUserID(ctx)
+
+	_, err := queries.GetPostFavorite(ctx, db.GetPostFavoriteParams{
+		PostID: pID,
+		UserID: selfUID,
+	})
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrPostFavoriteNotFound) {
-			return uc.postRepo.CreatePostFavorite(ctx, uID, pID)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return queries.CreatePostFavorite(ctx, db.CreatePostFavoriteParams{
+				UserID: selfUID,
+				PostID: pID,
+			})
 		}
 		return err
 	}

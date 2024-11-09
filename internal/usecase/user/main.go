@@ -4,43 +4,43 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/domain/user"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 )
 
 type IUserUsecase interface {
 	// users
-	GetUserByID(ctx context.Context, uID uuid.UUID) (*oapi.User, error)
-	GetUserByName(ctx context.Context, name string) (*oapi.User, error)
+	GetUserByID(ctx context.Context, uID uuid.UUID) (*api.User, error)
+	GetUserByName(ctx context.Context, name string) (*api.User, error)
 
-	UpdateUser(ctx context.Context, body *oapi.UpdateUserJSONBody) (*oapi.User, error)
+	UpdateUser(ctx context.Context, body *api.UpdateUserJSONBody) (*api.User, error)
 
 	// blocks
 	BlockUser(ctx context.Context, uID uuid.UUID) error
 
-	GetUserBlocking(ctx context.Context) ([]oapi.User, error)
+	GetUserBlocking(ctx context.Context) ([]api.User, error)
 
 	UnblockUser(ctx context.Context, uID uuid.UUID) error
 
 	// follows
-	FollowUser(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error)
+	FollowUser(ctx context.Context, uID uuid.UUID) (*api.SocialConnection, error)
 
-	GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]oapi.UserFollower, error)
-	GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]oapi.UserFollower, error)
+	GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]api.UserFollower, error)
+	GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]api.UserFollower, error)
 
-	UnfollowUser(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error)
-	RemoveUserFromFollowers(ctx context.Context, uID uuid.UUID) (*oapi.SocialConnection, error)
+	UnfollowUser(ctx context.Context, uID uuid.UUID) (*api.SocialConnection, error)
+	RemoveUserFromFollowers(ctx context.Context, uID uuid.UUID) (*api.SocialConnection, error)
 }
 
 type UserUsecase struct {
-	userRepo *user.UserRepository
+	pool *pgxpool.Pool
 }
 
 func New(
-	userRepo *user.UserRepository,
+	pool *pgxpool.Pool,
 ) *UserUsecase {
 	return &UserUsecase{
-		userRepo: userRepo,
+		pool: pool,
 	}
 }
 

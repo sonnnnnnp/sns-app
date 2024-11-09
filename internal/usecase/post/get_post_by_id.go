@@ -2,24 +2,32 @@ package post
 
 import (
 	"context"
+	"errors"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
+	"github.com/jackc/pgx/v5"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
+	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
+	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*oapi.Post, error) {
-	r, err := uc.postRepo.GetPostByID(ctx, pID)
+func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*api.Post, error) {
+	selfUID := ctxhelper.GetUserID(ctx)
+
+	r, err := db.New(uc.pool).GetPostByID(ctx, db.GetPostByIDParams{
+		SelfID: &selfUID,
+		PostID: pID,
+	})
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, internal_errors.ErrPostNotFound
+		}
 		return nil, err
 	}
 
-	if r == nil {
-		return nil, errors.ErrPostNotFound
-	}
-
-	return &oapi.Post{
-		Author: oapi.User{
+	return &api.Post{
+		Author: api.User{
 			AvatarImageUrl: r.User.AvatarImageUrl,
 			BannerImageUrl: r.User.BannerImageUrl,
 			Biography:      r.User.Biography,

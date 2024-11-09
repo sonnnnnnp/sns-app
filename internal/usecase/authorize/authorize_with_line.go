@@ -2,30 +2,33 @@ package authorize
 
 import (
 	"context"
+	"errors"
 
+	"github.com/jackc/pgx/v5"
+	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
-	"github.com/sonnnnnnp/sns-app/pkg/oapi"
 )
 
-func (uc *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) (u *db.User, isNew bool, err error) {
-	u, err = uc.userRepo.GetUserByLineID(ctx, lineID)
+func (uc *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) (user *db.User, isNew bool, err error) {
+	queries := db.New(uc.pool)
+
+	var u db.User
+	u, err = queries.GetUserByLineID(ctx, lineID)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			u, err = queries.CreateUser(ctx, &lineID)
+			if err != nil {
+				return nil, false, err
+			}
+		}
 		return nil, false, err
 	}
 
-	if u == nil {
-		u, err = uc.userRepo.CreateUser(ctx, &lineID)
-		if err != nil {
-			return nil, false, err
-		}
-		return u, true, nil
-	}
-
-	return u, false, nil
+	return &u, false, nil
 }
 
-func (uc *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) (*oapi.Authorization, error) {
+func (uc *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) (*api.Authorization, error) {
 	cfg := ctxhelper.GetConfig(ctx)
 
 	resp, err := uc.line.GetToken(
