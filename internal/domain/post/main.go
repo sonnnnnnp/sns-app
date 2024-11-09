@@ -16,6 +16,8 @@ type IPostRepository interface {
 
 	GetPostByID(ctx context.Context, id uuid.UUID) (*db.GetPostByIDRow, error)
 
+	DeletePost(ctx context.Context, pID uuid.UUID) error
+
 	// favorites
 	CreatePostFavorite(ctx context.Context, uID uuid.UUID, pID uuid.UUID) error
 

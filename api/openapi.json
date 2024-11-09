@@ -398,6 +398,63 @@
             "bearer": []
           }
         ]
+      },
+      "delete": {
+        "summary": "投稿を削除する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "deletePost",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "description": "データ"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
       }
     },
     "/users/following/delete": {
