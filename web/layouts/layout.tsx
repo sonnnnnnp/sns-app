@@ -7,9 +7,9 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex min-h-dvh">
+    <div className="flex justify-center min-h-dvh">
       <Navigation />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow max-w-[750px]">{children}</main>
       <Widget />
     </div>
   );
