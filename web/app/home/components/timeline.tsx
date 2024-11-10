@@ -333,23 +333,6 @@ const calls: CallData[] = [
   },
 ];
 
-const CustomTabsTrigger = ({
-  value,
-  label,
-}: {
-  value: string;
-  label: string;
-}) => {
-  return (
-    <TabsTrigger
-      className="w-[50%] data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none .data-\[state\=active\]\:shadow-none[data-state=active]"
-      value={value}
-    >
-      {label}
-    </TabsTrigger>
-  );
-};
-
 export function Timeline() {
   const [tabValue, setTabValue] = useState("following");
   const [postDialogOpen, setPostDialogOpen] = useState(false);
@@ -426,9 +409,19 @@ export function Timeline() {
           <Tabs defaultValue="following" onValueChange={onTabChange}>
             <TabsContent className="my-0" value={tabValue}>
               <div className="sticky top-0 z-10 rounded-none w-full">
-                <TabsList className="h-14 rounded-none w-full bg-transparent backdrop-blur border-b">
-                  <CustomTabsTrigger value="following" label="フォロー中" />
-                  <CustomTabsTrigger value="public" label="オープン" />
+                <TabsList className="h-14 p-0 rounded-none w-full bg-transparent backdrop-blur-md border-b">
+                  <TabsTrigger
+                    className="relative w-full h-full rounded-none bg-background/50 hover:bg-transparent data-[state=active]:bg-background/50 data-[state=active]:hover:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-16 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                    value="following"
+                  >
+                    フォロー中
+                  </TabsTrigger>
+                  <TabsTrigger
+                    className="relative w-full h-full rounded-none bg-background/50 hover:bg-transparent data-[state=active]:bg-background/50 data-[state=active]:hover:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-16 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                    value="public"
+                  >
+                    オープン
+                  </TabsTrigger>
                 </TabsList>
               </div>
               <div className="flex flex-col space-y-4 w-full p-4">
