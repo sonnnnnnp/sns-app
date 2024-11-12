@@ -30,6 +30,7 @@ type User struct {
 	Biography      *string
 	AvatarImageUrl *string
 	BannerImageUrl *string
+	IsPrivate      *bool
 	Birthdate      pgtype.Timestamptz
 	LineID         *string
 	CreatedAt      pgtype.Timestamptz

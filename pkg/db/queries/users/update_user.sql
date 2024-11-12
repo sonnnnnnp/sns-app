@@ -9,4 +9,5 @@ SET
     birthdate = COALESCE(sqlc.narg(birthdate), birthdate)::timestamptz,
     line_id = COALESCE(sqlc.narg(line_id), line_id)::text,
     updated_at = COALESCE(sqlc.narg(updated_at), updated_at)::timestamptz
-WHERE users.id = @user_id::uuid;
+WHERE
+    users.id = @user_id::uuid;

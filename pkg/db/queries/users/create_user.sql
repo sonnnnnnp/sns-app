@@ -4,4 +4,4 @@ INSERT INTO users (
 ) VALUES (
   sqlc.narg(line_id)::text
 )
-RETURNING *;
+RETURNING users.id;

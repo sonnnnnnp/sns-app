@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     biography TEXT DEFAULT NULL,
     avatar_image_url VARCHAR(255) DEFAULT NULL,
     banner_image_url VARCHAR(255) DEFAULT NULL,
+    is_private BOOLEAN DEFAULT FALSE,
     birthdate TIMESTAMP WITH TIME ZONE DEFAULT NULL,
     line_id text UNIQUE DEFAULT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

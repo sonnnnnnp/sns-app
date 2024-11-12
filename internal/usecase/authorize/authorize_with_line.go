@@ -4,28 +4,29 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (uc *AuthorizeUsecase) createOrGetUser(ctx context.Context, lineID string) (user *db.User, isNew bool, err error) {
+func (uc *AuthorizeUsecase) createOrGetUserID(ctx context.Context, lineID string) (uID uuid.UUID, isNew bool, err error) {
 	queries := db.New(uc.pool)
 
-	var u db.User
-	u, err = queries.GetUserByLineID(ctx, lineID)
+	u, err := queries.GetUserByLineID(ctx, lineID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			u, err = queries.CreateUser(ctx, &lineID)
+			uID, err = queries.CreateUser(ctx, &lineID)
 			if err != nil {
-				return nil, false, err
+				return uuid.Nil, false, err
 			}
+			return uID, true, nil
 		}
-		return nil, false, err
+		return uuid.Nil, false, err
 	}
 
-	return &u, false, nil
+	return u.ID, false, nil
 }
 
 func (uc *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) (*api.Authorization, error) {
@@ -46,10 +47,10 @@ func (uc *AuthorizeUsecase) AuthorizeWithLine(ctx context.Context, code string) 
 		return nil, err
 	}
 
-	u, isNew, err := uc.createOrGetUser(ctx, lineUser.UserID)
+	uID, isNew, err := uc.createOrGetUserID(ctx, lineUser.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	return uc.generateAuthorization([]byte(cfg.JWTSecret), u.ID, isNew)
+	return uc.generateAuthorization([]byte(cfg.JWTSecret), uID, isNew)
 }

@@ -17,7 +17,7 @@ func (uc *UserUsecase) GetUserByID(ctx context.Context, uID uuid.UUID) (*api.Use
 
 	selfUID := ctxhelper.GetUserID(ctx)
 
-	u, err := queries.GetUserByID(ctx, uID)
+	row, err := queries.GetUserByID(ctx, uID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, internal_errors.ErrUserNotFound
@@ -25,44 +25,49 @@ func (uc *UserUsecase) GetUserByID(ctx context.Context, uID uuid.UUID) (*api.Use
 		return nil, err
 	}
 
-	var sc *api.SocialConnection
-	var bs *api.BlockStatus
-	if u.ID != selfUID {
-		scRow, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+	var scRow db.GetSocialConnectionRow
+	var bsRow db.GetBlockStatusRow
+	if row.User.ID != selfUID {
+		scRow, err = queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
 			SelfID:   selfUID,
-			TargetID: u.ID,
+			TargetID: row.User.ID,
 		})
 		if err != nil {
 			return nil, err
-		}
-		sc = &api.SocialConnection{
-			Following:  scRow.Following,
-			FollowedBy: scRow.FollowedBy,
 		}
 
-		bsRow, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+		bsRow, err = queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
 			SelfID:   selfUID,
-			TargetID: u.ID,
+			TargetID: row.User.ID,
 		})
 		if err != nil {
 			return nil, err
-		}
-		bs = &api.BlockStatus{
-			BlockedBy: bsRow.BlockedBy,
-			Blocking:  bsRow.Blocking,
 		}
 	}
 
 	return &api.User{
-		Id:               u.ID,
-		Name:             u.Name,
-		Nickname:         u.Nickname,
-		AvatarImageUrl:   u.AvatarImageUrl,
-		BannerImageUrl:   u.BannerImageUrl,
-		Biography:        u.Biography,
-		SocialConnection: sc,
-		BlockStatus:      bs,
-		UpdatedAt:        u.UpdatedAt.Time,
-		CreatedAt:        u.CreatedAt.Time,
+		Id:             row.User.ID,
+		Name:           row.User.Name,
+		Nickname:       row.User.Nickname,
+		AvatarImageUrl: row.User.AvatarImageUrl,
+		BannerImageUrl: row.User.BannerImageUrl,
+		Biography:      row.User.Biography,
+		BlockStatus: &api.BlockStatus{
+			BlockedBy: bsRow.BlockedBy,
+			Blocking:  bsRow.Blocking,
+		},
+		SocialConnection: &api.SocialConnection{
+			Following:  scRow.Following,
+			FollowedBy: scRow.FollowedBy,
+		},
+		SocialEngagement: &api.SocialEngagement{
+			FollowingCount: int(row.FollowingCount),
+			FollowersCount: int(row.FollowersCount),
+			PostsCount:     int(row.PostsCount),
+			MediaCount:     int(row.MediaCount),
+			FavoritesCount: int(row.FavoritesCount),
+		},
+		UpdatedAt: row.User.UpdatedAt.Time,
+		CreatedAt: row.User.CreatedAt.Time,
 	}, nil
 }

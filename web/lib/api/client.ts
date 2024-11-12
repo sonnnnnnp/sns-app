@@ -284,8 +284,10 @@ export interface components {
             avatar_image_url: string | null;
             banner_image_url: string | null;
             biography: string | null;
-            social_connection?: components["schemas"]["SocialConnection"];
+            is_private: boolean;
             block_status?: components["schemas"]["BlockStatus"];
+            social_connection?: components["schemas"]["SocialConnection"];
+            social_engagement?: components["schemas"]["SocialEngagement"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
@@ -301,6 +303,13 @@ export interface components {
         BlockStatus: {
             blocking: boolean;
             blocked_by: boolean;
+        };
+        SocialEngagement: {
+            following_count: number;
+            followers_count: number;
+            posts_count: number;
+            media_count: number;
+            favorites_count: number;
         };
         Authorization: {
             user_id: string;
@@ -353,8 +362,10 @@ export interface components {
             avatar_image_url: string | null;
             banner_image_url: string | null;
             biography: string | null;
-            social_connection?: components["schemas"]["SocialConnection"];
+            is_private: boolean;
             block_status?: components["schemas"]["BlockStatus"];
+            social_connection?: components["schemas"]["SocialConnection"];
+            social_engagement?: components["schemas"]["SocialEngagement"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */

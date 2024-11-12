@@ -14,7 +14,7 @@ import (
 
 const getUserBlocking = `-- name: GetUserBlocking :many
 SELECT
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     user_blocks.created_at AS blocked_at
 FROM users
 INNER JOIN user_blocks ON users.id = user_blocks.blocking_id
@@ -29,6 +29,7 @@ type GetUserBlockingRow struct {
 	Biography      *string
 	AvatarImageUrl *string
 	BannerImageUrl *string
+	IsPrivate      *bool
 	Birthdate      pgtype.Timestamptz
 	LineID         *string
 	CreatedAt      pgtype.Timestamptz
@@ -52,6 +53,7 @@ func (q *Queries) GetUserBlocking(ctx context.Context, userID uuid.UUID) ([]GetU
 			&i.Biography,
 			&i.AvatarImageUrl,
 			&i.BannerImageUrl,
+			&i.IsPrivate,
 			&i.Birthdate,
 			&i.LineID,
 			&i.CreatedAt,

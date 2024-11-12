@@ -52,13 +52,13 @@ func (s *Seeder) seedUsers() error {
 	}
 
 	for i := range users {
-		u, err := s.queries.CreateUser(context.Background(), nil)
+		uID, err := s.queries.CreateUser(context.Background(), nil)
 		if err != nil {
 			return err
 		}
 
 		if err := s.queries.UpdateUser(context.Background(), db.UpdateUserParams{
-			UserID:         u.ID,
+			UserID:         uID,
 			Name:           users[i].Name,
 			Nickname:       users[i].Nickname,
 			Biography:      users[i].Biography,
@@ -70,7 +70,7 @@ func (s *Seeder) seedUsers() error {
 
 		text := "Hello, everyone! I'm using SNS-App to share my thoughts and experiences."
 		s.queries.CreatePost(context.Background(), db.CreatePostParams{
-			AuthorID: u.ID,
+			AuthorID: uID,
 			Text:     &text,
 		})
 	}

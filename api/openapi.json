@@ -1174,11 +1174,17 @@
             "type": "string",
             "nullable": true
           },
-          "social_connection": {
-            "$ref": "#/components/schemas/SocialConnection"
+          "is_private": {
+            "type": "boolean"
           },
           "block_status": {
             "$ref": "#/components/schemas/BlockStatus"
+          },
+          "social_connection": {
+            "$ref": "#/components/schemas/SocialConnection"
+          },
+          "social_engagement": {
+            "$ref": "#/components/schemas/SocialEngagement"
           },
           "updated_at": {
             "type": "string",
@@ -1197,7 +1203,8 @@
           "banner_image_url",
           "biography",
           "updated_at",
-          "created_at"
+          "created_at",
+          "is_private"
         ]
       },
       "SocialConnection": {
@@ -1242,6 +1249,33 @@
         "required": [
           "blocking",
           "blocked_by"
+        ]
+      },
+      "SocialEngagement": {
+        "type": "object",
+        "properties": {
+          "following_count": {
+            "type": "integer"
+          },
+          "followers_count": {
+            "type": "integer"
+          },
+          "posts_count": {
+            "type": "integer"
+          },
+          "media_count": {
+            "type": "integer"
+          },
+          "favorites_count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "following_count",
+          "followers_count",
+          "posts_count",
+          "media_count",
+          "favorites_count"
         ]
       },
       "Authorization": {
@@ -1387,11 +1421,17 @@
             "type": "string",
             "nullable": true
           },
-          "social_connection": {
-            "$ref": "#/components/schemas/SocialConnection"
+          "is_private": {
+            "type": "boolean"
           },
           "block_status": {
             "$ref": "#/components/schemas/BlockStatus"
+          },
+          "social_connection": {
+            "$ref": "#/components/schemas/SocialConnection"
+          },
+          "social_engagement": {
+            "$ref": "#/components/schemas/SocialEngagement"
           },
           "updated_at": {
             "type": "string",
@@ -1414,6 +1454,7 @@
           "avatar_image_url",
           "banner_image_url",
           "biography",
+          "is_private",
           "updated_at",
           "created_at"
         ]

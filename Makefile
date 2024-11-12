@@ -32,7 +32,7 @@ shell:
 tidy:
 	docker compose run --rm api bash -c "go mod tidy"
 
-.PHONY: openapi wire
+.PHONY: api wire
 
 #? api: OpenAPI からコードを生成
 api:

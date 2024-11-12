@@ -15,7 +15,7 @@ import (
 const getTimeline = `-- name: GetTimeline :many
 SELECT
     posts.id, posts.author_id, posts.text, posts.created_at, posts.updated_at,
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     (
         SELECT COUNT(*)
         FROM post_favorites
@@ -105,6 +105,7 @@ func (q *Queries) GetTimeline(ctx context.Context, arg GetTimelineParams) ([]Get
 			&i.User.Biography,
 			&i.User.AvatarImageUrl,
 			&i.User.BannerImageUrl,
+			&i.User.IsPrivate,
 			&i.User.Birthdate,
 			&i.User.LineID,
 			&i.User.CreatedAt,

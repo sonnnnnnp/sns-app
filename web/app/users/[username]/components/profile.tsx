@@ -103,6 +103,14 @@ export function Profile() {
       if (!data?.ok) {
         return;
       }
+      setUser({
+        ...user,
+        social_engagement: {
+          ...user.social_engagement,
+          followers_count: (user.social_engagement &&
+            user.social_engagement?.followers_count - 1) as number,
+        } as components["schemas"]["User"]["social_engagement"], // 誰が見てもウンコード。形もウンコ。
+      });
     } else {
       const { data } = await client.POST("/users/{user_id}/follows", {
         params: {
@@ -114,6 +122,14 @@ export function Profile() {
       if (!data?.ok) {
         return;
       }
+      setUser({
+        ...user,
+        social_engagement: {
+          ...user.social_engagement,
+          followers_count: (user.social_engagement &&
+            user.social_engagement?.followers_count + 1) as number,
+        } as components["schemas"]["User"]["social_engagement"],
+      });
     }
 
     setIsFollowing(!isFollowing);
@@ -325,14 +341,18 @@ export function Profile() {
                       href={`/users/${pathParams.username}/following`}
                       className="flex gap-x-1 hover:underline"
                     >
-                      <span className="font-bold">11</span>
+                      <span className="font-bold">
+                        {user?.social_engagement?.following_count}
+                      </span>
                       <span className="text-muted-foreground">フォロー中</span>
                     </Link>
                     <Link
                       href={`/users/${pathParams.username}/followers`}
                       className="flex gap-x-1 hover:underline"
                     >
-                      <span className="font-bold">236</span>
+                      <span className="font-bold">
+                        {user?.social_engagement?.followers_count}
+                      </span>
                       <span className="text-muted-foreground">フォロワー</span>
                     </Link>
                   </div>
