@@ -158,7 +158,7 @@ export function Profile() {
           className="w-full"
         >
           <div className="flex flex-col w-full">
-            <div className="sticky top-0 z-10 rounded-none w-full bg-transparent backdrop-blur border-b">
+            <div className="sticky top-0 z-10 rounded-none w-full bg-background/60 backdrop-blur border-b">
               <div className="flex justify-between items-center h-14 px-2 text-muted-foreground">
                 <Button variant="ghost" onClick={() => router.back()}>
                   <ChevronLeftIcon className="h-5 w-5" />
@@ -178,7 +178,7 @@ export function Profile() {
                       className="object-cover w-full h-52 sm:h-64"
                     />
                   ) : (
-                    <div className="w-full h-64 bg-accent" />
+                    <div className="w-full bg-accent h-52 sm:h-64" />
                   )}
                   <div className="absolute top-4 right-4">
                     <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
@@ -341,31 +341,31 @@ export function Profile() {
                   <TabsList className="w-full h-12 p-0 bg-background justify-between">
                     <TabsTrigger
                       value="posts"
-                      className="relative w-full h-full rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                      className="relative w-full h-full font-bold rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
                     >
                       <span>投稿</span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="replies"
-                      className="relative w-full h-full rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                      className="relative w-full h-full font-bold rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
                     >
                       <span>返信</span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="calls"
-                      className="relative w-full h-full rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                      className="relative w-full h-full font-bold rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
                     >
                       <span>通話</span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="media"
-                      className="relative w-full h-full rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                      className="relative w-full h-full font-bold rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
                     >
                       <span>メディア</span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="likes"
-                      className="relative w-full h-full rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                      className="relative w-full h-full font-bold rounded-none hover:bg-accent data-[state=active]:hover:bg-accent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-12 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
                     >
                       <span>いいね</span>
                     </TabsTrigger>

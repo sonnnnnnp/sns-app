@@ -411,13 +411,13 @@ export function Timeline() {
               <div className="sticky top-0 z-10 rounded-none w-full">
                 <TabsList className="h-14 p-0 rounded-none w-full bg-transparent backdrop-blur-md border-b">
                   <TabsTrigger
-                    className="relative w-full h-full rounded-none bg-background/50 hover:bg-transparent data-[state=active]:bg-background/50 data-[state=active]:hover:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-16 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                    className="relative w-full h-full font-bold rounded-none bg-background/60 hover:bg-background/40 data-[state=active]:bg-background/60 data-[state=active]:hover:bg-background/40 data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-16 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
                     value="following"
                   >
                     フォロー中
                   </TabsTrigger>
                   <TabsTrigger
-                    className="relative w-full h-full rounded-none bg-background/50 hover:bg-transparent data-[state=active]:bg-background/50 data-[state=active]:hover:bg-transparent data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-16 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                    className="relative w-full h-full font-bold rounded-none bg-background/60 hover:bg-background/40 data-[state=active]:bg-background/60 data-[state=active]:hover:bg-background/40 data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-16 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
                     value="public"
                   >
                     オープン
