@@ -156,6 +156,12 @@ type RefreshAuthorizationJSONBody struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+// AuthorizeWithUsernameParams defines parameters for AuthorizeWithUsername.
+type AuthorizeWithUsernameParams struct {
+	// Name 名前
+	Name string `form:"name" json:"name"`
+}
+
 // CreatePostJSONBody defines parameters for CreatePost.
 type CreatePostJSONBody struct {
 	Content *string `json:"content,omitempty"`
@@ -282,6 +288,9 @@ type ClientInterface interface {
 
 	RefreshAuthorization(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// AuthorizeWithUsername request
+	AuthorizeWithUsername(ctx context.Context, params *AuthorizeWithUsernameParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreatePostWithBody request with any body
 	CreatePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -373,6 +382,18 @@ func (c *Client) RefreshAuthorizationWithBody(ctx context.Context, contentType s
 
 func (c *Client) RefreshAuthorization(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewRefreshAuthorizationRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) AuthorizeWithUsername(ctx context.Context, params *AuthorizeWithUsernameParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthorizeWithUsernameRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -728,6 +749,51 @@ func NewRefreshAuthorizationRequestWithBody(server string, contentType string, b
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewAuthorizeWithUsernameRequest generates requests for AuthorizeWithUsername
+func NewAuthorizeWithUsernameRequest(server string, params *AuthorizeWithUsernameParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/authorize/username")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -1554,6 +1620,9 @@ type ClientWithResponsesInterface interface {
 
 	RefreshAuthorizationWithResponse(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error)
 
+	// AuthorizeWithUsernameWithResponse request
+	AuthorizeWithUsernameWithResponse(ctx context.Context, params *AuthorizeWithUsernameParams, reqEditors ...RequestEditorFn) (*AuthorizeWithUsernameResponse, error)
+
 	// CreatePostWithBodyWithResponse request with any body
 	CreatePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
 
@@ -1671,6 +1740,35 @@ func (r RefreshAuthorizationResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r RefreshAuthorizationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type AuthorizeWithUsernameResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int           `json:"code"`
+		Data Authorization `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r AuthorizeWithUsernameResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r AuthorizeWithUsernameResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2252,6 +2350,15 @@ func (c *ClientWithResponses) RefreshAuthorizationWithResponse(ctx context.Conte
 	return ParseRefreshAuthorizationResponse(rsp)
 }
 
+// AuthorizeWithUsernameWithResponse request returning *AuthorizeWithUsernameResponse
+func (c *ClientWithResponses) AuthorizeWithUsernameWithResponse(ctx context.Context, params *AuthorizeWithUsernameParams, reqEditors ...RequestEditorFn) (*AuthorizeWithUsernameResponse, error) {
+	rsp, err := c.AuthorizeWithUsername(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAuthorizeWithUsernameResponse(rsp)
+}
+
 // CreatePostWithBodyWithResponse request with arbitrary body returning *CreatePostResponse
 func (c *ClientWithResponses) CreatePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePostResponse, error) {
 	rsp, err := c.CreatePostWithBody(ctx, contentType, body, reqEditors...)
@@ -2490,6 +2597,39 @@ func ParseRefreshAuthorizationResponse(rsp *http.Response) (*RefreshAuthorizatio
 	}
 
 	response := &RefreshAuthorizationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int           `json:"code"`
+			Data Authorization `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseAuthorizeWithUsernameResponse parses an HTTP response from a AuthorizeWithUsernameWithResponse call
+func ParseAuthorizeWithUsernameResponse(rsp *http.Response) (*AuthorizeWithUsernameResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &AuthorizeWithUsernameResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -3151,6 +3291,9 @@ type ServerInterface interface {
 	// 認証トークンを更新
 	// (POST /authorize/refresh)
 	RefreshAuthorization(ctx echo.Context) error
+	// ユーザー名でログイン（テスト用）
+	// (POST /authorize/username)
+	AuthorizeWithUsername(ctx echo.Context, params AuthorizeWithUsernameParams) error
 	// 投稿を作成する
 	// (POST /posts)
 	CreatePost(ctx echo.Context) error
@@ -3244,6 +3387,26 @@ func (w *ServerInterfaceWrapper) RefreshAuthorization(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.RefreshAuthorization(ctx)
+	return err
+}
+
+// AuthorizeWithUsername converts echo context to params.
+func (w *ServerInterfaceWrapper) AuthorizeWithUsername(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params AuthorizeWithUsernameParams
+	// ------------- Required query parameter "name" -------------
+
+	err = runtime.BindQueryParameter("form", true, true, "name", ctx.QueryParams(), &params.Name)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.AuthorizeWithUsername(ctx, params)
 	return err
 }
 
@@ -3636,6 +3799,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 
 	router.POST(baseURL+"/authorize/line", wrapper.AuthorizeWithLine)
 	router.POST(baseURL+"/authorize/refresh", wrapper.RefreshAuthorization)
+	router.POST(baseURL+"/authorize/username", wrapper.AuthorizeWithUsername)
 	router.POST(baseURL+"/posts", wrapper.CreatePost)
 	router.DELETE(baseURL+"/posts/:post_id", wrapper.DeletePost)
 	router.GET(baseURL+"/posts/:post_id", wrapper.GetPostByID)
@@ -3662,38 +3826,39 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"l9hZYid/wMWoGQ6H/w8AAP//3XtsJJ1BAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

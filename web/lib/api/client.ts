@@ -38,6 +38,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/authorize/username": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** ユーザー名でログイン（テスト用） */
+        post: operations["authorizeWithUsername"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/posts/{post_id}/favorites": {
         parameters: {
             query?: never;
@@ -446,6 +463,35 @@ export interface operations {
         parameters: {
             query: {
                 code: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["Authorization"];
+                    };
+                };
+            };
+        };
+    };
+    authorizeWithUsername: {
+        parameters: {
+            query: {
+                /** @description 名前 */
+                name: string;
             };
             header?: never;
             path?: never;
