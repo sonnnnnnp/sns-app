@@ -30,10 +30,6 @@ LEFT JOIN
     AND blocking.blocking_id = sqlc.narg(self_id)::uuid
 WHERE
     (
-        sqlc.narg(author_id)::uuid IS NULL
-        OR posts.author_id = sqlc.narg(author_id)::uuid
-    )
-    AND (
         sqlc.narg(created_at)::timestamptz IS NULL
         OR posts.created_at < sqlc.narg(created_at)::timestamptz
     )

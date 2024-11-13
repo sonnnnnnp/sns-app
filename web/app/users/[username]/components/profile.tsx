@@ -58,8 +58,8 @@ export function Profile() {
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
 
   const handleFetchProfile = useCallback(async () => {
-    const user = await client.GET("/users/{name}", {
-      params: { path: { name: pathParams.username } },
+    const user = await client.GET("/users", {
+      params: { query: { name: pathParams.username } },
     });
     if (!user.data?.ok) {
       return console.error("error fetching user");
@@ -69,8 +69,8 @@ export function Profile() {
     setIsFollowing(user.data.data.social_connection?.following ?? false);
     setIsBlockingUser(user.data.data.block_status?.blocking ?? false);
 
-    const timeline = await client.GET("/timeline", {
-      params: { query: { user_id: user.data.data.id } },
+    const timeline = await client.GET("/timeline/users/{user_id}", {
+      params: { path: { user_id: user.data.data.id } },
     });
     if (!timeline.data?.ok) {
       return console.error("error fetching timeline");
@@ -200,7 +200,7 @@ export function Profile() {
                     <div className="flex items-center space-x-1 rounded-md bg-secondary text-secondary-foreground">
                       {isBlockingUser ? (
                         <Button
-                          variant="secondary"
+                          variant="destructive"
                           className="px-3 shadow-none"
                           onClick={handleUnblockUser}
                         >

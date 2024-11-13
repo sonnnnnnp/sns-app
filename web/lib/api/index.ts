@@ -1,8 +1,8 @@
 import createClient, { Middleware } from "openapi-fetch";
 
+import { Cookie } from "../cookies";
 import type { paths } from "./client";
 import { destroyAuthorization, refreshAuthorization } from "./utils";
-import { Cookie } from "../cookies";
 
 interface responseBody {
   ok: boolean;
@@ -26,7 +26,7 @@ const requestInterceptor: Middleware = {
   async onResponse({ request, response, options }) {
     const body: responseBody = await response.clone().json();
 
-    if (body.code === -1002) {
+    if (body.code === -110002) {
       const refreshToken = Cookie.refreshToken();
       if (!refreshToken) {
         destroyAuthorization();

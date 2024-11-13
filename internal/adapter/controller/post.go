@@ -66,15 +66,3 @@ func (c Controller) GetPostFavorites(ctx echo.Context, pID uuid.UUID) error {
 
 	return c.json(ctx, http.StatusOK, favorites)
 }
-
-func (c Controller) GetTimeline(ctx echo.Context, params api.GetTimelineParams) error {
-	posts, nextCursor, err := c.postUsecase.GetTimeline(ctx.Request().Context(), &params)
-	if err != nil {
-		return err
-	}
-
-	return c.json(ctx, http.StatusOK, &api.Timeline{
-		Posts:      posts,
-		NextCursor: nextCursor,
-	})
-}

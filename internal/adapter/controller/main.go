@@ -5,10 +5,11 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	authorize_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
-	post_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/post"
-	stream_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/stream"
-	user_usecase "github.com/sonnnnnnp/sns-app/internal/usecase/user"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/post"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/user"
 )
 
 type Response struct {
@@ -18,23 +19,26 @@ type Response struct {
 }
 
 type Controller struct {
-	authUsecase   *authorize_usecase.AuthorizeUsecase
-	postUsecase   *post_usecase.PostUsecase
-	streamUsecase *stream_usecase.StreamUsecase
-	userUsecase   *user_usecase.UserUsecase
+	authUsecase     *authorize.AuthorizeUsecase
+	postUsecase     *post.PostUsecase
+	streamUsecase   *stream.StreamUsecase
+	timelineUsecase *timeline.TimelineUsecase
+	userUsecase     *user.UserUsecase
 }
 
 func New(
-	authUsecase *authorize_usecase.AuthorizeUsecase,
-	postUsecase *post_usecase.PostUsecase,
-	streamUsecase *stream_usecase.StreamUsecase,
-	userUsecase *user_usecase.UserUsecase,
+	authUsecase *authorize.AuthorizeUsecase,
+	postUsecase *post.PostUsecase,
+	streamUsecase *stream.StreamUsecase,
+	timelineUsecase *timeline.TimelineUsecase,
+	userUsecase *user.UserUsecase,
 ) *Controller {
 	return &Controller{
-		authUsecase:   authUsecase,
-		postUsecase:   postUsecase,
-		streamUsecase: streamUsecase,
-		userUsecase:   userUsecase,
+		authUsecase:     authUsecase,
+		postUsecase:     postUsecase,
+		streamUsecase:   streamUsecase,
+		timelineUsecase: timelineUsecase,
+		userUsecase:     userUsecase,
 	}
 }
 

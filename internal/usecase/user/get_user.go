@@ -11,10 +11,10 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (uc *UserUsecase) GetUserByName(ctx context.Context, name string) (*api.User, error) {
-	queries := db.New(uc.pool)
-
+func (uc *UserUsecase) getUserByName(ctx context.Context, name string) (*api.User, error) {
 	selfUID := ctxhelper.GetUserID(ctx)
+
+	queries := db.New(uc.pool)
 
 	row, err := queries.GetUserByName(ctx, name)
 	if err != nil {
@@ -69,4 +69,12 @@ func (uc *UserUsecase) GetUserByName(ctx context.Context, name string) (*api.Use
 		UpdatedAt: row.User.UpdatedAt.Time,
 		CreatedAt: row.User.CreatedAt.Time,
 	}, nil
+}
+
+func (uc *UserUsecase) GetUser(ctx context.Context, params api.GetUserParams) (*api.User, error) {
+	if params.Name != nil {
+		return uc.getUserByName(ctx, *params.Name)
+	}
+
+	return nil, internal_errors.ErrInsufficientParameters
 }

@@ -4,6 +4,7 @@ sql:
     queries:
       - ./pkg/db/queries/post_favorites
       - ./pkg/db/queries/posts
+      - ./pkg/db/queries/timeline
       - ./pkg/db/queries/user_blocks
       - ./pkg/db/queries/user_follows
       - ./pkg/db/queries/users

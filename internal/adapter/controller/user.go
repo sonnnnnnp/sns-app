@@ -6,15 +6,12 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
 )
 
 // user
 
 func (c Controller) GetSelf(ctx echo.Context) error {
-	uID := ctxhelper.GetUserID(ctx.Request().Context())
-
-	u, err := c.userUsecase.GetUserByID(ctx.Request().Context(), uID)
+	u, err := c.userUsecase.GetSelf(ctx.Request().Context())
 	if err != nil {
 		return err
 	}
@@ -22,8 +19,8 @@ func (c Controller) GetSelf(ctx echo.Context) error {
 	return c.json(ctx, http.StatusOK, u)
 }
 
-func (c Controller) GetUserByName(ctx echo.Context, name string) error {
-	u, err := c.userUsecase.GetUserByName(ctx.Request().Context(), name)
+func (c Controller) GetUser(ctx echo.Context, params api.GetUserParams) error {
+	u, err := c.userUsecase.GetUser(ctx.Request().Context(), params)
 	if err != nil {
 		return err
 	}

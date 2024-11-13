@@ -851,19 +851,19 @@
         ]
       }
     },
-    "/users/{name}": {
+    "/users": {
       "get": {
         "summary": "ユーザーを取得する",
         "deprecated": false,
         "description": "",
-        "operationId": "getUserByName",
+        "operationId": "getUser",
         "tags": [],
         "parameters": [
           {
             "name": "name",
-            "in": "path",
-            "description": "",
-            "required": true,
+            "in": "query",
+            "description": "名前",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -1057,9 +1057,76 @@
             }
           },
           {
-            "name": "user_id",
+            "name": "following",
             "in": "query",
             "description": "",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Timeline"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/timeline/users/{user_id}": {
+      "get": {
+        "summary": "ユーザーのタイムラインを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getUserTimeline",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "次のページを取得するためのキー",
             "required": false,
             "schema": {
               "type": "string",
@@ -1067,12 +1134,12 @@
             }
           },
           {
-            "name": "following",
+            "name": "limit",
             "in": "query",
             "description": "",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "integer"
             }
           }
         ],

@@ -32,6 +32,7 @@ type Querier interface {
 	GetUserByName(ctx context.Context, name string) (GetUserByNameRow, error)
 	GetUserFollowers(ctx context.Context, userID uuid.UUID) ([]GetUserFollowersRow, error)
 	GetUserFollowing(ctx context.Context, userID uuid.UUID) ([]GetUserFollowingRow, error)
+	GetUserTimeline(ctx context.Context, arg GetUserTimelineParams) ([]GetUserTimelineRow, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) error
 }
 

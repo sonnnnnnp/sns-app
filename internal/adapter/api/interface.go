@@ -166,8 +166,20 @@ type GetTimelineParams struct {
 	// Cursor 次のページを取得するためのキー
 	Cursor    *openapi_types.UUID `form:"cursor,omitempty" json:"cursor,omitempty"`
 	Limit     *int                `form:"limit,omitempty" json:"limit,omitempty"`
-	UserId    *openapi_types.UUID `form:"user_id,omitempty" json:"user_id,omitempty"`
 	Following *bool               `form:"following,omitempty" json:"following,omitempty"`
+}
+
+// GetUserTimelineParams defines parameters for GetUserTimeline.
+type GetUserTimelineParams struct {
+	// Cursor 次のページを取得するためのキー
+	Cursor *openapi_types.UUID `form:"cursor,omitempty" json:"cursor,omitempty"`
+	Limit  *int                `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// GetUserParams defines parameters for GetUser.
+type GetUserParams struct {
+	// Name 名前
+	Name *string `form:"name,omitempty" json:"name,omitempty"`
 }
 
 // UpdateUserJSONBody defines parameters for UpdateUser.
@@ -296,6 +308,12 @@ type ClientInterface interface {
 	// GetTimeline request
 	GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetUserTimeline request
+	GetUserTimeline(ctx context.Context, userId openapi_types.UUID, params *GetUserTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetUser request
+	GetUser(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetUserBlocking request
 	GetUserBlocking(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -306,9 +324,6 @@ type ClientInterface interface {
 	UpdateUserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateUser(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetUserByName request
-	GetUserByName(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UnblockUser request
 	UnblockUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -476,6 +491,30 @@ func (c *Client) GetTimeline(ctx context.Context, params *GetTimelineParams, req
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetUserTimeline(ctx context.Context, userId openapi_types.UUID, params *GetUserTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserTimelineRequest(c.Server, userId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetUser(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetUserBlocking(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetUserBlockingRequest(c.Server)
 	if err != nil {
@@ -514,18 +553,6 @@ func (c *Client) UpdateUserWithBody(ctx context.Context, contentType string, bod
 
 func (c *Client) UpdateUser(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateUserRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetUserByName(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUserByNameRequest(c.Server, name)
 	if err != nil {
 		return nil, err
 	}
@@ -996,9 +1023,9 @@ func NewGetTimelineRequest(server string, params *GetTimelineParams) (*http.Requ
 
 		}
 
-		if params.UserId != nil {
+		if params.Following != nil {
 
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "user_id", runtime.ParamLocationQuery, *params.UserId); err != nil {
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "following", runtime.ParamLocationQuery, *params.Following); err != nil {
 				return nil, err
 			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 				return nil, err
@@ -1012,9 +1039,114 @@ func NewGetTimelineRequest(server string, params *GetTimelineParams) (*http.Requ
 
 		}
 
-		if params.Following != nil {
+		queryURL.RawQuery = queryValues.Encode()
+	}
 
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "following", runtime.ParamLocationQuery, *params.Following); err != nil {
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetUserTimelineRequest generates requests for GetUserTimeline
+func NewGetUserTimelineRequest(server string, userId openapi_types.UUID, params *GetUserTimelineParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/timeline/users/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Cursor != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "cursor", runtime.ParamLocationQuery, *params.Cursor); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetUserRequest generates requests for GetUser
+func NewGetUserRequest(server string, params *GetUserParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Name != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
 				return nil, err
 			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 				return nil, err
@@ -1129,40 +1261,6 @@ func NewUpdateUserRequestWithBody(server string, contentType string, body io.Rea
 	}
 
 	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetUserByNameRequest generates requests for GetUserByName
-func NewGetUserByNameRequest(server string, name string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "name", runtime.ParamLocationPath, name)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
 
 	return req, nil
 }
@@ -1482,6 +1580,12 @@ type ClientWithResponsesInterface interface {
 	// GetTimelineWithResponse request
 	GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
 
+	// GetUserTimelineWithResponse request
+	GetUserTimelineWithResponse(ctx context.Context, userId openapi_types.UUID, params *GetUserTimelineParams, reqEditors ...RequestEditorFn) (*GetUserTimelineResponse, error)
+
+	// GetUserWithResponse request
+	GetUserWithResponse(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*GetUserResponse, error)
+
 	// GetUserBlockingWithResponse request
 	GetUserBlockingWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetUserBlockingResponse, error)
 
@@ -1492,9 +1596,6 @@ type ClientWithResponsesInterface interface {
 	UpdateUserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
 
 	UpdateUserWithResponse(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
-
-	// GetUserByNameWithResponse request
-	GetUserByNameWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*GetUserByNameResponse, error)
 
 	// UnblockUserWithResponse request
 	UnblockUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*UnblockUserResponse, error)
@@ -1791,6 +1892,64 @@ func (r GetTimelineResponse) StatusCode() int {
 	return 0
 }
 
+type GetUserTimelineResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int      `json:"code"`
+		Data Timeline `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetUserTimelineResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUserTimelineResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int  `json:"code"`
+		Data User `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetUserBlockingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1872,35 +2031,6 @@ func (r UpdateUserResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UpdateUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetUserByNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		// Code レスポンスコード
-		Code int  `json:"code"`
-		Data User `json:"data"`
-
-		// Ok 正常に処理を終了したかどうか
-		Ok bool `json:"ok"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetUserByNameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetUserByNameResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2202,6 +2332,24 @@ func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, param
 	return ParseGetTimelineResponse(rsp)
 }
 
+// GetUserTimelineWithResponse request returning *GetUserTimelineResponse
+func (c *ClientWithResponses) GetUserTimelineWithResponse(ctx context.Context, userId openapi_types.UUID, params *GetUserTimelineParams, reqEditors ...RequestEditorFn) (*GetUserTimelineResponse, error) {
+	rsp, err := c.GetUserTimeline(ctx, userId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserTimelineResponse(rsp)
+}
+
+// GetUserWithResponse request returning *GetUserResponse
+func (c *ClientWithResponses) GetUserWithResponse(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*GetUserResponse, error) {
+	rsp, err := c.GetUser(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserResponse(rsp)
+}
+
 // GetUserBlockingWithResponse request returning *GetUserBlockingResponse
 func (c *ClientWithResponses) GetUserBlockingWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetUserBlockingResponse, error) {
 	rsp, err := c.GetUserBlocking(ctx, reqEditors...)
@@ -2235,15 +2383,6 @@ func (c *ClientWithResponses) UpdateUserWithResponse(ctx context.Context, body U
 		return nil, err
 	}
 	return ParseUpdateUserResponse(rsp)
-}
-
-// GetUserByNameWithResponse request returning *GetUserByNameResponse
-func (c *ClientWithResponses) GetUserByNameWithResponse(ctx context.Context, name string, reqEditors ...RequestEditorFn) (*GetUserByNameResponse, error) {
-	rsp, err := c.GetUserByName(ctx, name, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetUserByNameResponse(rsp)
 }
 
 // UnblockUserWithResponse request returning *UnblockUserResponse
@@ -2622,6 +2761,72 @@ func ParseGetTimelineResponse(rsp *http.Response) (*GetTimelineResponse, error) 
 	return response, nil
 }
 
+// ParseGetUserTimelineResponse parses an HTTP response from a GetUserTimelineWithResponse call
+func ParseGetUserTimelineResponse(rsp *http.Response) (*GetUserTimelineResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetUserTimelineResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int      `json:"code"`
+			Data Timeline `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetUserResponse parses an HTTP response from a GetUserWithResponse call
+func ParseGetUserResponse(rsp *http.Response) (*GetUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int  `json:"code"`
+			Data User `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetUserBlockingResponse parses an HTTP response from a GetUserBlockingWithResponse call
 func ParseGetUserBlockingResponse(rsp *http.Response) (*GetUserBlockingResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -2697,39 +2902,6 @@ func ParseUpdateUserResponse(rsp *http.Response) (*UpdateUserResponse, error) {
 	}
 
 	response := &UpdateUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			// Code レスポンスコード
-			Code int  `json:"code"`
-			Data User `json:"data"`
-
-			// Ok 正常に処理を終了したかどうか
-			Ok bool `json:"ok"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetUserByNameResponse parses an HTTP response from a GetUserByNameWithResponse call
-func ParseGetUserByNameResponse(rsp *http.Response) (*GetUserByNameResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetUserByNameResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -3003,6 +3175,12 @@ type ServerInterface interface {
 	// タイムラインを取得する
 	// (GET /timeline)
 	GetTimeline(ctx echo.Context, params GetTimelineParams) error
+	// ユーザーのタイムラインを取得する
+	// (GET /timeline/users/{user_id})
+	GetUserTimeline(ctx echo.Context, userId openapi_types.UUID, params GetUserTimelineParams) error
+	// ユーザーを取得する
+	// (GET /users)
+	GetUser(ctx echo.Context, params GetUserParams) error
 	// ユーザーのブロック一覧を取得する
 	// (GET /users/blocks)
 	GetUserBlocking(ctx echo.Context) error
@@ -3012,9 +3190,6 @@ type ServerInterface interface {
 	// ユーザーを更新する
 	// (PUT /users/update)
 	UpdateUser(ctx echo.Context) error
-	// ユーザーを取得する
-	// (GET /users/{name})
-	GetUserByName(ctx echo.Context, name string) error
 	// ユーザーをアンブロックする
 	// (DELETE /users/{user_id}/blocks)
 	UnblockUser(ctx echo.Context, userId openapi_types.UUID) error
@@ -3206,13 +3381,6 @@ func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
 	}
 
-	// ------------- Optional query parameter "user_id" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "user_id", ctx.QueryParams(), &params.UserId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
-	}
-
 	// ------------- Optional query parameter "following" -------------
 
 	err = runtime.BindQueryParameter("form", true, false, "following", ctx.QueryParams(), &params.Following)
@@ -3222,6 +3390,60 @@ func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetTimeline(ctx, params)
+	return err
+}
+
+// GetUserTimeline converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUserTimeline(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "user_id" -------------
+	var userId openapi_types.UUID
+
+	err = runtime.BindStyledParameterWithOptions("simple", "user_id", ctx.Param("user_id"), &userId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter user_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetUserTimelineParams
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "cursor", ctx.QueryParams(), &params.Cursor)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter cursor: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetUserTimeline(ctx, userId, params)
+	return err
+}
+
+// GetUser converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUser(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetUserParams
+	// ------------- Optional query parameter "name" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "name", ctx.QueryParams(), &params.Name)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetUser(ctx, params)
 	return err
 }
 
@@ -3255,24 +3477,6 @@ func (w *ServerInterfaceWrapper) UpdateUser(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.UpdateUser(ctx)
-	return err
-}
-
-// GetUserByName converts echo context to params.
-func (w *ServerInterfaceWrapper) GetUserByName(ctx echo.Context) error {
-	var err error
-	// ------------- Path parameter "name" -------------
-	var name string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "name", ctx.Param("name"), &name, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
-	}
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetUserByName(ctx, name)
 	return err
 }
 
@@ -3440,10 +3644,11 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/posts/:post_id/favorites", wrapper.FavoritePost)
 	router.GET(baseURL+"/stream", wrapper.Stream)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
+	router.GET(baseURL+"/timeline/users/:user_id", wrapper.GetUserTimeline)
+	router.GET(baseURL+"/users", wrapper.GetUser)
 	router.GET(baseURL+"/users/blocks", wrapper.GetUserBlocking)
 	router.GET(baseURL+"/users/me", wrapper.GetSelf)
 	router.PUT(baseURL+"/users/update", wrapper.UpdateUser)
-	router.GET(baseURL+"/users/:name", wrapper.GetUserByName)
 	router.DELETE(baseURL+"/users/:user_id/blocks", wrapper.UnblockUser)
 	router.POST(baseURL+"/users/:user_id/blocks", wrapper.BlockUser)
 	router.GET(baseURL+"/users/:user_id/followers", wrapper.GetUserFollowers)
@@ -3457,38 +3662,38 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xa628bxxH/Vw7XfmREpf3Gb1FsFQICI7As5INhEKu7IbkR7/ayuyeHFQiUd4UfMYwY",
-	"AuwgfaBpE9ixE8UB3IdbuPUfs6bs/hfF7h7vwds7UpbSmAwBwyC0r9mZ3/xmduYObId4AfHB58xuHdjM",
-	"6YGH1M93Qt4jFP8acUx8+YeAkgAox6CGkeMAY21O9kCN8kEAdstmnGK/aw8bNmZtH67mhnYJ6QPy5RiF",
-	"DgXWq1kdMqBt7BrG1PKPQkzBtVuX04mNokTTZ6TyXGlMNiS7H4LD5WEbfeLsbXPEQ1a+6K4cBLe9OzDf",
-	"RY1LyQyjU7KmUxv5XU0SvU8YN+hcmUT++jmFjt2yf9bMzNdMbNfcYUDlHg4FxMFtI7VTh1BP/rJdxOEt",
-	"jj2wG2W1d9A+oZiDa77rZJi1HRL6PDcJ+xy6+lxtNReYQ3GgwWNvnXt599H403/YjUyQMFRmK8nA4WO1",
-	"sx/2+2i3D3aL0xAME8PAPeEFp+yhYaOVWtiuoLxEovLt8+qqMuJmMqNszNcxT0AYT7xiphqlY8wHlSmt",
-	"TA6ZUoLaz3TNi8AC4jPTFYkLZSyI+FsR/VPEfxTxE/kjeiLiZyK+mV0iByYXcWTa4rpcEz23DfKQvfKC",
-	"46Mvx0+fitE34+v3X965JqLDl3+LXvzrmhh9JkZ/EqNbYvRQjK6J0a1sxyovJntSNfJqiXgmpWwTB6P+",
-	"u8T3wTETaIf0++RqDbHoCfMxSza3Udi4WrTzfhd1wQPfwDNzuXlyDJ1jEva7dZM8cDGqmyARWXNMlS4y",
-	"N50StbhjUYCym5t0eAl70Me+AfM+fMzbTkiZJuopGH77ZzH6TsS/U+h9KqLD8af3xv/5TIw+F9EticRo",
-	"JCdERyJ+Ng9XqnvIczAHj81ydxVVhuk2iFI0MLo/sxuFi5hUsJPwy1SI2kcc0Tb2UBfaIe3PReS7yPfh",
-	"xIsw6VIU9AbzzZbxts3SGF+npnw68Jpx9LQxELN2QPE+0oGjzA0+8gzMOr5ze3zztmk/Hzt7kzWlQaYI",
-	"oe0UyKpOQSVyyzaBAq3M3iRHQ2cW0dVFc3dulFFpwFweUXXJQM40VW6xmfDNyj2q0sxJiFr51JvvU3lj",
-	"Nc7Ow3LmqHa3WR5meK/JPHX+kFhw11mhUW9dJdOZyPLaMki4gBNSzAfbcr/k8QqIah5ShyjE6z+lG/Q4",
-	"D+yhXI/9DlFgxryv8OCzt1AQ2A17HyjT7vD22vrausqyA/BRgO2W/cu19bW3ZU6FeE8d2kRJ6QCaaY6U",
-	"vGelclRBYcu1W2mJAT7AvPeenCp3ocgDrvR2+cDG8tCPQqCDCexak9w704omNa1GU8XgipysHylKwF+s",
-	"r+vnic8Tp0JB0MeOkqz5IdPemu33g71q6tBQrL+8Ge8auaQoQAF4duvylYbNQs9DdGC37Pe2Lpy3xOiB",
-	"iI9E9L2IvhLxE7Ugh5CkTFMNkot6QlEdWnJgfIO4g1PYclYhakpFxekm/QxXUPt/QS1jt8tXhgXcvXp0",
-	"+9XXz0R8Qz2zHis1HR7//q/H977X8EufTWbIvasCkHotnRXQcsvKEFsOFE1elwsOnuNP7r78+rmIDl/8",
-	"+w/HN+7op3kONs2DpEA21Nfsg04oixA6p/6eQMgU02S0zEJaVnOrjmozEtw3N8otVu3uTLAzvvnJfz//",
-	"aoKdht0FA838CrgEyMZg69wKJD8lZskX/YzM0kxrkHUcs+NPpi0Uz9RZOu0lnIWiR9+J0W/VvyMRHb56",
-	"8OXcLrmZqn9F3pXkPXfJOe2Bld62y+LSo28ypGkh4/tKT39X/085fKMi7dxcefO8Os6Yk3EKyJOSJA5d",
-	"POYC4dCyLvUws8B3A4J9bmFmucBw10ccXKtDqPUB7G4TZw+41UUcrqKBFTLUBQv5ruUg3yfc2gUrZOBa",
-	"iFnIunh++5L1zvtba3ZjyobbWpxTKvUMEZpdTfn+DRE/Ul7/hVYfzzWyqhgxbXaVMHm67paxtqMbTidB",
-	"cMNcJepjD3PbUBbK9Q3NK7NPSk4tRL4vWxIk46yFzMpSWCw+jYvouapOfSHih7pMZczSVO21qXolrM5h",
-	"dhjQjexbn8UzrS5nL4Fd82FYUtM9ER+JOBbR4xdPf/Pq/oMaM3u1nLgN/c7CmnYZSnzXH41vXKsxn+4o",
-	"KTWHBhPuqGGljLMq8Zl6u3P1cut7t4ZRynuTy83XOq1sU9b0MJemLrkkiJ96Uuhydhn3B9Kcw5nRaXBB",
-	"921nPzKSBu+Sd9uWEyRV5HiQpLjDXDJTXWVScxKqnI2XLHte5kfplKJF9BeJxFx+Meuxv7FS6kylGtRp",
-	"wnAn/zFIHetlX40sis5/NC7MVLWEr4C7InqokPVYxM9mPgSmgZZ8kV3FlxfBI/sqs9ykxFtBbi7Imb5+",
-	"W65QPIU6KWp0c942YeaRuqKwQtJPr3SRwufkjDWri6gmLVQusiKpH4akkjQ2w9rMntUKOyvsTAe4FDXD",
-	"4fB/AQAA//+DS/hcYjwAAA==",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
