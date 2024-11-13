@@ -5,12 +5,12 @@ import (
 	"net/http"
 )
 
-// エラーコードは6桁の整数で表します。形式は以下の通りです。
+// エラーコードは6桁の整数で表す。形式は以下の通り。
 // - [メインカテゴリ]
 // - [サブカテゴリ]
 // - [エラー番号]
 //
-// 例えば、120104 は以下のように解釈されます。
+// 例えば、120104は以下のように解釈される。
 // - 12 (ユーザー)
 // - 01 (ブロック)
 // - 04 (特定のエラー)
@@ -30,14 +30,14 @@ var errorCodeMap = map[error]int{
 	// -- users --
 	ErrUserNotFound: -120000,
 	// blocks
-	ErrCannotBlockYourself:     -120101,
-	ErrUserAlreadyBlocking:     -120102,
-	ErrUserBlocking:            -120103,
-	ErrUserBlockedBy:           -120104,
-	ErrUserBlockingOrBlockedBy: -120105,
+	ErrCannotBlockYourself:     -120100,
+	ErrUserAlreadyBlocking:     -120101,
+	ErrUserBlocking:            -120102,
+	ErrUserBlockedBy:           -120103,
+	ErrUserBlockingOrBlockedBy: -120104,
 	// follows
-	ErrCannotFollowYourself: -120206,
-	ErrUserAlreadyFollowing: -120207,
+	ErrCannotFollowYourself: -120200,
+	ErrUserAlreadyFollowing: -120201,
 
 	// -- posts --
 	ErrPostNotFound:         -130000,
