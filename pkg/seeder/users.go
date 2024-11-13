@@ -19,7 +19,7 @@ func (s *Seeder) seedUsers() error {
 		},
 		{
 			UserID:         uuid.Nil,
-			Name:           ptr("noahhhhhh"),
+			Name:           ptr("test"),
 			Nickname:       ptr("のあ"),
 			Biography:      ptr("三重/社会人/20の代\n仲良くなったらフォロー返す💁🏼‍♀️\nだる絡みはすぐ消すかも"),
 			AvatarImageUrl: ptr("https://i.pinimg.com/474x/85/e6/47/85e64767b129d2cae2d1c47b1ed0aece.jpg"),

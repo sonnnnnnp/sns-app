@@ -1,9 +1,9 @@
+import { Toaster } from "@/components/ui/sonner";
+import { StreamProvider } from "@/providers/stream-provider";
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "next-themes";
-import { StreamProvider } from "@/providers/stream-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 

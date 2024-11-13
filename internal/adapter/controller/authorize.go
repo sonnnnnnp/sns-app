@@ -29,3 +29,14 @@ func (c Controller) RefreshAuthorization(ctx echo.Context) error {
 
 	return c.json(ctx, http.StatusOK, &auth)
 }
+
+// for development only
+
+func (c Controller) AuthorizeWithUsername(ctx echo.Context, params api.AuthorizeWithUsernameParams) error {
+	auth, err := c.authUsecase.AuthorizeWithUsername(ctx.Request().Context(), params.Name)
+	if err != nil {
+		return err
+	}
+
+	return c.json(ctx, http.StatusOK, &auth)
+}
