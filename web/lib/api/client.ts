@@ -180,7 +180,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{name}": {
+    "/users": {
         parameters: {
             query?: never;
             header?: never;
@@ -188,7 +188,7 @@ export interface paths {
             cookie?: never;
         };
         /** ユーザーを取得する */
-        get: operations["getUserByName"];
+        get: operations["getUser"];
         put?: never;
         post?: never;
         delete?: never;
@@ -248,6 +248,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/timeline/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ユーザーのタイムラインを取得する */
+        get: operations["getUserTimeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/stream": {
         parameters: {
             query?: never;
@@ -284,8 +301,10 @@ export interface components {
             avatar_image_url: string | null;
             banner_image_url: string | null;
             biography: string | null;
-            social_connection?: components["schemas"]["SocialConnection"];
+            is_private: boolean;
             block_status?: components["schemas"]["BlockStatus"];
+            social_connection?: components["schemas"]["SocialConnection"];
+            social_engagement?: components["schemas"]["SocialEngagement"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
@@ -301,6 +320,13 @@ export interface components {
         BlockStatus: {
             blocking: boolean;
             blocked_by: boolean;
+        };
+        SocialEngagement: {
+            following_count: number;
+            followers_count: number;
+            posts_count: number;
+            media_count: number;
+            favorites_count: number;
         };
         Authorization: {
             user_id: string;
@@ -353,8 +379,10 @@ export interface components {
             avatar_image_url: string | null;
             banner_image_url: string | null;
             biography: string | null;
-            social_connection?: components["schemas"]["SocialConnection"];
+            is_private: boolean;
             block_status?: components["schemas"]["BlockStatus"];
+            social_connection?: components["schemas"]["SocialConnection"];
+            social_engagement?: components["schemas"]["SocialEngagement"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
@@ -803,13 +831,14 @@ export interface operations {
             };
         };
     };
-    getUserByName: {
+    getUser: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                name: string;
+            query?: {
+                /** @description 名前 */
+                name?: string;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -898,11 +927,42 @@ export interface operations {
                 /** @description 次のページを取得するためのキー */
                 cursor?: string;
                 limit?: number;
-                user_id?: string;
                 following?: boolean;
             };
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["Timeline"];
+                    };
+                };
+            };
+        };
+    };
+    getUserTimeline: {
+        parameters: {
+            query?: {
+                /** @description 次のページを取得するためのキー */
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                user_id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;

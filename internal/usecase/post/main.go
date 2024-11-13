@@ -23,9 +23,6 @@ type IPostUsecase interface {
 	GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]api.PostFavorite, error)
 
 	DeletePostFavorite(ctx context.Context, pID uuid.UUID) error
-
-	// timeline
-	GetTimeline(ctx context.Context, params *api.GetTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error)
 }
 
 type PostUsecase struct {

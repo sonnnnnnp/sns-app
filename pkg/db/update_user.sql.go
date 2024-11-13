@@ -23,7 +23,8 @@ SET
     birthdate = COALESCE($6, birthdate)::timestamptz,
     line_id = COALESCE($7, line_id)::text,
     updated_at = COALESCE($8, updated_at)::timestamptz
-WHERE users.id = $9::uuid
+WHERE
+    users.id = $9::uuid
 `
 
 type UpdateUserParams struct {

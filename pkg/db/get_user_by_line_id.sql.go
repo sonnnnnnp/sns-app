@@ -10,8 +10,12 @@ import (
 )
 
 const getUserByLineID = `-- name: GetUserByLineID :one
-SELECT id, name, nickname, biography, avatar_image_url, banner_image_url, birthdate, line_id, created_at, updated_at FROM users
-WHERE line_id = $1::text
+SELECT
+    id, name, nickname, biography, avatar_image_url, banner_image_url, is_private, birthdate, line_id, created_at, updated_at
+FROM
+    users
+WHERE
+    line_id = $1::text
 `
 
 func (q *Queries) GetUserByLineID(ctx context.Context, lineID string) (User, error) {
@@ -24,6 +28,7 @@ func (q *Queries) GetUserByLineID(ctx context.Context, lineID string) (User, err
 		&i.Biography,
 		&i.AvatarImageUrl,
 		&i.BannerImageUrl,
+		&i.IsPrivate,
 		&i.Birthdate,
 		&i.LineID,
 		&i.CreatedAt,

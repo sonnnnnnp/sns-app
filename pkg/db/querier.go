@@ -13,7 +13,7 @@ import (
 type Querier interface {
 	CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error)
 	CreatePostFavorite(ctx context.Context, arg CreatePostFavoriteParams) error
-	CreateUser(ctx context.Context, lineID *string) (User, error)
+	CreateUser(ctx context.Context, lineID *string) (uuid.UUID, error)
 	CreateUserBlock(ctx context.Context, arg CreateUserBlockParams) error
 	CreateUserFollow(ctx context.Context, arg CreateUserFollowParams) error
 	DeletePost(ctx context.Context, postID uuid.UUID) error
@@ -27,11 +27,12 @@ type Querier interface {
 	GetSocialConnection(ctx context.Context, arg GetSocialConnectionParams) (GetSocialConnectionRow, error)
 	GetTimeline(ctx context.Context, arg GetTimelineParams) ([]GetTimelineRow, error)
 	GetUserBlocking(ctx context.Context, userID uuid.UUID) ([]GetUserBlockingRow, error)
-	GetUserByID(ctx context.Context, userID uuid.UUID) (User, error)
+	GetUserByID(ctx context.Context, userID uuid.UUID) (GetUserByIDRow, error)
 	GetUserByLineID(ctx context.Context, lineID string) (User, error)
-	GetUserByName(ctx context.Context, name string) (User, error)
+	GetUserByName(ctx context.Context, name string) (GetUserByNameRow, error)
 	GetUserFollowers(ctx context.Context, userID uuid.UUID) ([]GetUserFollowersRow, error)
 	GetUserFollowing(ctx context.Context, userID uuid.UUID) ([]GetUserFollowingRow, error)
+	GetUserTimeline(ctx context.Context, arg GetUserTimelineParams) ([]GetUserTimelineRow, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) error
 }
 

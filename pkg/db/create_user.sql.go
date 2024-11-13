@@ -7,6 +7,8 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -15,23 +17,12 @@ INSERT INTO users (
 ) VALUES (
   $1::text
 )
-RETURNING id, name, nickname, biography, avatar_image_url, banner_image_url, birthdate, line_id, created_at, updated_at
+RETURNING users.id
 `
 
-func (q *Queries) CreateUser(ctx context.Context, lineID *string) (User, error) {
+func (q *Queries) CreateUser(ctx context.Context, lineID *string) (uuid.UUID, error) {
 	row := q.db.QueryRow(ctx, createUser, lineID)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Nickname,
-		&i.Biography,
-		&i.AvatarImageUrl,
-		&i.BannerImageUrl,
-		&i.Birthdate,
-		&i.LineID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }

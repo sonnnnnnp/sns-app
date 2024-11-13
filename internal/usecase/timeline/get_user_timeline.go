@@ -1,4 +1,4 @@
-package post
+package timeline
 
 import (
 	"context"
@@ -13,29 +13,22 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-var (
-	defaultLimit = 25
-	maxLimit     = 100
-)
-
-func (uc *PostUsecase) GetTimeline(ctx context.Context, params *api.GetTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {
-	queries := db.New(uc.pool)
-
+func (uc *TimelineUsecase) GetUserTimeline(ctx context.Context, uID uuid.UUID, params *api.GetUserTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
-	// 特定ユーザーのタイムラインの場合はブロックしていないかを検証
-	if params.UserId != nil {
-		bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
-			SelfID:   selfUID,
-			TargetID: *params.UserId,
-		})
-		if err != nil {
-			return nil, uuid.Nil, err
-		}
+	queries := db.New(uc.pool)
 
-		if bs.Blocking || bs.BlockedBy {
-			return nil, uuid.Nil, internal_errors.ErrUserBlockingOrBlockedBy
-		}
+	// ブロックされていないかを検証
+	bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+		SelfID:   selfUID,
+		TargetID: uID,
+	})
+	if err != nil {
+		return nil, uuid.Nil, err
+	}
+
+	if bs.BlockedBy {
+		return nil, uuid.Nil, internal_errors.ErrUserBlockedBy
 	}
 
 	// 指定されたカーソル投稿 ID から検索用日時を取得する
@@ -62,18 +55,12 @@ func (uc *PostUsecase) GetTimeline(ctx context.Context, params *api.GetTimelineP
 		params.Limit = &maxLimit
 	}
 
-	var onlyFollowing bool
-	if params.Following != nil {
-		onlyFollowing = *params.Following
-	}
-
 	// タイムラインを取得
-	rows, err := queries.GetTimeline(ctx, db.GetTimelineParams{
-		SelfID:        &selfUID,
-		AuthorID:      params.UserId,
-		CreatedAt:     fromCursor,
-		Limit:         int64(*params.Limit),
-		OnlyFollowing: onlyFollowing,
+	rows, err := queries.GetUserTimeline(ctx, db.GetUserTimelineParams{
+		SelfID:    &selfUID,
+		AuthorID:  uID,
+		CreatedAt: fromCursor,
+		Limit:     int64(*params.Limit),
 	})
 	if err != nil {
 		return nil, uuid.Nil, err

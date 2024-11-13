@@ -10,24 +10,84 @@ import (
 )
 
 const getUserByName = `-- name: GetUserByName :one
-SELECT id, name, nickname, biography, avatar_image_url, banner_image_url, birthdate, line_id, created_at, updated_at FROM users
-WHERE name = $1::text
+SELECT
+    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            user_follows
+        WHERE
+            user_follows.follower_id = users.id
+    ) as following_count,
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            user_follows
+        WHERE
+            user_follows.following_id = users.id
+    ) as followers_count,
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            posts
+        WHERE
+            posts.author_id = users.id
+    ) as posts_count,
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            posts
+        WHERE
+            -- TODO: メディアを含む投稿を探す
+            posts.author_id = users.id
+    ) as media_count,
+    (
+        SELECT
+            COUNT(*)
+        FROM
+            post_favorites
+        WHERE
+            post_favorites.user_id = users.id
+    ) as favorites_count
+FROM
+    users
+WHERE
+    name = $1::text
 `
 
-func (q *Queries) GetUserByName(ctx context.Context, name string) (User, error) {
+type GetUserByNameRow struct {
+	User           User
+	FollowingCount int64
+	FollowersCount int64
+	PostsCount     int64
+	MediaCount     int64
+	FavoritesCount int64
+}
+
+func (q *Queries) GetUserByName(ctx context.Context, name string) (GetUserByNameRow, error) {
 	row := q.db.QueryRow(ctx, getUserByName, name)
-	var i User
+	var i GetUserByNameRow
 	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Nickname,
-		&i.Biography,
-		&i.AvatarImageUrl,
-		&i.BannerImageUrl,
-		&i.Birthdate,
-		&i.LineID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+		&i.User.ID,
+		&i.User.Name,
+		&i.User.Nickname,
+		&i.User.Biography,
+		&i.User.AvatarImageUrl,
+		&i.User.BannerImageUrl,
+		&i.User.IsPrivate,
+		&i.User.Birthdate,
+		&i.User.LineID,
+		&i.User.CreatedAt,
+		&i.User.UpdatedAt,
+		&i.FollowingCount,
+		&i.FollowersCount,
+		&i.PostsCount,
+		&i.MediaCount,
+		&i.FavoritesCount,
 	)
 	return i, err
 }
