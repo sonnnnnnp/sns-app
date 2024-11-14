@@ -16,7 +16,7 @@ func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*api.Pos
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	r, err := db.New(uc.pool).GetPostByID(ctx, db.GetPostByIDParams{
-		SelfID: &selfUID,
+		SelfID: selfUID,
 		PostID: pID,
 	})
 	if err != nil {

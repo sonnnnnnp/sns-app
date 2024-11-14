@@ -255,7 +255,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** タイムラインを取得する */
+        /** オープンのタイムラインを取得する */
         get: operations["getTimeline"];
         put?: never;
         post?: never;
@@ -274,6 +274,23 @@ export interface paths {
         };
         /** ユーザーのタイムラインを取得する */
         get: operations["getUserTimeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/timeline/following": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** フォロー中のタイムラインを取得する */
+        get: operations["getFollowingTimeline"];
         put?: never;
         post?: never;
         delete?: never;
@@ -973,7 +990,6 @@ export interface operations {
                 /** @description 次のページを取得するためのキー */
                 cursor?: string;
                 limit?: number;
-                following?: boolean;
             };
             header?: never;
             path?: never;
@@ -1009,6 +1025,36 @@ export interface operations {
             path: {
                 user_id: string;
             };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["Timeline"];
+                    };
+                };
+            };
+        };
+    };
+    getFollowingTimeline: {
+        parameters: {
+            query?: {
+                /** @description 次のページを取得するためのキー */
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;

@@ -13,23 +13,10 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-func (uc *TimelineUsecase) GetUserTimeline(ctx context.Context, uID uuid.UUID, params *api.GetUserTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {
+func (uc *TimelineUsecase) GetFollowingTimeline(ctx context.Context, params *api.GetFollowingTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	queries := db.New(uc.pool)
-
-	// ブロックされていないかを検証
-	bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
-		SelfID:   selfUID,
-		TargetID: uID,
-	})
-	if err != nil {
-		return nil, uuid.Nil, err
-	}
-
-	if bs.BlockedBy {
-		return nil, uuid.Nil, internal_errors.ErrUserBlockedBy
-	}
 
 	// 指定されたカーソル投稿 ID から検索用日時を取得する
 	var fromCursor *time.Time
@@ -56,9 +43,8 @@ func (uc *TimelineUsecase) GetUserTimeline(ctx context.Context, uID uuid.UUID, p
 	}
 
 	// タイムラインを取得
-	rows, err := queries.GetUserTimeline(ctx, db.GetUserTimelineParams{
+	rows, err := queries.GetFollowingTimeline(ctx, db.GetFollowingTimelineParams{
 		SelfID:    selfUID,
-		AuthorID:  uID,
 		CreatedAt: fromCursor,
 		Limit:     int64(*params.Limit),
 	})

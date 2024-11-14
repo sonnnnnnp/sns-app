@@ -14,14 +14,22 @@ import (
 const getBlockStatus = `-- name: GetBlockStatus :one
 SELECT
     EXISTS (
-        SELECT 1
-        FROM user_blocks
-        WHERE blocker_id = $1::uuid AND blocking_id = $2::uuid
+        SELECT
+            1
+        FROM
+            user_blocks
+        WHERE
+            blocker_id = $1::uuid
+            AND blocked_id = $2::uuid
     ) AS blocking,
     EXISTS (
-        SELECT 1
-        FROM user_blocks
-        WHERE blocker_id = $2::uuid AND blocking_id = $1::uuid
+        SELECT
+            1
+        FROM
+            user_blocks
+        WHERE
+            blocker_id = $2::uuid
+            AND blocked_id = $1::uuid
     ) AS blocked_by
 `
 

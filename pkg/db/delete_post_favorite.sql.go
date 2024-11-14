@@ -12,8 +12,11 @@ import (
 )
 
 const deletePostFavorite = `-- name: DeletePostFavorite :exec
-DELETE FROM post_favorites
-WHERE user_id = $1::uuid AND post_id = $2::uuid
+DELETE FROM
+    post_favorites
+WHERE
+    user_id = $1::uuid
+    AND post_id = $2::uuid
 `
 
 type DeletePostFavoriteParams struct {

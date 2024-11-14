@@ -47,8 +47,8 @@ func (uc *UserUsecase) FollowUser(ctx context.Context, uID uuid.UUID) (*api.Soci
 	}
 
 	if err := queries.CreateUserFollow(ctx, db.CreateUserFollowParams{
-		FollowerID:  selfUID,
-		FollowingID: uID,
+		FollowerID: selfUID,
+		FollowedID: uID,
 	}); err != nil {
 		return nil, err
 	}

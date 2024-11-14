@@ -170,9 +170,15 @@ type CreatePostJSONBody struct {
 // GetTimelineParams defines parameters for GetTimeline.
 type GetTimelineParams struct {
 	// Cursor 次のページを取得するためのキー
-	Cursor    *openapi_types.UUID `form:"cursor,omitempty" json:"cursor,omitempty"`
-	Limit     *int                `form:"limit,omitempty" json:"limit,omitempty"`
-	Following *bool               `form:"following,omitempty" json:"following,omitempty"`
+	Cursor *openapi_types.UUID `form:"cursor,omitempty" json:"cursor,omitempty"`
+	Limit  *int                `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// GetFollowingTimelineParams defines parameters for GetFollowingTimeline.
+type GetFollowingTimelineParams struct {
+	// Cursor 次のページを取得するためのキー
+	Cursor *openapi_types.UUID `form:"cursor,omitempty" json:"cursor,omitempty"`
+	Limit  *int                `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // GetUserTimelineParams defines parameters for GetUserTimeline.
@@ -316,6 +322,9 @@ type ClientInterface interface {
 
 	// GetTimeline request
 	GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetFollowingTimeline request
+	GetFollowingTimeline(ctx context.Context, params *GetFollowingTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetUserTimeline request
 	GetUserTimeline(ctx context.Context, userId openapi_types.UUID, params *GetUserTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -502,6 +511,18 @@ func (c *Client) Stream(ctx context.Context, reqEditors ...RequestEditorFn) (*ht
 
 func (c *Client) GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTimelineRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetFollowingTimeline(ctx context.Context, params *GetFollowingTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetFollowingTimelineRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1089,9 +1110,58 @@ func NewGetTimelineRequest(server string, params *GetTimelineParams) (*http.Requ
 
 		}
 
-		if params.Following != nil {
+		queryURL.RawQuery = queryValues.Encode()
+	}
 
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "following", runtime.ParamLocationQuery, *params.Following); err != nil {
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetFollowingTimelineRequest generates requests for GetFollowingTimeline
+func NewGetFollowingTimelineRequest(server string, params *GetFollowingTimelineParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/timeline/following")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Cursor != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "cursor", runtime.ParamLocationQuery, *params.Cursor); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
 				return nil, err
 			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 				return nil, err
@@ -1649,6 +1719,9 @@ type ClientWithResponsesInterface interface {
 	// GetTimelineWithResponse request
 	GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
 
+	// GetFollowingTimelineWithResponse request
+	GetFollowingTimelineWithResponse(ctx context.Context, params *GetFollowingTimelineParams, reqEditors ...RequestEditorFn) (*GetFollowingTimelineResponse, error)
+
 	// GetUserTimelineWithResponse request
 	GetUserTimelineWithResponse(ctx context.Context, userId openapi_types.UUID, params *GetUserTimelineParams, reqEditors ...RequestEditorFn) (*GetUserTimelineResponse, error)
 
@@ -1984,6 +2057,35 @@ func (r GetTimelineResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetTimelineResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetFollowingTimelineResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int      `json:"code"`
+		Data Timeline `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetFollowingTimelineResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetFollowingTimelineResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2437,6 +2539,15 @@ func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, param
 		return nil, err
 	}
 	return ParseGetTimelineResponse(rsp)
+}
+
+// GetFollowingTimelineWithResponse request returning *GetFollowingTimelineResponse
+func (c *ClientWithResponses) GetFollowingTimelineWithResponse(ctx context.Context, params *GetFollowingTimelineParams, reqEditors ...RequestEditorFn) (*GetFollowingTimelineResponse, error) {
+	rsp, err := c.GetFollowingTimeline(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetFollowingTimelineResponse(rsp)
 }
 
 // GetUserTimelineWithResponse request returning *GetUserTimelineResponse
@@ -2901,6 +3012,39 @@ func ParseGetTimelineResponse(rsp *http.Response) (*GetTimelineResponse, error) 
 	return response, nil
 }
 
+// ParseGetFollowingTimelineResponse parses an HTTP response from a GetFollowingTimelineWithResponse call
+func ParseGetFollowingTimelineResponse(rsp *http.Response) (*GetFollowingTimelineResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetFollowingTimelineResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int      `json:"code"`
+			Data Timeline `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetUserTimelineResponse parses an HTTP response from a GetUserTimelineWithResponse call
 func ParseGetUserTimelineResponse(rsp *http.Response) (*GetUserTimelineResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -3315,9 +3459,12 @@ type ServerInterface interface {
 	// WebSocket ストリーム
 	// (GET /stream)
 	Stream(ctx echo.Context) error
-	// タイムラインを取得する
+	// オープンのタイムラインを取得する
 	// (GET /timeline)
 	GetTimeline(ctx echo.Context, params GetTimelineParams) error
+	// フォロー中のタイムラインを取得する
+	// (GET /timeline/following)
+	GetFollowingTimeline(ctx echo.Context, params GetFollowingTimelineParams) error
 	// ユーザーのタイムラインを取得する
 	// (GET /timeline/users/{user_id})
 	GetUserTimeline(ctx echo.Context, userId openapi_types.UUID, params GetUserTimelineParams) error
@@ -3544,15 +3691,35 @@ func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
 	}
 
-	// ------------- Optional query parameter "following" -------------
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetTimeline(ctx, params)
+	return err
+}
 
-	err = runtime.BindQueryParameter("form", true, false, "following", ctx.QueryParams(), &params.Following)
+// GetFollowingTimeline converts echo context to params.
+func (w *ServerInterfaceWrapper) GetFollowingTimeline(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetFollowingTimelineParams
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "cursor", ctx.QueryParams(), &params.Cursor)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter following: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter cursor: %s", err))
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "limit", ctx.QueryParams(), &params.Limit)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter limit: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetTimeline(ctx, params)
+	err = w.Handler.GetFollowingTimeline(ctx, params)
 	return err
 }
 
@@ -3808,6 +3975,7 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/posts/:post_id/favorites", wrapper.FavoritePost)
 	router.GET(baseURL+"/stream", wrapper.Stream)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
+	router.GET(baseURL+"/timeline/following", wrapper.GetFollowingTimeline)
 	router.GET(baseURL+"/timeline/users/:user_id", wrapper.GetUserTimeline)
 	router.GET(baseURL+"/users", wrapper.GetUser)
 	router.GET(baseURL+"/users/blocks", wrapper.GetUserBlocking)
@@ -3826,39 +3994,39 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"l9hZYid/wMWoGQ6H/w8AAP//3XtsJJ1BAAA=",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

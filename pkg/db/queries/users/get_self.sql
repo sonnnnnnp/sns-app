@@ -1,4 +1,4 @@
--- name: GetUserByName :one
+-- name: GetSelf :one
 SELECT
     sqlc.embed(users),
     (
@@ -45,4 +45,4 @@ SELECT
 FROM
     users
 WHERE
-    name = @name::text;
+    id = @self_id::uuid;

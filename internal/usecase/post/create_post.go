@@ -22,7 +22,7 @@ func (uc *PostUsecase) CreatePost(ctx context.Context, body *api.CreatePostJSONB
 	}
 
 	r, err := queries.GetPostByID(ctx, db.GetPostByIDParams{
-		SelfID: &selfUID,
+		SelfID: selfUID,
 		PostID: pID,
 	})
 	if err != nil {

@@ -16,10 +16,15 @@ const getUserBlocking = `-- name: GetUserBlocking :many
 SELECT
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     user_blocks.created_at AS blocked_at
-FROM users
-INNER JOIN user_blocks ON users.id = user_blocks.blocking_id
-WHERE user_blocks.blocker_id = $1::uuid
-ORDER BY user_blocks.created_at DESC
+FROM
+    users
+    INNER JOIN
+        user_blocks
+        ON users.id = user_blocks.blocked_id
+WHERE
+    user_blocks.blocker_id = $1::uuid
+ORDER BY
+    user_blocks.created_at DESC
 `
 
 type GetUserBlockingRow struct {

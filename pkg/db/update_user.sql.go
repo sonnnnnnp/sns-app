@@ -13,7 +13,8 @@ import (
 )
 
 const updateUser = `-- name: UpdateUser :exec
-UPDATE users
+UPDATE
+    users
 SET
     name = COALESCE($1, name)::text,
     nickname = COALESCE($2, nickname)::text,

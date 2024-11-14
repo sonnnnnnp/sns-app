@@ -16,25 +16,35 @@ SELECT
     posts.id, posts.author_id, posts.text, posts.created_at, posts.updated_at,
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     (
-        SELECT COUNT(*)
-        FROM post_favorites
-        WHERE post_favorites.post_id = posts.id
+        SELECT
+            COUNT(*)
+        FROM
+            post_favorites
+        WHERE
+            post_favorites.post_id = posts.id
     ) AS favorites_count,
     EXISTS (
-        SELECT 1
-        FROM post_favorites
-        WHERE post_favorites.post_id = posts.id AND (
-            post_favorites.user_id = $1::uuid
-        )
+        SELECT
+            1
+        FROM
+            post_favorites
+        WHERE
+            post_favorites.post_id = posts.id
+            AND (
+                post_favorites.user_id = $1::uuid
+            )
     ) AS favorited
-FROM posts
-INNER JOIN users ON posts.author_id = users.id
+FROM
+    posts
+    INNER JOIN
+        users
+        ON posts.author_id = users.id
 WHERE
     posts.id = $2::uuid
 `
 
 type GetPostByIDParams struct {
-	SelfID *uuid.UUID
+	SelfID uuid.UUID
 	PostID uuid.UUID
 }
 

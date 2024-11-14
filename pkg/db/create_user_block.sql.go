@@ -12,19 +12,24 @@ import (
 )
 
 const createUserBlock = `-- name: CreateUserBlock :exec
-INSERT INTO user_blocks (
-  blocker_id, blocking_id
-) VALUES (
-  $1::uuid, $2::uuid
-)
+INSERT INTO
+  user_blocks (
+    blocker_id,
+    blocked_id
+  )
+VALUES
+  (
+    $1::uuid,
+    $2::uuid
+  )
 `
 
 type CreateUserBlockParams struct {
-	BlockerID  uuid.UUID
-	BlockingID uuid.UUID
+	BlockerID uuid.UUID
+	BlockedID uuid.UUID
 }
 
 func (q *Queries) CreateUserBlock(ctx context.Context, arg CreateUserBlockParams) error {
-	_, err := q.db.Exec(ctx, createUserBlock, arg.BlockerID, arg.BlockingID)
+	_, err := q.db.Exec(ctx, createUserBlock, arg.BlockerID, arg.BlockedID)
 	return err
 }

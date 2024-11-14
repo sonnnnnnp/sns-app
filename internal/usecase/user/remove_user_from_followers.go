@@ -20,8 +20,8 @@ func (uc *UserUsecase) RemoveUserFromFollowers(ctx context.Context, uID uuid.UUI
 	}
 
 	if err := queries.DeleteUserFollow(ctx, db.DeleteUserFollowParams{
-		FollowerID:  uID,
-		FollowingID: selfUID,
+		FollowerID: uID,
+		FollowedID: selfUID,
 	}); err != nil {
 		return nil, err
 	}

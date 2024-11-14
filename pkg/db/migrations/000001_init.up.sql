@@ -18,16 +18,16 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS user_follows (
     follower_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    following_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    followed_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (follower_id, following_id)
+    PRIMARY KEY (follower_id, followed_id)
 );
 
 CREATE TABLE IF NOT EXISTS user_blocks (
     blocker_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    blocking_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    blocked_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (blocker_id, blocking_id)
+    PRIMARY KEY (blocker_id, blocked_id)
 );
 
 --  posts

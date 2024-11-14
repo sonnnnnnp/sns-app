@@ -12,16 +12,19 @@ import (
 )
 
 const deleteUserFollow = `-- name: DeleteUserFollow :exec
-DELETE FROM user_follows
-WHERE follower_id = $1::uuid AND following_id = $2::uuid
+DELETE FROM
+    user_follows
+WHERE
+    follower_id = $1::uuid
+    AND followed_id = $2::uuid
 `
 
 type DeleteUserFollowParams struct {
-	FollowerID  uuid.UUID
-	FollowingID uuid.UUID
+	FollowerID uuid.UUID
+	FollowedID uuid.UUID
 }
 
 func (q *Queries) DeleteUserFollow(ctx context.Context, arg DeleteUserFollowParams) error {
-	_, err := q.db.Exec(ctx, deleteUserFollow, arg.FollowerID, arg.FollowingID)
+	_, err := q.db.Exec(ctx, deleteUserFollow, arg.FollowerID, arg.FollowedID)
 	return err
 }

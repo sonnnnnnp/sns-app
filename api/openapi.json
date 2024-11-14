@@ -1088,7 +1088,7 @@
     },
     "/timeline": {
       "get": {
-        "summary": "タイムラインを取得する",
+        "summary": "オープンのタイムラインを取得する",
         "deprecated": false,
         "description": "",
         "operationId": "getTimeline",
@@ -1111,15 +1111,6 @@
             "required": false,
             "schema": {
               "type": "integer"
-            }
-          },
-          {
-            "name": "following",
-            "in": "query",
-            "description": "",
-            "required": false,
-            "schema": {
-              "type": "boolean"
             }
           }
         ],
@@ -1180,6 +1171,73 @@
               "format": "uuid"
             }
           },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "次のページを取得するためのキー",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Timeline"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/timeline/following": {
+      "get": {
+        "summary": "フォロー中のタイムラインを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getFollowingTimeline",
+        "tags": [],
+        "parameters": [
           {
             "name": "cursor",
             "in": "query",
