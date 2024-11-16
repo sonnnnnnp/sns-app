@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
       },
     },
   });
-
+  
   const cookieStore = cookies();
   cookieStore.set("access-token", data?.data.access_token!, {
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
