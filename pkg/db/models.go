@@ -12,6 +12,7 @@ import (
 type Post struct {
 	ID        uuid.UUID
 	AuthorID  uuid.UUID
+	ReplyToID *uuid.UUID
 	Text      *string
 	CreatedAt pgtype.Timestamptz
 	UpdatedAt pgtype.Timestamptz

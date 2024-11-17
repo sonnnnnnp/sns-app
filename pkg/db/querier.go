@@ -13,6 +13,7 @@ import (
 type Querier interface {
 	CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error)
 	CreatePostFavorite(ctx context.Context, arg CreatePostFavoriteParams) error
+	CreatePostReply(ctx context.Context, arg CreatePostReplyParams) (uuid.UUID, error)
 	CreateUser(ctx context.Context, lineID *string) (User, error)
 	CreateUserBlock(ctx context.Context, arg CreateUserBlockParams) error
 	CreateUserFollow(ctx context.Context, arg CreateUserFollowParams) error

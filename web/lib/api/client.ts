@@ -92,6 +92,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/posts/{post_id}/reply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** 投稿に返信する */
+        post: operations["createPostReply"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users/{user_id}/follows": {
         parameters: {
             query?: never;
@@ -180,7 +197,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/{name}": {
+    "/users": {
         parameters: {
             query?: never;
             header?: never;
@@ -188,7 +205,7 @@ export interface paths {
             cookie?: never;
         };
         /** ユーザーを取得する */
-        get: operations["getUserByName"];
+        get: operations["getUser"];
         put?: never;
         post?: never;
         delete?: never;
@@ -238,8 +255,25 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** タイムラインを取得する */
+        /** オープンのタイムラインを取得する */
         get: operations["getTimeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/timeline/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ユーザーのタイムラインを取得する */
+        get: operations["getUserTimeline"];
         put?: never;
         post?: never;
         delete?: never;
@@ -272,6 +306,44 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        UserFollower: {
+            /**
+             * Format: uuid
+             * @description ID番号
+             */
+            id: string;
+            /** @description 名前 */
+            name: string;
+            nickname: string;
+            avatar_image_url: string | null;
+            banner_image_url: string | null;
+            biography: string | null;
+            is_private: boolean;
+            block_status?: components["schemas"]["BlockStatus"];
+            social_connection?: components["schemas"]["SocialConnection"];
+            social_engagement?: components["schemas"]["SocialEngagement"];
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: date-time */
+            created_at: string;
+            /** Format: date-time */
+            followed_at: string;
+        };
+        SocialEngagement: {
+            following_count: number;
+            followers_count: number;
+            posts_count: number;
+            media_count: number;
+            favorites_count: number;
+        };
+        SocialConnection: {
+            following: boolean;
+            followed_by: boolean;
+        };
+        BlockStatus: {
+            blocking: boolean;
+            blocked_by: boolean;
+        };
         User: {
             /**
              * Format: uuid
@@ -284,29 +356,49 @@ export interface components {
             avatar_image_url: string | null;
             banner_image_url: string | null;
             biography: string | null;
-            social_connection?: components["schemas"]["SocialConnection"];
+            is_private: boolean;
             block_status?: components["schemas"]["BlockStatus"];
+            social_connection?: components["schemas"]["SocialConnection"];
+            social_engagement?: components["schemas"]["SocialEngagement"];
             /** Format: date-time */
             updated_at: string;
             /** Format: date-time */
             created_at: string;
         };
-        SocialConnection: {
-            following: boolean;
-            followed_by: boolean;
-        };
-        Users: {
-            users: components["schemas"]["User"][];
-        };
-        BlockStatus: {
-            blocking: boolean;
-            blocked_by: boolean;
+        Response: {
+            /** @description 正常に処理を終了したかどうか */
+            ok: boolean;
+            /** @description レスポンスコード */
+            code: number;
+            /** @description データ */
+            data: Record<string, never>;
         };
         Authorization: {
             user_id: string;
             access_token: string;
             refresh_token: string;
             is_new: boolean;
+        };
+        PostFavorite: {
+            /** Format: uuid */
+            post_id: string;
+            /** Format: date-time */
+            created_at: string;
+            user: components["schemas"]["User"];
+        };
+        UserFollowers: {
+            users: components["schemas"]["UserFollower"][];
+        };
+        Users: {
+            users: components["schemas"]["User"][];
+        };
+        PostTimeline: {
+            posts: components["schemas"]["Post"][];
+            /**
+             * Format: uuid
+             * @description 次のページを取得するためのキー
+             */
+            next_cursor: string;
         };
         Post: {
             /**
@@ -322,56 +414,6 @@ export interface components {
             updated_at: string;
             /** Format: date-time */
             created_at: string;
-        };
-        PostFavorite: {
-            /** Format: uuid */
-            post_id: string;
-            /** Format: date-time */
-            created_at: string;
-            user: components["schemas"]["User"];
-        };
-        Timeline: {
-            posts: components["schemas"]["Post"][];
-            /**
-             * Format: uuid
-             * @description 次のページを取得するためのキー
-             */
-            next_cursor: string;
-        };
-        SocialSetting: {
-            lineId: string | null;
-        };
-        UserFollower: {
-            /**
-             * Format: uuid
-             * @description ID番号
-             */
-            id: string;
-            /** @description 名前 */
-            name: string;
-            nickname: string;
-            avatar_image_url: string | null;
-            banner_image_url: string | null;
-            biography: string | null;
-            social_connection?: components["schemas"]["SocialConnection"];
-            block_status?: components["schemas"]["BlockStatus"];
-            /** Format: date-time */
-            updated_at: string;
-            /** Format: date-time */
-            created_at: string;
-            /** Format: date-time */
-            followed_at: string;
-        };
-        UserFollowers: {
-            users: components["schemas"]["UserFollower"][];
-        };
-        Response: {
-            /** @description 正常に処理を終了したかどうか */
-            ok: boolean;
-            /** @description レスポンスコード */
-            code: number;
-            /** @description データ */
-            data: Record<string, never>;
         };
     };
     responses: never;
@@ -598,6 +640,33 @@ export interface operations {
             };
         };
     };
+    createPostReply: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                post_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    content?: string;
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Response"];
+                };
+            };
+        };
+    };
     followUser: {
         parameters: {
             query?: never;
@@ -803,13 +872,14 @@ export interface operations {
             };
         };
     };
-    getUserByName: {
+    getUser: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                name: string;
+            query?: {
+                /** @description 名前 */
+                name?: string;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -898,8 +968,6 @@ export interface operations {
                 /** @description 次のページを取得するためのキー */
                 cursor?: string;
                 limit?: number;
-                user_id?: string;
-                following?: boolean;
             };
             header?: never;
             path?: never;
@@ -918,7 +986,39 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         /** @description データ */
-                        data: components["schemas"]["Timeline"];
+                        data: components["schemas"]["PostTimeline"];
+                    };
+                };
+            };
+        };
+    };
+    getUserTimeline: {
+        parameters: {
+            query?: {
+                /** @description 次のページを取得するためのキー */
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["PostTimeline"];
                     };
                 };
             };
