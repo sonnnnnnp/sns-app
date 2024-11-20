@@ -43,6 +43,13 @@ var errorCodeMap = map[error]int{
 	ErrPostNotFound:         -130000,
 	ErrPostAreadlyFavorited: -130001,
 	ErrPostFavoriteNotFound: -130002,
+
+	// -- calls --
+
+	ErrCallNotFound:       -140000,
+	ErrNotCallHost:        -140001,
+	ErrAlreadyJoinedACall: -140002,
+	ErrCallAlreadyEnded:   -140003,
 }
 
 func getErrorCode(err error) int {

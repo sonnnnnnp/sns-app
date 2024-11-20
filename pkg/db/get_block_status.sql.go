@@ -14,25 +14,33 @@ import (
 const getBlockStatus = `-- name: GetBlockStatus :one
 SELECT
     EXISTS (
-        SELECT 1
-        FROM user_blocks
-        WHERE blocker_id = $1::uuid AND blocking_id = $2::uuid
+        SELECT
+            1
+        FROM
+            user_blocks
+        WHERE
+            blocker_id = $1::uuid
+            AND blocked_id = $2::uuid
     ) AS blocking,
     EXISTS (
-        SELECT 1
-        FROM user_blocks
-        WHERE blocker_id = $2::uuid AND blocking_id = $1::uuid
+        SELECT
+            1
+        FROM
+            user_blocks
+        WHERE
+            blocker_id = $2::uuid
+            AND blocked_id = $1::uuid
     ) AS blocked_by
 `
 
 type GetBlockStatusParams struct {
-	SelfID   uuid.UUID
-	TargetID uuid.UUID
+	SelfID   uuid.UUID `json:"self_id"`
+	TargetID uuid.UUID `json:"target_id"`
 }
 
 type GetBlockStatusRow struct {
-	Blocking  bool
-	BlockedBy bool
+	Blocking  bool `json:"blocking"`
+	BlockedBy bool `json:"blocked_by"`
 }
 
 func (q *Queries) GetBlockStatus(ctx context.Context, arg GetBlockStatusParams) (GetBlockStatusRow, error) {

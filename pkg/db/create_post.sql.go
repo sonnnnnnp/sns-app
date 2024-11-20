@@ -12,17 +12,22 @@ import (
 )
 
 const createPost = `-- name: CreatePost :one
-INSERT INTO posts (
-  author_id, text
-) VALUES (
-  $1::uuid, $2::text
-)
+INSERT INTO
+  posts (
+    author_id,
+    text
+  )
+VALUES
+  (
+    $1::uuid,
+    $2::text
+  )
 RETURNING posts.id
 `
 
 type CreatePostParams struct {
-	AuthorID uuid.UUID
-	Text     *string
+	AuthorID uuid.UUID `json:"author_id"`
+	Text     *string   `json:"text"`
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error) {

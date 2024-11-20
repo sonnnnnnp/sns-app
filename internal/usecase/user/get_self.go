@@ -16,7 +16,7 @@ func (uc *UserUsecase) GetSelf(ctx context.Context) (*api.User, error) {
 
 	queries := db.New(uc.pool)
 
-	row, err := queries.GetUserByID(ctx, selfUID)
+	row, err := queries.GetSelf(ctx, selfUID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, internal_errors.ErrUserNotFound

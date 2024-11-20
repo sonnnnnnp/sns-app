@@ -350,20 +350,23 @@ export function Timeline() {
   const onTabChange = async (value: string) => {
     setTabValue(value);
 
-    const { data } = await client.GET("/timeline", {
-      params: {
-        query: {
-          following: value === "following",
-        },
-      },
-    });
-    if (!data?.ok) {
-      return console.error("error fetching timeline");
+    let timeline: components["schemas"]["Timeline"];
+
+    if (value === "following") {
+      const { data } = await client.GET("/timeline/following");
+      if (!data?.ok) {
+        return console.error("error fetching timeline");
+      }
+      timeline = data?.data;
+    } else {
+      const { data } = await client.GET("/timeline");
+      if (!data?.ok) {
+        return console.error("error fetching timeline");
+      }
+      timeline = data?.data;
     }
 
-    console.log(value);
-
-    setPosts(data?.data.posts ?? []);
+    setPosts(timeline.posts ?? []);
   };
 
   const onPostContentChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {

@@ -6,6 +6,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/call"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/call_timeline"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/post"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
@@ -19,26 +21,32 @@ type Response struct {
 }
 
 type Controller struct {
-	authUsecase     *authorize.AuthorizeUsecase
-	postUsecase     *post.PostUsecase
-	streamUsecase   *stream.StreamUsecase
-	timelineUsecase *timeline.TimelineUsecase
-	userUsecase     *user.UserUsecase
+	authUsecase         *authorize.AuthorizeUsecase
+	callUsecase         *call.CallUsecase
+	callTimelineUsecase *call_timeline.CallTimelineUsecase
+	postUsecase         *post.PostUsecase
+	streamUsecase       *stream.StreamUsecase
+	timelineUsecase     *timeline.TimelineUsecase
+	userUsecase         *user.UserUsecase
 }
 
 func New(
 	authUsecase *authorize.AuthorizeUsecase,
+	callUsecase *call.CallUsecase,
+	callTimelineUsecase *call_timeline.CallTimelineUsecase,
 	postUsecase *post.PostUsecase,
 	streamUsecase *stream.StreamUsecase,
 	timelineUsecase *timeline.TimelineUsecase,
 	userUsecase *user.UserUsecase,
 ) *Controller {
 	return &Controller{
-		authUsecase:     authUsecase,
-		postUsecase:     postUsecase,
-		streamUsecase:   streamUsecase,
-		timelineUsecase: timelineUsecase,
-		userUsecase:     userUsecase,
+		authUsecase:         authUsecase,
+		callUsecase:         callUsecase,
+		callTimelineUsecase: callTimelineUsecase,
+		postUsecase:         postUsecase,
+		streamUsecase:       streamUsecase,
+		timelineUsecase:     timelineUsecase,
+		userUsecase:         userUsecase,
 	}
 }
 

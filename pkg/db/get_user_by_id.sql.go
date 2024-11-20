@@ -13,83 +13,28 @@ import (
 
 const getUserByID = `-- name: GetUserByID :one
 SELECT
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
-    (
-        SELECT
-            COUNT(*)
-        FROM
-            user_follows
-        WHERE
-            user_follows.follower_id = users.id
-    ) as following_count,
-    (
-        SELECT
-            COUNT(*)
-        FROM
-            user_follows
-        WHERE
-            user_follows.following_id = users.id
-    ) as followers_count,
-    (
-        SELECT
-            COUNT(*)
-        FROM
-            posts
-        WHERE
-            posts.author_id = users.id
-    ) as posts_count,
-    (
-        SELECT
-            COUNT(*)
-        FROM
-            posts
-        WHERE
-            -- TODO: メディアを含む投稿を探す
-            posts.author_id = users.id
-    ) as media_count,
-    (
-        SELECT
-            COUNT(*)
-        FROM
-            post_favorites
-        WHERE
-            post_favorites.user_id = users.id
-    ) as favorites_count
+    id, name, nickname, biography, avatar_image_url, banner_image_url, is_private, birthdate, line_id, created_at, updated_at
 FROM
     users
 WHERE
     id = $1::uuid
 `
 
-type GetUserByIDRow struct {
-	User           User
-	FollowingCount int64
-	FollowersCount int64
-	PostsCount     int64
-	MediaCount     int64
-	FavoritesCount int64
-}
-
-func (q *Queries) GetUserByID(ctx context.Context, userID uuid.UUID) (GetUserByIDRow, error) {
+func (q *Queries) GetUserByID(ctx context.Context, userID uuid.UUID) (User, error) {
 	row := q.db.QueryRow(ctx, getUserByID, userID)
-	var i GetUserByIDRow
+	var i User
 	err := row.Scan(
-		&i.User.ID,
-		&i.User.Name,
-		&i.User.Nickname,
-		&i.User.Biography,
-		&i.User.AvatarImageUrl,
-		&i.User.BannerImageUrl,
-		&i.User.IsPrivate,
-		&i.User.Birthdate,
-		&i.User.LineID,
-		&i.User.CreatedAt,
-		&i.User.UpdatedAt,
-		&i.FollowingCount,
-		&i.FollowersCount,
-		&i.PostsCount,
-		&i.MediaCount,
-		&i.FavoritesCount,
+		&i.ID,
+		&i.Name,
+		&i.Nickname,
+		&i.Biography,
+		&i.AvatarImageUrl,
+		&i.BannerImageUrl,
+		&i.IsPrivate,
+		&i.Birthdate,
+		&i.LineID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }

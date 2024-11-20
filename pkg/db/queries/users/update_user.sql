@@ -1,5 +1,6 @@
 -- name: UpdateUser :exec
-UPDATE users
+UPDATE
+    users
 SET
     name = COALESCE(sqlc.narg(name), name)::text,
     nickname = COALESCE(sqlc.narg(nickname), nickname)::text,

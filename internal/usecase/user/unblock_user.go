@@ -17,7 +17,7 @@ func (uc *UserUsecase) UnblockUser(ctx context.Context, uID uuid.UUID) error {
 	}
 
 	return db.New(uc.pool).DeleteUserBlock(ctx, db.DeleteUserBlockParams{
-		BlockerID:  selfUID,
-		BlockingID: uID,
+		BlockerID: selfUID,
+		BlockedID: uID,
 	})
 }

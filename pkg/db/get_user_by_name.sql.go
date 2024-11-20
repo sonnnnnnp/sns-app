@@ -19,15 +19,15 @@ SELECT
             user_follows
         WHERE
             user_follows.follower_id = users.id
-    ) as following_count,
+    ) AS following_count,
     (
         SELECT
             COUNT(*)
         FROM
             user_follows
         WHERE
-            user_follows.following_id = users.id
-    ) as followers_count,
+            user_follows.followed_id = users.id
+    ) AS followers_count,
     (
         SELECT
             COUNT(*)
@@ -35,7 +35,7 @@ SELECT
             posts
         WHERE
             posts.author_id = users.id
-    ) as posts_count,
+    ) AS posts_count,
     (
         SELECT
             COUNT(*)
@@ -44,7 +44,7 @@ SELECT
         WHERE
             -- TODO: メディアを含む投稿を探す
             posts.author_id = users.id
-    ) as media_count,
+    ) AS media_count,
     (
         SELECT
             COUNT(*)
@@ -52,7 +52,7 @@ SELECT
             post_favorites
         WHERE
             post_favorites.user_id = users.id
-    ) as favorites_count
+    ) AS favorites_count
 FROM
     users
 WHERE
@@ -60,12 +60,12 @@ WHERE
 `
 
 type GetUserByNameRow struct {
-	User           User
-	FollowingCount int64
-	FollowersCount int64
-	PostsCount     int64
-	MediaCount     int64
-	FavoritesCount int64
+	User           User  `json:"user"`
+	FollowingCount int64 `json:"following_count"`
+	FollowersCount int64 `json:"followers_count"`
+	PostsCount     int64 `json:"posts_count"`
+	MediaCount     int64 `json:"media_count"`
+	FavoritesCount int64 `json:"favorites_count"`
 }
 
 func (q *Queries) GetUserByName(ctx context.Context, name string) (GetUserByNameRow, error) {

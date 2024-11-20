@@ -17,21 +17,29 @@ SELECT
     posts.id, posts.author_id, posts.text, posts.created_at, posts.updated_at,
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     (
-        SELECT COUNT(*)
-        FROM post_favorites
-        WHERE post_favorites.post_id = posts.id
+        SELECT
+            COUNT(*)
+        FROM
+            post_favorites
+        WHERE
+            post_favorites.post_id = posts.id
     ) AS favorites_count,
     EXISTS (
-        SELECT 1
-        FROM post_favorites
-        WHERE post_favorites.post_id = posts.id AND (
-            post_favorites.user_id = $2::uuid
-        )
+        SELECT
+            1
+        FROM
+            post_favorites
+        WHERE
+            post_favorites.post_id = posts.id
+            AND (
+                post_favorites.user_id = $2::uuid
+            )
     ) AS favorited
 FROM
     posts
-INNER JOIN
-    users ON posts.author_id = users.id
+    INNER JOIN
+        users
+        ON posts.author_id = users.id
 WHERE
     posts.author_id = $3::uuid
     AND (
@@ -40,21 +48,22 @@ WHERE
     )
 ORDER BY
     posts.created_at DESC
-LIMIT $1
+LIMIT
+    $1
 `
 
 type GetUserTimelineParams struct {
-	Limit     int64
-	SelfID    *uuid.UUID
-	AuthorID  uuid.UUID
-	CreatedAt *time.Time
+	Limit     int64      `json:"limit"`
+	SelfID    uuid.UUID  `json:"self_id"`
+	AuthorID  uuid.UUID  `json:"author_id"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 type GetUserTimelineRow struct {
-	Post           Post
-	User           User
-	FavoritesCount int64
-	Favorited      bool
+	Post           Post  `json:"post"`
+	User           User  `json:"user"`
+	FavoritesCount int64 `json:"favorites_count"`
+	Favorited      bool  `json:"favorited"`
 }
 
 func (q *Queries) GetUserTimeline(ctx context.Context, arg GetUserTimelineParams) ([]GetUserTimelineRow, error) {

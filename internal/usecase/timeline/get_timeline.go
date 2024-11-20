@@ -13,11 +13,6 @@ import (
 	"github.com/sonnnnnnp/sns-app/pkg/db"
 )
 
-var (
-	defaultLimit = 25
-	maxLimit     = 100
-)
-
 func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *api.GetTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
@@ -27,7 +22,7 @@ func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *api.GetTimel
 	var fromCursor *time.Time
 	if params.Cursor != nil {
 		r, err := queries.GetPostByID(ctx, db.GetPostByIDParams{
-			SelfID: &selfUID,
+			SelfID: selfUID,
 			PostID: *params.Cursor,
 		})
 		if err != nil {
@@ -47,17 +42,11 @@ func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *api.GetTimel
 		params.Limit = &maxLimit
 	}
 
-	var onlyFollowing bool
-	if params.Following != nil {
-		onlyFollowing = *params.Following
-	}
-
 	// タイムラインを取得
 	rows, err := queries.GetTimeline(ctx, db.GetTimelineParams{
-		SelfID:        &selfUID,
-		CreatedAt:     fromCursor,
-		Limit:         int64(*params.Limit),
-		OnlyFollowing: onlyFollowing,
+		SelfID:    selfUID,
+		CreatedAt: fromCursor,
+		Limit:     int64(*params.Limit),
 	})
 	if err != nil {
 		return nil, uuid.Nil, err

@@ -15,15 +15,20 @@ const getPostFavorites = `-- name: GetPostFavorites :many
 SELECT
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     post_favorites.user_id, post_favorites.post_id, post_favorites.created_at
-FROM users
-INNER JOIN post_favorites ON users.id = post_favorites.user_id
-WHERE post_favorites.post_id = $1::uuid
-ORDER BY post_favorites.created_at DESC
+FROM
+    users
+    INNER JOIN
+        post_favorites
+        ON users.id = post_favorites.user_id
+WHERE
+    post_favorites.post_id = $1::uuid
+ORDER BY
+    post_favorites.created_at DESC
 `
 
 type GetPostFavoritesRow struct {
-	User         User
-	PostFavorite PostFavorite
+	User         User         `json:"user"`
+	PostFavorite PostFavorite `json:"post_favorite"`
 }
 
 func (q *Queries) GetPostFavorites(ctx context.Context, postID uuid.UUID) ([]GetPostFavoritesRow, error) {

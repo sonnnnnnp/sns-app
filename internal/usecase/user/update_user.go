@@ -25,19 +25,19 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, body *api.UpdateUserJSONB
 		return nil, err
 	}
 
-	row, err := queries.GetUserByID(ctx, selfUID)
+	u, err := queries.GetUserByID(ctx, selfUID)
 	if err != nil {
 		return nil, err
 	}
 
 	return &api.User{
-		Id:             row.User.ID,
-		Name:           row.User.Name,
-		Nickname:       row.User.Nickname,
-		AvatarImageUrl: row.User.AvatarImageUrl,
-		BannerImageUrl: row.User.BannerImageUrl,
-		Biography:      row.User.Biography,
-		UpdatedAt:      row.User.UpdatedAt.Time,
-		CreatedAt:      row.User.CreatedAt.Time,
+		Id:             u.ID,
+		Name:           u.Name,
+		Nickname:       u.Nickname,
+		AvatarImageUrl: u.AvatarImageUrl,
+		BannerImageUrl: u.BannerImageUrl,
+		Biography:      u.Biography,
+		UpdatedAt:      u.UpdatedAt.Time,
+		CreatedAt:      u.CreatedAt.Time,
 	}, nil
 }

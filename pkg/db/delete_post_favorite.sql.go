@@ -12,13 +12,16 @@ import (
 )
 
 const deletePostFavorite = `-- name: DeletePostFavorite :exec
-DELETE FROM post_favorites
-WHERE user_id = $1::uuid AND post_id = $2::uuid
+DELETE FROM
+    post_favorites
+WHERE
+    user_id = $1::uuid
+    AND post_id = $2::uuid
 `
 
 type DeletePostFavoriteParams struct {
-	UserID uuid.UUID
-	PostID uuid.UUID
+	UserID uuid.UUID `json:"user_id"`
+	PostID uuid.UUID `json:"post_id"`
 }
 
 func (q *Queries) DeletePostFavorite(ctx context.Context, arg DeletePostFavoriteParams) error {

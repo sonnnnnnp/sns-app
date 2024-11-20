@@ -35,7 +35,7 @@ func (uc *TimelineUsecase) GetUserTimeline(ctx context.Context, uID uuid.UUID, p
 	var fromCursor *time.Time
 	if params.Cursor != nil {
 		r, err := queries.GetPostByID(ctx, db.GetPostByIDParams{
-			SelfID: &selfUID,
+			SelfID: selfUID,
 			PostID: *params.Cursor,
 		})
 		if err != nil {
@@ -57,7 +57,7 @@ func (uc *TimelineUsecase) GetUserTimeline(ctx context.Context, uID uuid.UUID, p
 
 	// タイムラインを取得
 	rows, err := queries.GetUserTimeline(ctx, db.GetUserTimelineParams{
-		SelfID:    &selfUID,
+		SelfID:    selfUID,
 		AuthorID:  uID,
 		CreatedAt: fromCursor,
 		Limit:     int64(*params.Limit),

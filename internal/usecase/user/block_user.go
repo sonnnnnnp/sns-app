@@ -36,7 +36,7 @@ func (uc *UserUsecase) BlockUser(ctx context.Context, uID uuid.UUID) error {
 	}
 
 	return queries.CreateUserBlock(ctx, db.CreateUserBlockParams{
-		BlockerID:  selfUID,
-		BlockingID: uID,
+		BlockerID: selfUID,
+		BlockedID: uID,
 	})
 }

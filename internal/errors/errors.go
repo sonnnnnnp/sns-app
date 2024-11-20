@@ -24,6 +24,12 @@ var (
 	ErrPostAreadlyFavorited = errors.New("post already favorited")
 	ErrPostFavoriteNotFound = errors.New("post favorite not found")
 
+	// call
+	ErrCallNotFound       = errors.New("call not found")
+	ErrNotCallHost        = errors.New("not call host")
+	ErrAlreadyJoinedACall = errors.New("already joined a call")
+	ErrCallAlreadyEnded   = errors.New("call already ended")
+
 	// other
 	ErrCursorNotFound            = errors.New("cursor not found")
 	ErrWebsocketProtocolRequired = errors.New("websocket protocol required")

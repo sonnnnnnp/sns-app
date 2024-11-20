@@ -12,19 +12,24 @@ import (
 )
 
 const createUserFollow = `-- name: CreateUserFollow :exec
-INSERT INTO user_follows (
-  follower_id, following_id
-) VALUES (
-  $1::uuid, $2::uuid
-)
+INSERT INTO
+  user_follows (
+    follower_id,
+    followed_id
+  )
+VALUES
+  (
+    $1::uuid,
+    $2::uuid
+  )
 `
 
 type CreateUserFollowParams struct {
-	FollowerID  uuid.UUID
-	FollowingID uuid.UUID
+	FollowerID uuid.UUID `json:"follower_id"`
+	FollowedID uuid.UUID `json:"followed_id"`
 }
 
 func (q *Queries) CreateUserFollow(ctx context.Context, arg CreateUserFollowParams) error {
-	_, err := q.db.Exec(ctx, createUserFollow, arg.FollowerID, arg.FollowingID)
+	_, err := q.db.Exec(ctx, createUserFollow, arg.FollowerID, arg.FollowedID)
 	return err
 }

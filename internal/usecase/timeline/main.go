@@ -10,6 +10,7 @@ import (
 
 type ITimelineUsecase interface {
 	GetTimeline(ctx context.Context, params *api.GetTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error)
+	GetFollowingTimeline(ctx context.Context, params *api.GetFollowingTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error)
 	GetUserTimeline(ctx context.Context, uID uuid.UUID, params *api.GetUserTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error)
 }
 
@@ -24,5 +25,10 @@ func New(
 		pool: pool,
 	}
 }
+
+var (
+	defaultLimit = 25
+	maxLimit     = 100
+)
 
 var _ ITimelineUsecase = (*TimelineUsecase)(nil)

@@ -16,25 +16,30 @@ const getUserFollowing = `-- name: GetUserFollowing :many
 SELECT
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     user_follows.created_at AS followed_at
-FROM users
-INNER JOIN user_follows ON users.id = user_follows.following_id
-WHERE user_follows.follower_id = $1::uuid
-ORDER BY user_follows.created_at DESC
+FROM
+    users
+    INNER JOIN
+        user_follows
+        ON users.id = user_follows.followed_id
+WHERE
+    user_follows.follower_id = $1::uuid
+ORDER BY
+    user_follows.created_at DESC
 `
 
 type GetUserFollowingRow struct {
-	ID             uuid.UUID
-	Name           string
-	Nickname       string
-	Biography      *string
-	AvatarImageUrl *string
-	BannerImageUrl *string
-	IsPrivate      *bool
-	Birthdate      pgtype.Timestamptz
-	LineID         *string
-	CreatedAt      pgtype.Timestamptz
-	UpdatedAt      pgtype.Timestamptz
-	FollowedAt     pgtype.Timestamptz
+	ID             uuid.UUID          `json:"id"`
+	Name           string             `json:"name"`
+	Nickname       string             `json:"nickname"`
+	Biography      *string            `json:"biography"`
+	AvatarImageUrl *string            `json:"avatar_image_url"`
+	BannerImageUrl *string            `json:"banner_image_url"`
+	IsPrivate      *bool              `json:"is_private"`
+	Birthdate      pgtype.Timestamptz `json:"birthdate"`
+	LineID         *string            `json:"line_id"`
+	CreatedAt      pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt      pgtype.Timestamptz `json:"updated_at"`
+	FollowedAt     pgtype.Timestamptz `json:"followed_at"`
 }
 
 func (q *Queries) GetUserFollowing(ctx context.Context, userID uuid.UUID) ([]GetUserFollowingRow, error) {
