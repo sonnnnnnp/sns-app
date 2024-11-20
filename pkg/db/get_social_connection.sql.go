@@ -34,13 +34,13 @@ SELECT
 `
 
 type GetSocialConnectionParams struct {
-	SelfID   uuid.UUID
-	TargetID uuid.UUID
+	SelfID   uuid.UUID `json:"self_id"`
+	TargetID uuid.UUID `json:"target_id"`
 }
 
 type GetSocialConnectionRow struct {
-	Following  bool
-	FollowedBy bool
+	Following  bool `json:"following"`
+	FollowedBy bool `json:"followed_by"`
 }
 
 func (q *Queries) GetSocialConnection(ctx context.Context, arg GetSocialConnectionParams) (GetSocialConnectionRow, error) {

@@ -55,6 +55,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/calls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** 通話を作成する */
+        post: operations["createCall"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/calls/{call_id}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** 通話を終了する */
+        put: operations["endCall"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/posts/{post_id}/favorites": {
         parameters: {
             query?: never;
@@ -299,6 +333,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/call_timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** オープンの通話タイムラインを取得する */
+        get: operations["getCallTimeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/call_timeline/following": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** フォロー中の通話タイムラインを取得する */
+        get: operations["getFollowingCallTimeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/call_timeline/users/{user_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ユーザーの通話タイムラインを取得する */
+        get: operations["getUserCallTimeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/stream": {
         parameters: {
             query?: never;
@@ -323,6 +408,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        CallParticipant: {
+            user: components["schemas"]["User"];
+            /** @enum {string} */
+            role: "host" | "co-host" | "participant";
+        };
         User: {
             /**
              * Format: uuid
@@ -344,17 +434,6 @@ export interface components {
             /** Format: date-time */
             created_at: string;
         };
-        SocialConnection: {
-            following: boolean;
-            followed_by: boolean;
-        };
-        Users: {
-            users: components["schemas"]["User"][];
-        };
-        BlockStatus: {
-            blocking: boolean;
-            blocked_by: boolean;
-        };
         SocialEngagement: {
             following_count: number;
             followers_count: number;
@@ -362,44 +441,13 @@ export interface components {
             media_count: number;
             favorites_count: number;
         };
-        Authorization: {
-            user_id: string;
-            access_token: string;
-            refresh_token: string;
-            is_new: boolean;
+        SocialConnection: {
+            following: boolean;
+            followed_by: boolean;
         };
-        Post: {
-            /**
-             * Format: uuid
-             * @description ID番号
-             */
-            id: string;
-            author: components["schemas"]["User"];
-            text: string | null;
-            favorited: boolean;
-            favorites_count: number;
-            /** Format: date-time */
-            updated_at: string;
-            /** Format: date-time */
-            created_at: string;
-        };
-        PostFavorite: {
-            /** Format: uuid */
-            post_id: string;
-            /** Format: date-time */
-            created_at: string;
-            user: components["schemas"]["User"];
-        };
-        Timeline: {
-            posts: components["schemas"]["Post"][];
-            /**
-             * Format: uuid
-             * @description 次のページを取得するためのキー
-             */
-            next_cursor: string;
-        };
-        SocialSetting: {
-            lineId: string | null;
+        BlockStatus: {
+            blocking: boolean;
+            blocked_by: boolean;
         };
         UserFollower: {
             /**
@@ -424,9 +472,6 @@ export interface components {
             /** Format: date-time */
             followed_at: string;
         };
-        UserFollowers: {
-            users: components["schemas"]["UserFollower"][];
-        };
         Response: {
             /** @description 正常に処理を終了したかどうか */
             ok: boolean;
@@ -434,6 +479,70 @@ export interface components {
             code: number;
             /** @description データ */
             data: Record<string, never>;
+        };
+        Authorization: {
+            user_id: string;
+            access_token: string;
+            refresh_token: string;
+            is_new: boolean;
+        };
+        CallTimeline: {
+            rooms: components["schemas"]["CallRoom"][];
+            /**
+             * Format: uuid
+             * @description 次のページを取得するためのキー
+             */
+            next_cursor: string;
+        };
+        CallRoom: {
+            /**
+             * Format: uuid
+             * @description ID番号
+             */
+            id: string;
+            title: string;
+            /** @enum {string} */
+            type: "voice" | "video";
+            is_active: boolean;
+            /** @enum {string} */
+            joinable_by: "all" | "followers" | "friends" | "nobody";
+            participants: components["schemas"]["CallParticipant"][];
+        };
+        PostFavorite: {
+            /** Format: uuid */
+            post_id: string;
+            /** Format: date-time */
+            created_at: string;
+            user: components["schemas"]["User"];
+        };
+        UserFollowers: {
+            users: components["schemas"]["UserFollower"][];
+        };
+        Users: {
+            users: components["schemas"]["User"][];
+        };
+        PostTimeline: {
+            posts: components["schemas"]["Post"][];
+            /**
+             * Format: uuid
+             * @description 次のページを取得するためのキー
+             */
+            next_cursor: string;
+        };
+        Post: {
+            /**
+             * Format: uuid
+             * @description ID番号
+             */
+            id: string;
+            author: components["schemas"]["User"];
+            text: string | null;
+            favorited: boolean;
+            favorites_count: number;
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: date-time */
+            created_at: string;
         };
     };
     responses: never;
@@ -528,6 +637,68 @@ export interface operations {
                         code: number;
                         /** @description データ */
                         data: components["schemas"]["Authorization"];
+                    };
+                };
+            };
+        };
+    };
+    createCall: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    title?: string;
+                    /** @enum {string} */
+                    type?: "voice" | "video";
+                    /** @enum {string} */
+                    joinable_by?: "all" | "followers" | "friends" | "nobody";
+                };
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["CallRoom"];
+                    };
+                };
+            };
+        };
+    };
+    endCall: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                call_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        data: components["schemas"]["CallRoom"];
                     };
                 };
             };
@@ -1008,7 +1179,7 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         /** @description データ */
-                        data: components["schemas"]["Timeline"];
+                        data: components["schemas"]["PostTimeline"];
                     };
                 };
             };
@@ -1040,7 +1211,7 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         /** @description データ */
-                        data: components["schemas"]["Timeline"];
+                        data: components["schemas"]["PostTimeline"];
                     };
                 };
             };
@@ -1070,7 +1241,99 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         /** @description データ */
-                        data: components["schemas"]["Timeline"];
+                        data: components["schemas"]["PostTimeline"];
+                    };
+                };
+            };
+        };
+    };
+    getCallTimeline: {
+        parameters: {
+            query?: {
+                /** @description 次のページを取得するためのキー */
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["CallTimeline"];
+                    };
+                };
+            };
+        };
+    };
+    getFollowingCallTimeline: {
+        parameters: {
+            query?: {
+                /** @description 次のページを取得するためのキー */
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["CallTimeline"];
+                    };
+                };
+            };
+        };
+    };
+    getUserCallTimeline: {
+        parameters: {
+            query?: {
+                /** @description 次のページを取得するためのキー */
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["CallTimeline"];
                     };
                 };
             };

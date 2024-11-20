@@ -20,8 +20,8 @@ WHERE
 `
 
 type DeleteUserBlockParams struct {
-	BlockerID uuid.UUID
-	BlockedID uuid.UUID
+	BlockerID uuid.UUID `json:"blocker_id"`
+	BlockedID uuid.UUID `json:"blocked_id"`
 }
 
 func (q *Queries) DeleteUserBlock(ctx context.Context, arg DeleteUserBlockParams) error {

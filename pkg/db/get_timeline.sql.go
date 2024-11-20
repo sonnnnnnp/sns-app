@@ -60,16 +60,16 @@ LIMIT
 `
 
 type GetTimelineParams struct {
-	Limit     int64
-	SelfID    uuid.UUID
-	CreatedAt *time.Time
+	Limit     int64      `json:"limit"`
+	SelfID    uuid.UUID  `json:"self_id"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 type GetTimelineRow struct {
-	Post           Post
-	User           User
-	FavoritesCount int64
-	Favorited      bool
+	Post           Post  `json:"post"`
+	User           User  `json:"user"`
+	FavoritesCount int64 `json:"favorites_count"`
+	Favorited      bool  `json:"favorited"`
 }
 
 func (q *Queries) GetTimeline(ctx context.Context, arg GetTimelineParams) ([]GetTimelineRow, error) {

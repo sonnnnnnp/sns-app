@@ -60,12 +60,12 @@ WHERE
 `
 
 type GetUserByNameRow struct {
-	User           User
-	FollowingCount int64
-	FollowersCount int64
-	PostsCount     int64
-	MediaCount     int64
-	FavoritesCount int64
+	User           User  `json:"user"`
+	FollowingCount int64 `json:"following_count"`
+	FollowersCount int64 `json:"followers_count"`
+	PostsCount     int64 `json:"posts_count"`
+	MediaCount     int64 `json:"media_count"`
+	FavoritesCount int64 `json:"favorites_count"`
 }
 
 func (q *Queries) GetUserByName(ctx context.Context, name string) (GetUserByNameRow, error) {

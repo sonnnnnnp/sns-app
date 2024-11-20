@@ -20,8 +20,8 @@ WHERE
 `
 
 type DeletePostFavoriteParams struct {
-	UserID uuid.UUID
-	PostID uuid.UUID
+	UserID uuid.UUID `json:"user_id"`
+	PostID uuid.UUID `json:"post_id"`
 }
 
 func (q *Queries) DeletePostFavorite(ctx context.Context, arg DeletePostFavoriteParams) error {

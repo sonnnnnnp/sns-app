@@ -14,7 +14,7 @@ func (c Controller) GetTimeline(ctx echo.Context, params api.GetTimelineParams) 
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.Timeline{
+	return c.json(ctx, http.StatusOK, &api.PostTimeline{
 		Posts:      posts,
 		NextCursor: nextCursor,
 	})
@@ -26,7 +26,7 @@ func (c Controller) GetFollowingTimeline(ctx echo.Context, params api.GetFollowi
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.Timeline{
+	return c.json(ctx, http.StatusOK, &api.PostTimeline{
 		Posts:      posts,
 		NextCursor: nextCursor,
 	})
@@ -38,7 +38,7 @@ func (c Controller) GetUserTimeline(ctx echo.Context, uID uuid.UUID, params api.
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.Timeline{
+	return c.json(ctx, http.StatusOK, &api.PostTimeline{
 		Posts:      posts,
 		NextCursor: nextCursor,
 	})

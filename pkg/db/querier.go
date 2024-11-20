@@ -11,6 +11,7 @@ import (
 )
 
 type Querier interface {
+	CreateCall(ctx context.Context, arg CreateCallParams) (uuid.UUID, error)
 	CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error)
 	CreatePostFavorite(ctx context.Context, arg CreatePostFavoriteParams) error
 	CreateUser(ctx context.Context, lineID *string) (uuid.UUID, error)
@@ -20,7 +21,11 @@ type Querier interface {
 	DeletePostFavorite(ctx context.Context, arg DeletePostFavoriteParams) error
 	DeleteUserBlock(ctx context.Context, arg DeleteUserBlockParams) error
 	DeleteUserFollow(ctx context.Context, arg DeleteUserFollowParams) error
+	EndCall(ctx context.Context, callID uuid.UUID) error
 	GetBlockStatus(ctx context.Context, arg GetBlockStatusParams) (GetBlockStatusRow, error)
+	GetCallByID(ctx context.Context, arg GetCallByIDParams) (GetCallByIDRow, error)
+	GetCallTimeline(ctx context.Context, arg GetCallTimelineParams) ([]GetCallTimelineRow, error)
+	GetFollowingCallTimeline(ctx context.Context, arg GetFollowingCallTimelineParams) ([]GetFollowingCallTimelineRow, error)
 	GetFollowingTimeline(ctx context.Context, arg GetFollowingTimelineParams) ([]GetFollowingTimelineRow, error)
 	GetPostByID(ctx context.Context, arg GetPostByIDParams) (GetPostByIDRow, error)
 	GetPostFavorite(ctx context.Context, arg GetPostFavoriteParams) (GetPostFavoriteRow, error)
@@ -32,9 +37,14 @@ type Querier interface {
 	GetUserByID(ctx context.Context, userID uuid.UUID) (User, error)
 	GetUserByLineID(ctx context.Context, lineID string) (User, error)
 	GetUserByName(ctx context.Context, name string) (GetUserByNameRow, error)
+	GetUserCallTimeline(ctx context.Context, arg GetUserCallTimelineParams) ([]GetUserCallTimelineRow, error)
 	GetUserFollowers(ctx context.Context, userID uuid.UUID) ([]GetUserFollowersRow, error)
 	GetUserFollowing(ctx context.Context, userID uuid.UUID) ([]GetUserFollowingRow, error)
 	GetUserTimeline(ctx context.Context, arg GetUserTimelineParams) ([]GetUserTimelineRow, error)
+	HasUserActiveCall(ctx context.Context, userID uuid.UUID) (bool, error)
+	IsUserCallHost(ctx context.Context, arg IsUserCallHostParams) (bool, error)
+	JoinCall(ctx context.Context, arg JoinCallParams) error
+	LeaveCall(ctx context.Context, arg LeaveCallParams) error
 	UpdateUser(ctx context.Context, arg UpdateUserParams) error
 }
 

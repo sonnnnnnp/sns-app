@@ -5,6 +5,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/call"
+	"github.com/sonnnnnnp/sns-app/internal/usecase/call_timeline"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/post"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
 	"github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
@@ -17,6 +19,8 @@ func Wire(pool *pgxpool.Pool) *controller.Controller {
 		line.New,
 
 		authorize.New,
+		call.New,
+		call_timeline.New,
 		post.New,
 		stream.New,
 		timeline.New,

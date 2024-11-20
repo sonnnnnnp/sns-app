@@ -25,8 +25,8 @@ VALUES
 `
 
 type CreateUserBlockParams struct {
-	BlockerID uuid.UUID
-	BlockedID uuid.UUID
+	BlockerID uuid.UUID `json:"blocker_id"`
+	BlockedID uuid.UUID `json:"blocked_id"`
 }
 
 func (q *Queries) CreateUserBlock(ctx context.Context, arg CreateUserBlockParams) error {

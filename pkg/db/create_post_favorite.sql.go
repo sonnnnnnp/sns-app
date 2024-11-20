@@ -25,8 +25,8 @@ VALUES
 `
 
 type CreatePostFavoriteParams struct {
-	UserID uuid.UUID
-	PostID uuid.UUID
+	UserID uuid.UUID `json:"user_id"`
+	PostID uuid.UUID `json:"post_id"`
 }
 
 func (q *Queries) CreatePostFavorite(ctx context.Context, arg CreatePostFavoriteParams) error {

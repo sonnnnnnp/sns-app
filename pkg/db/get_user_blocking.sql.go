@@ -28,18 +28,18 @@ ORDER BY
 `
 
 type GetUserBlockingRow struct {
-	ID             uuid.UUID
-	Name           string
-	Nickname       string
-	Biography      *string
-	AvatarImageUrl *string
-	BannerImageUrl *string
-	IsPrivate      *bool
-	Birthdate      pgtype.Timestamptz
-	LineID         *string
-	CreatedAt      pgtype.Timestamptz
-	UpdatedAt      pgtype.Timestamptz
-	BlockedAt      pgtype.Timestamptz
+	ID             uuid.UUID          `json:"id"`
+	Name           string             `json:"name"`
+	Nickname       string             `json:"nickname"`
+	Biography      *string            `json:"biography"`
+	AvatarImageUrl *string            `json:"avatar_image_url"`
+	BannerImageUrl *string            `json:"banner_image_url"`
+	IsPrivate      *bool              `json:"is_private"`
+	Birthdate      pgtype.Timestamptz `json:"birthdate"`
+	LineID         *string            `json:"line_id"`
+	CreatedAt      pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt      pgtype.Timestamptz `json:"updated_at"`
+	BlockedAt      pgtype.Timestamptz `json:"blocked_at"`
 }
 
 func (q *Queries) GetUserBlocking(ctx context.Context, userID uuid.UUID) ([]GetUserBlockingRow, error) {

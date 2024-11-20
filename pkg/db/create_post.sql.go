@@ -26,8 +26,8 @@ RETURNING posts.id
 `
 
 type CreatePostParams struct {
-	AuthorID uuid.UUID
-	Text     *string
+	AuthorID uuid.UUID `json:"author_id"`
+	Text     *string   `json:"text"`
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error) {

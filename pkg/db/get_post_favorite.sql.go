@@ -26,13 +26,13 @@ WHERE
 `
 
 type GetPostFavoriteParams struct {
-	PostID uuid.UUID
-	UserID uuid.UUID
+	PostID uuid.UUID `json:"post_id"`
+	UserID uuid.UUID `json:"user_id"`
 }
 
 type GetPostFavoriteRow struct {
-	User         User
-	PostFavorite PostFavorite
+	User         User         `json:"user"`
+	PostFavorite PostFavorite `json:"post_favorite"`
 }
 
 func (q *Queries) GetPostFavorite(ctx context.Context, arg GetPostFavoriteParams) (GetPostFavoriteRow, error) {

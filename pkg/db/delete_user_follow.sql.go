@@ -20,8 +20,8 @@ WHERE
 `
 
 type DeleteUserFollowParams struct {
-	FollowerID uuid.UUID
-	FollowedID uuid.UUID
+	FollowerID uuid.UUID `json:"follower_id"`
+	FollowedID uuid.UUID `json:"followed_id"`
 }
 
 func (q *Queries) DeleteUserFollow(ctx context.Context, arg DeleteUserFollowParams) error {

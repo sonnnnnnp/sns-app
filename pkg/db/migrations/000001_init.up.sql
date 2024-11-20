@@ -46,3 +46,42 @@ CREATE TABLE IF NOT EXISTS post_favorites (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     PRIMARY KEY (user_id, post_id)
 );
+
+-- calls
+
+CREATE TYPE call_type AS ENUM (
+    'voice',
+    'video'
+);
+
+CREATE TYPE call_joinable_by AS ENUM (
+    'all',
+    'followers',
+    'friends',
+    'nobody'
+);
+
+CREATE TABLE IF NOT EXISTS calls (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title TEXT DEFAULT NULL,
+    type call_type NOT NULL DEFAULT 'voice',
+    joinable_by call_joinable_by NOT NULL DEFAULT 'all',
+    host_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    started_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    ended_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
+);
+
+CREATE TYPE call_participant_role AS ENUM (
+    'host',
+    'co-host',
+    'participant'
+);
+
+CREATE TABLE IF NOT EXISTS call_participants (
+    call_id UUID NOT NULL REFERENCES calls(id) ON DELETE CASCADE,
+    participant_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role call_participant_role NOT NULL DEFAULT 'participant',
+    joined_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    left_at TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    PRIMARY KEY (call_id, participant_id)
+);

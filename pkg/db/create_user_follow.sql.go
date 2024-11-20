@@ -25,8 +25,8 @@ VALUES
 `
 
 type CreateUserFollowParams struct {
-	FollowerID uuid.UUID
-	FollowedID uuid.UUID
+	FollowerID uuid.UUID `json:"follower_id"`
+	FollowedID uuid.UUID `json:"followed_id"`
 }
 
 func (q *Queries) CreateUserFollow(ctx context.Context, arg CreateUserFollowParams) error {

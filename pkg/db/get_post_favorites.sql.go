@@ -27,8 +27,8 @@ ORDER BY
 `
 
 type GetPostFavoritesRow struct {
-	User         User
-	PostFavorite PostFavorite
+	User         User         `json:"user"`
+	PostFavorite PostFavorite `json:"post_favorite"`
 }
 
 func (q *Queries) GetPostFavorites(ctx context.Context, postID uuid.UUID) ([]GetPostFavoritesRow, error) {
