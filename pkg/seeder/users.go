@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/pkg/db"
+	"github.com/sonnnnnnp/reverie/pkg/db"
 )
 
 func (s *Seeder) seedUsers() error {
@@ -68,7 +68,7 @@ func (s *Seeder) seedUsers() error {
 			return err
 		}
 
-		text := "Hello, everyone! I'm using SNS-App to share my thoughts and experiences."
+		text := "Hello, everyone! I'm using Reverie to share my thoughts and experiences."
 		s.queries.CreatePost(context.Background(), db.CreatePostParams{
 			AuthorID: uID,
 			Text:     &text,

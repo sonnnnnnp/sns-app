@@ -8,15 +8,15 @@ package internal
 
 import (
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/controller"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/call"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/call_timeline"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/post"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/user"
-	"github.com/sonnnnnnp/sns-app/pkg/line"
+	"github.com/sonnnnnnp/reverie/internal/adapter/controller"
+	"github.com/sonnnnnnp/reverie/internal/usecase/authorize"
+	"github.com/sonnnnnnp/reverie/internal/usecase/call"
+	"github.com/sonnnnnnp/reverie/internal/usecase/call_timeline"
+	"github.com/sonnnnnnp/reverie/internal/usecase/post"
+	"github.com/sonnnnnnp/reverie/internal/usecase/stream"
+	"github.com/sonnnnnnp/reverie/internal/usecase/timeline"
+	"github.com/sonnnnnnp/reverie/internal/usecase/user"
+	"github.com/sonnnnnnp/reverie/pkg/line"
 )
 
 // Injectors from wire.go:

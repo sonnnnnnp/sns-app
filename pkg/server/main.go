@@ -7,13 +7,13 @@ import (
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 
-	"github.com/sonnnnnnp/sns-app/internal"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/middleware"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/pkg/config"
-	"github.com/sonnnnnnp/sns-app/pkg/ws"
+	"github.com/sonnnnnnp/reverie/internal"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/internal/adapter/gateway/db"
+	"github.com/sonnnnnnp/reverie/internal/adapter/middleware"
+	"github.com/sonnnnnnp/reverie/internal/errors"
+	"github.com/sonnnnnnp/reverie/pkg/config"
+	"github.com/sonnnnnnp/reverie/pkg/ws"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )

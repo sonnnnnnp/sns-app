@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/sonnnnnnp/sns-app/pkg/config"
-	"github.com/sonnnnnnp/sns-app/pkg/server"
+	"github.com/sonnnnnnp/reverie/pkg/config"
+	"github.com/sonnnnnnp/reverie/pkg/server"
 )
 
 func main() {

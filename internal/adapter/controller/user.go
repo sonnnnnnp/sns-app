@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
 )
 
 // user

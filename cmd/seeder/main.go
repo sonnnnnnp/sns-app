@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/sonnnnnnp/sns-app/internal/adapter/gateway/db"
-	"github.com/sonnnnnnp/sns-app/pkg/config"
-	"github.com/sonnnnnnp/sns-app/pkg/seeder"
+	"github.com/sonnnnnnp/reverie/internal/adapter/gateway/db"
+	"github.com/sonnnnnnp/reverie/pkg/config"
+	"github.com/sonnnnnnp/reverie/pkg/seeder"
 )
 
 func main() {

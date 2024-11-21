@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo/v4"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/ws"
+	"github.com/sonnnnnnp/reverie/internal/errors"
+	"github.com/sonnnnnnp/reverie/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/reverie/pkg/ws"
 )
 
 func (c Controller) Stream(ctx echo.Context) error {
