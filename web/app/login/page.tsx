@@ -2,6 +2,7 @@
 
 import * as crypto from "crypto";
 
+import { Meteors } from "@/components/meteors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,11 +64,12 @@ export default function Login() {
 
   return (
     <div className="flex flex-col h-dvh justify-center items-center">
+      <Meteors number={10} />
       <div className="grid gap-6 w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">ログイン</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Reverie</h1>
           <p className="text-sm text-muted-foreground">
-            ようこそ。不思議な変人たちの世界へ。
+            現実の外で、もっとリアルなつながりを。
           </p>
         </div>
         {process.env.NEXT_PUBLIC_APP_ENV === "development" && (
