@@ -23,6 +23,7 @@
     "@types/twitter-text": "^3.1.10",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "framer-motion": "^11.11.17",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.441.0",
     "next": "14.2.5",
@@ -30,8 +31,9 @@
     "openapi-fetch": "^0.12.0",
     "react": "^18",
     "react-dom": "^18",
+    "simplex-noise": "^4.0.3",
     "sonner": "^1.5.0",
-    "tailwind-merge": "^2.5.2",
+    "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "twitter-text": "^3.1.0",
     "zustand": "^5.0.1"

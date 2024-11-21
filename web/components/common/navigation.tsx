@@ -7,6 +7,7 @@ import {
   Bell,
   Blocks,
   Home,
+  Loader2Icon,
   MessagesSquare,
   PencilIcon,
   Search,
@@ -15,7 +16,7 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { PostDialog } from "../dialog/post-dialog";
-import { Avatar, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -26,10 +27,13 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 
+import { useUserStore } from "@/store/user";
 import twitterText from "twitter-text";
 import { Separator } from "../ui/separator";
 
 export function Navigation() {
+  const { user } = useUserStore();
+
   const [open, setOpen] = React.useState(false);
   const [postDialogOpen, setPostDialogOpen] = React.useState(false);
   const [postContentValid, setPostContentValid] = React.useState(false);
@@ -80,13 +84,20 @@ export function Navigation() {
                 aria-label="Select a team"
                 className="w-full justify-start px-3 py-8"
               >
-                <Avatar className="mr-2 h-10 w-10">
-                  <AvatarImage
-                    src="/users/placeholder-profile.svg"
-                    className="object-cover"
-                  />
+                <Avatar className="mr-3 h-10 w-10">
+                  {user?.avatar_image_url ? (
+                    <AvatarImage
+                      src={user.avatar_image_url}
+                      className="object-cover"
+                    />
+                  ) : (
+                    <AvatarImage src="/users/placeholder-profile.svg" />
+                  )}
+                  <AvatarFallback>
+                    <Loader2Icon className="h-4 w-4 text-muted-foreground animate-spin" />
+                  </AvatarFallback>
                 </Avatar>
-                <p className="text-muted-foreground">@username</p>
+                <p className="text-muted-foreground">{`@${user?.name}`}</p>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">hello</PopoverContent>
@@ -253,59 +264,74 @@ export function Navigation() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href="/users/username"
+                  href={`/users/${user?.name}`}
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="/users/placeholder-profile.svg" />
+                    {user?.avatar_image_url ? (
+                      <AvatarImage
+                        src={user.avatar_image_url}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <AvatarImage src="/users/placeholder-profile.svg" />
+                    )}
+                    <AvatarFallback>
+                      <Loader2Icon className="h-4 w-4 text-muted-foreground animate-spin" />
+                    </AvatarFallback>
                   </Avatar>
-                  <span className="sr-only">ユーザー名</span>
+                  <span className="sr-only">{`@${user?.name}`}</span>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">ユーザー名</TooltipContent>
+              <TooltipContent side="right">{`@${user?.name}`}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
       </div>
       {/* footer navigation */}
       <div className="fixed bottom-0 flex items-center justify-between w-full z-30 h-16 px-6 border-t bg-background sm:hidden">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="overflow-hidden rounded-full"
+        <Link
+          href="/home"
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
         >
           <Home className="h-6 w-6 text-primary" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="overflow-hidden rounded-full"
+        </Link>
+        <Link
+          href="/groups"
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
         >
           <Blocks className="h-6 w-6 text-muted-foreground" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="overflow-hidden rounded-full"
+        </Link>
+        <Link
+          href="/messages"
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
         >
           <MessagesSquare className="h-6 w-6 text-muted-foreground" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="overflow-hidden rounded-full"
+        </Link>
+        <Link
+          href="/notifications"
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
         >
           <Bell className="h-6 w-6 text-muted-foreground" />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="overflow-hidden rounded-full"
+        </Link>
+        <Link
+          href={`/users/${user?.name}`}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-primary"
         >
           <Avatar className="h-9 w-9">
-            <AvatarImage src="/users/placeholder-profile.svg" />
+            {user?.avatar_image_url ? (
+              <AvatarImage
+                src={user.avatar_image_url}
+                className="object-cover"
+              />
+            ) : (
+              <AvatarImage src="/users/placeholder-profile.svg" />
+            )}
+            <AvatarFallback>
+              <Loader2Icon className="h-4 w-4 text-muted-foreground animate-spin" />
+            </AvatarFallback>
           </Avatar>
-        </Button>
+        </Link>
       </div>
       <PostDialog
         open={postDialogOpen}
