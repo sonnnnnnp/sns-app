@@ -7,6 +7,8 @@ import (
 )
 
 type Config struct {
+	APPEnv string `env:"APP_ENV" envDefault:"development"`
+
 	DBDSN             string        `env:"DB_DSN" envDefault:"postgres://user:password@db:5432/db"`
 	DBMaxConnLifetime time.Duration `env:"DB_MAX_CONN_LIFETIME" envDefault:"30m"`
 	DBMaxConnIdleTime time.Duration `env:"DB_MAX_CONN_IDLE_TIME" envDefault:"5m"`

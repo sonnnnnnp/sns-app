@@ -13,7 +13,8 @@ import (
 )
 
 const updateUser = `-- name: UpdateUser :exec
-UPDATE users
+UPDATE
+    users
 SET
     name = COALESCE($1, name)::text,
     nickname = COALESCE($2, nickname)::text,
@@ -23,19 +24,20 @@ SET
     birthdate = COALESCE($6, birthdate)::timestamptz,
     line_id = COALESCE($7, line_id)::text,
     updated_at = COALESCE($8, updated_at)::timestamptz
-WHERE users.id = $9::uuid
+WHERE
+    users.id = $9::uuid
 `
 
 type UpdateUserParams struct {
-	Name           *string
-	Nickname       *string
-	Biography      *string
-	AvatarImageUrl *string
-	BannerImageUrl *string
-	Birthdate      *time.Time
-	LineID         *string
-	UpdatedAt      *time.Time
-	UserID         uuid.UUID
+	Name           *string    `json:"name"`
+	Nickname       *string    `json:"nickname"`
+	Biography      *string    `json:"biography"`
+	AvatarImageUrl *string    `json:"avatar_image_url"`
+	BannerImageUrl *string    `json:"banner_image_url"`
+	Birthdate      *time.Time `json:"birthdate"`
+	LineID         *string    `json:"line_id"`
+	UpdatedAt      *time.Time `json:"updated_at"`
+	UserID         uuid.UUID  `json:"user_id"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {

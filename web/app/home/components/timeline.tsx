@@ -333,23 +333,6 @@ const calls: CallData[] = [
   },
 ];
 
-const CustomTabsTrigger = ({
-  value,
-  label,
-}: {
-  value: string;
-  label: string;
-}) => {
-  return (
-    <TabsTrigger
-      className="w-[50%] data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none .data-\[state\=active\]\:shadow-none[data-state=active]"
-      value={value}
-    >
-      {label}
-    </TabsTrigger>
-  );
-};
-
 export function Timeline() {
   const [tabValue, setTabValue] = useState("following");
   const [postDialogOpen, setPostDialogOpen] = useState(false);
@@ -357,7 +340,7 @@ export function Timeline() {
   const [postContent, setPostContent] = useState("");
 
   const [posts, setPosts] = useState<
-    components["schemas"]["Timeline"]["posts"]
+    components["schemas"]["PostTimeline"]["posts"]
   >([]);
 
   useEffect(() => {
@@ -367,20 +350,23 @@ export function Timeline() {
   const onTabChange = async (value: string) => {
     setTabValue(value);
 
-    const { data } = await client.GET("/timeline", {
-      params: {
-        query: {
-          following: value === "following",
-        },
-      },
-    });
-    if (!data?.ok) {
-      return console.error("error fetching timeline");
+    let timeline: components["schemas"]["PostTimeline"];
+
+    if (value === "following") {
+      const { data } = await client.GET("/timeline/following");
+      if (!data?.ok) {
+        return console.error("error fetching timeline");
+      }
+      timeline = data?.data;
+    } else {
+      const { data } = await client.GET("/timeline");
+      if (!data?.ok) {
+        return console.error("error fetching timeline");
+      }
+      timeline = data?.data;
     }
 
-    console.log(value);
-
-    setPosts(data?.data.posts ?? []);
+    setPosts(timeline.posts ?? []);
   };
 
   const onPostContentChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -426,9 +412,19 @@ export function Timeline() {
           <Tabs defaultValue="following" onValueChange={onTabChange}>
             <TabsContent className="my-0" value={tabValue}>
               <div className="sticky top-0 z-10 rounded-none w-full">
-                <TabsList className="h-14 rounded-none w-full bg-transparent backdrop-blur border-b">
-                  <CustomTabsTrigger value="following" label="フォロー中" />
-                  <CustomTabsTrigger value="public" label="オープン" />
+                <TabsList className="h-14 p-0 rounded-none w-full bg-transparent backdrop-blur-md border-b">
+                  <TabsTrigger
+                    className="relative w-full h-full font-bold rounded-none bg-background/60 hover:bg-background/40 data-[state=active]:bg-background/60 data-[state=active]:hover:bg-background/40 data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-16 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                    value="following"
+                  >
+                    フォロー中
+                  </TabsTrigger>
+                  <TabsTrigger
+                    className="relative w-full h-full font-bold rounded-none bg-background/60 hover:bg-background/40 data-[state=active]:bg-background/60 data-[state=active]:hover:bg-background/40 data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:bg-primary data-[state=active]:after:h-[3px] data-[state=active]:after:w-16 data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:rounded-md"
+                    value="public"
+                  >
+                    オープン
+                  </TabsTrigger>
                 </TabsList>
               </div>
               <div className="flex flex-col space-y-4 w-full p-4">

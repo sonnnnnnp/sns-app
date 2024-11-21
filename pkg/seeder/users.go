@@ -19,7 +19,7 @@ func (s *Seeder) seedUsers() error {
 		},
 		{
 			UserID:         uuid.Nil,
-			Name:           ptr("noahhhhhh"),
+			Name:           ptr("test"),
 			Nickname:       ptr("のあ"),
 			Biography:      ptr("三重/社会人/20の代\n仲良くなったらフォロー返す💁🏼‍♀️\nだる絡みはすぐ消すかも"),
 			AvatarImageUrl: ptr("https://i.pinimg.com/474x/85/e6/47/85e64767b129d2cae2d1c47b1ed0aece.jpg"),
@@ -52,13 +52,13 @@ func (s *Seeder) seedUsers() error {
 	}
 
 	for i := range users {
-		u, err := s.queries.CreateUser(context.Background(), nil)
+		uID, err := s.queries.CreateUser(context.Background(), nil)
 		if err != nil {
 			return err
 		}
 
 		if err := s.queries.UpdateUser(context.Background(), db.UpdateUserParams{
-			UserID:         u.ID,
+			UserID:         uID,
 			Name:           users[i].Name,
 			Nickname:       users[i].Nickname,
 			Biography:      users[i].Biography,
@@ -70,7 +70,7 @@ func (s *Seeder) seedUsers() error {
 
 		text := "Hello, everyone! I'm using SNS-App to share my thoughts and experiences."
 		s.queries.CreatePost(context.Background(), db.CreatePostParams{
-			AuthorID: u.ID,
+			AuthorID: uID,
 			Text:     &text,
 		})
 	}

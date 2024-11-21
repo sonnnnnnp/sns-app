@@ -14,26 +14,32 @@ import (
 
 const getUserBlocking = `-- name: GetUserBlocking :many
 SELECT
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     user_blocks.created_at AS blocked_at
-FROM users
-INNER JOIN user_blocks ON users.id = user_blocks.blocking_id
-WHERE user_blocks.blocker_id = $1::uuid
-ORDER BY user_blocks.created_at DESC
+FROM
+    users
+    INNER JOIN
+        user_blocks
+        ON users.id = user_blocks.blocked_id
+WHERE
+    user_blocks.blocker_id = $1::uuid
+ORDER BY
+    user_blocks.created_at DESC
 `
 
 type GetUserBlockingRow struct {
-	ID             uuid.UUID
-	Name           string
-	Nickname       string
-	Biography      *string
-	AvatarImageUrl *string
-	BannerImageUrl *string
-	Birthdate      pgtype.Timestamptz
-	LineID         *string
-	CreatedAt      pgtype.Timestamptz
-	UpdatedAt      pgtype.Timestamptz
-	BlockedAt      pgtype.Timestamptz
+	ID             uuid.UUID          `json:"id"`
+	Name           string             `json:"name"`
+	Nickname       string             `json:"nickname"`
+	Biography      *string            `json:"biography"`
+	AvatarImageUrl *string            `json:"avatar_image_url"`
+	BannerImageUrl *string            `json:"banner_image_url"`
+	IsPrivate      *bool              `json:"is_private"`
+	Birthdate      pgtype.Timestamptz `json:"birthdate"`
+	LineID         *string            `json:"line_id"`
+	CreatedAt      pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt      pgtype.Timestamptz `json:"updated_at"`
+	BlockedAt      pgtype.Timestamptz `json:"blocked_at"`
 }
 
 func (q *Queries) GetUserBlocking(ctx context.Context, userID uuid.UUID) ([]GetUserBlockingRow, error) {
@@ -52,6 +58,7 @@ func (q *Queries) GetUserBlocking(ctx context.Context, userID uuid.UUID) ([]GetU
 			&i.Biography,
 			&i.AvatarImageUrl,
 			&i.BannerImageUrl,
+			&i.IsPrivate,
 			&i.Birthdate,
 			&i.LineID,
 			&i.CreatedAt,

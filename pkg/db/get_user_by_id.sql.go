@@ -12,8 +12,12 @@ import (
 )
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, name, nickname, biography, avatar_image_url, banner_image_url, birthdate, line_id, created_at, updated_at FROM users
-WHERE id = $1::uuid
+SELECT
+    id, name, nickname, biography, avatar_image_url, banner_image_url, is_private, birthdate, line_id, created_at, updated_at
+FROM
+    users
+WHERE
+    id = $1::uuid
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, userID uuid.UUID) (User, error) {
@@ -26,6 +30,7 @@ func (q *Queries) GetUserByID(ctx context.Context, userID uuid.UUID) (User, erro
 		&i.Biography,
 		&i.AvatarImageUrl,
 		&i.BannerImageUrl,
+		&i.IsPrivate,
 		&i.Birthdate,
 		&i.LineID,
 		&i.CreatedAt,

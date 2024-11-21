@@ -12,6 +12,7 @@ import (
 )
 
 type IAuthorizeUsecase interface {
+    AuthorizeWithUsername(ctx context.Context, name string) (*api.Authorization, error)
 	AuthorizeWithLine(ctx context.Context, code string) (*api.Authorization, error)
 	RefreshAuthorization(ctx context.Context, body *api.RefreshAuthorizationJSONBody) (*api.Authorization, error)
 }

@@ -124,6 +124,196 @@
         "security": []
       }
     },
+    "/authorize/username": {
+      "post": {
+        "summary": "ユーザー名でログイン（テスト用）",
+        "deprecated": false,
+        "description": "",
+        "operationId": "authorizeWithUsername",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "名前",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Authorization"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/calls": {
+      "post": {
+        "summary": "通話を作成する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "createCall",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "voice",
+                      "video"
+                    ]
+                  },
+                  "joinable_by": {
+                    "type": "string",
+                    "enum": [
+                      "all",
+                      "followers",
+                      "friends",
+                      "nobody"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CallRoom"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/calls/{call_id}/end": {
+      "put": {
+        "summary": "通話を終了する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "endCall",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "call_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CallRoom"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/posts/{post_id}/favorites": {
       "post": {
         "summary": "投稿にいいねする",
@@ -281,6 +471,10 @@
                 "properties": {
                   "content": {
                     "type": "string"
+                  },
+                  "reply_to_post_id": {
+                    "type": "string",
+                    "format": "uuid"
                   }
                 }
               }
@@ -424,62 +618,6 @@
                   "required": [
                     "ok",
                     "code",
-                    "data"
-                  ]
-                }
-              }
-            },
-            "headers": {}
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
-    },
-    "/posts/{post_id}/reply": {
-      "post": {
-        "summary": "投稿に返信する",
-        "deprecated": false,
-        "description": "",
-        "operationId": "createPostReply",
-        "tags": [],
-        "parameters": [
-          {
-            "name": "post_id",
-            "in": "path",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "content": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Response",
-                  "required": [
                     "data"
                   ]
                 }
@@ -1229,6 +1367,284 @@
         ]
       }
     },
+    "/timeline/following": {
+      "get": {
+        "summary": "フォロー中のタイムラインを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getFollowingTimeline",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "次のページを取得するためのキー",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/PostTimeline"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/call_timeline": {
+      "get": {
+        "summary": "オープンの通話タイムラインを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getCallTimeline",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "次のページを取得するためのキー",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/CallTimeline"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/call_timeline/following": {
+      "get": {
+        "summary": "フォロー中の通話タイムラインを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getFollowingCallTimeline",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "次のページを取得するためのキー",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/CallTimeline"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/call_timeline/users/{user_id}": {
+      "get": {
+        "summary": "ユーザーの通話タイムラインを取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getUserCallTimeline",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "次のページを取得するためのキー",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/CallTimeline"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
     "/stream": {
       "get": {
         "summary": "WebSocket ストリーム",
@@ -1261,6 +1677,273 @@
   },
   "components": {
     "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID番号",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "名前"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "avatar_image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "banner_image_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "biography": {
+            "type": "string",
+            "nullable": true
+          },
+          "is_private": {
+            "type": "boolean"
+          },
+          "block_status": {
+            "$ref": "#/components/schemas/BlockStatus"
+          },
+          "social_connection": {
+            "$ref": "#/components/schemas/SocialConnection"
+          },
+          "social_engagement": {
+            "$ref": "#/components/schemas/SocialEngagement"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "nickname",
+          "avatar_image_url",
+          "banner_image_url",
+          "biography",
+          "updated_at",
+          "created_at",
+          "is_private"
+        ]
+      },
+      "SocialConnection": {
+        "type": "object",
+        "properties": {
+          "following": {
+            "type": "boolean"
+          },
+          "followed_by": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "following",
+          "followed_by"
+        ]
+      },
+      "Users": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        },
+        "required": [
+          "users"
+        ]
+      },
+      "BlockStatus": {
+        "type": "object",
+        "properties": {
+          "blocking": {
+            "type": "boolean"
+          },
+          "blocked_by": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "blocking",
+          "blocked_by"
+        ]
+      },
+      "SocialEngagement": {
+        "type": "object",
+        "properties": {
+          "following_count": {
+            "type": "integer"
+          },
+          "followers_count": {
+            "type": "integer"
+          },
+          "posts_count": {
+            "type": "integer"
+          },
+          "media_count": {
+            "type": "integer"
+          },
+          "favorites_count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "following_count",
+          "followers_count",
+          "posts_count",
+          "media_count",
+          "favorites_count"
+        ]
+      },
+      "Authorization": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "access_token": {
+            "type": "string"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "is_new": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "user_id",
+          "access_token",
+          "refresh_token",
+          "is_new"
+        ]
+      },
+      "Post": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID番号",
+            "format": "uuid"
+          },
+          "author": {
+            "$ref": "#/components/schemas/User"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "favorited": {
+            "type": "boolean"
+          },
+          "favorites_count": {
+            "type": "integer"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "author",
+          "updated_at",
+          "created_at",
+          "text",
+          "favorites_count",
+          "favorited"
+        ]
+      },
+      "PostFavorite": {
+        "type": "object",
+        "properties": {
+          "post_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "post_id",
+          "created_at",
+          "user"
+        ]
+      },
+      "PostTimeline": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Post"
+            }
+          },
+          "next_cursor": {
+            "type": "string",
+            "description": "次のページを取得するためのキー",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "posts",
+          "next_cursor"
+        ]
+      },
+      "CallTimeline": {
+        "type": "object",
+        "properties": {
+          "rooms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CallRoom"
+            }
+          },
+          "next_cursor": {
+            "type": "string",
+            "format": "uuid",
+            "description": "次のページを取得するためのキー"
+          }
+        },
+        "required": [
+          "rooms",
+          "next_cursor"
+        ]
+      },
+      "SocialSetting": {
+        "type": "object",
+        "properties": {
+          "lineId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "lineId"
+        ]
+      },
       "UserFollower": {
         "type": "object",
         "properties": {
@@ -1326,64 +2009,21 @@
           "created_at"
         ]
       },
-      "SocialEngagement": {
+      "UserFollowers": {
         "type": "object",
         "properties": {
-          "following_count": {
-            "type": "integer"
-          },
-          "followers_count": {
-            "type": "integer"
-          },
-          "posts_count": {
-            "type": "integer"
-          },
-          "media_count": {
-            "type": "integer"
-          },
-          "favorites_count": {
-            "type": "integer"
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserFollower"
+            }
           }
         },
         "required": [
-          "following_count",
-          "followers_count",
-          "posts_count",
-          "media_count",
-          "favorites_count"
+          "users"
         ]
       },
-      "SocialConnection": {
-        "type": "object",
-        "properties": {
-          "following": {
-            "type": "boolean"
-          },
-          "followed_by": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "following",
-          "followed_by"
-        ]
-      },
-      "BlockStatus": {
-        "type": "object",
-        "properties": {
-          "blocking": {
-            "type": "boolean"
-          },
-          "blocked_by": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "blocking",
-          "blocked_by"
-        ]
-      },
-      "User": {
+      "CallRoom": {
         "type": "object",
         "properties": {
           "id": {
@@ -1391,56 +2031,62 @@
             "description": "ID番号",
             "format": "uuid"
           },
-          "name": {
-            "type": "string",
-            "description": "名前"
-          },
-          "nickname": {
+          "title": {
             "type": "string"
           },
-          "avatar_image_url": {
+          "type": {
             "type": "string",
-            "nullable": true
+            "enum": [
+              "voice",
+              "video"
+            ]
           },
-          "banner_image_url": {
-            "type": "string",
-            "nullable": true
-          },
-          "biography": {
-            "type": "string",
-            "nullable": true
-          },
-          "is_private": {
+          "is_active": {
             "type": "boolean"
           },
-          "block_status": {
-            "$ref": "#/components/schemas/BlockStatus"
-          },
-          "social_connection": {
-            "$ref": "#/components/schemas/SocialConnection"
-          },
-          "social_engagement": {
-            "$ref": "#/components/schemas/SocialEngagement"
-          },
-          "updated_at": {
+          "joinable_by": {
             "type": "string",
-            "format": "date-time"
+            "enum": [
+              "all",
+              "followers",
+              "friends",
+              "nobody"
+            ]
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CallParticipant"
+            }
           }
         },
         "required": [
           "id",
-          "name",
-          "nickname",
-          "avatar_image_url",
-          "banner_image_url",
-          "biography",
-          "updated_at",
-          "created_at",
-          "is_private"
+          "is_active",
+          "type",
+          "participants",
+          "title",
+          "joinable_by"
+        ]
+      },
+      "CallParticipant": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "host",
+              "co-host",
+              "participant"
+            ]
+          }
+        },
+        "required": [
+          "user",
+          "role"
         ]
       },
       "Response": {
@@ -1465,138 +2111,6 @@
           "ok",
           "code",
           "data"
-        ]
-      },
-      "Authorization": {
-        "type": "object",
-        "properties": {
-          "user_id": {
-            "type": "string"
-          },
-          "access_token": {
-            "type": "string"
-          },
-          "refresh_token": {
-            "type": "string"
-          },
-          "is_new": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "user_id",
-          "access_token",
-          "refresh_token",
-          "is_new"
-        ]
-      },
-      "PostFavorite": {
-        "type": "object",
-        "properties": {
-          "post_id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          }
-        },
-        "required": [
-          "post_id",
-          "created_at",
-          "user"
-        ]
-      },
-      "UserFollowers": {
-        "type": "object",
-        "properties": {
-          "users": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UserFollower"
-            }
-          }
-        },
-        "required": [
-          "users"
-        ]
-      },
-      "Users": {
-        "type": "object",
-        "properties": {
-          "users": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/User"
-            }
-          }
-        },
-        "required": [
-          "users"
-        ]
-      },
-      "PostTimeline": {
-        "type": "object",
-        "properties": {
-          "posts": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Post"
-            }
-          },
-          "next_cursor": {
-            "type": "string",
-            "description": "次のページを取得するためのキー",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "posts",
-          "next_cursor"
-        ]
-      },
-      "Post": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "ID番号",
-            "format": "uuid"
-          },
-          "author": {
-            "$ref": "#/components/schemas/User"
-          },
-          "text": {
-            "type": "string",
-            "nullable": true
-          },
-          "favorited": {
-            "type": "boolean"
-          },
-          "favorites_count": {
-            "type": "integer"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "id",
-          "author",
-          "updated_at",
-          "created_at",
-          "text",
-          "favorites_count",
-          "favorited"
         ]
       }
     },

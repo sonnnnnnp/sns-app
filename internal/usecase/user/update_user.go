@@ -31,13 +31,13 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, body *api.UpdateUserJSONB
 	}
 
 	return &api.User{
+		Id:             u.ID,
+		Name:           u.Name,
+		Nickname:       u.Nickname,
 		AvatarImageUrl: u.AvatarImageUrl,
 		BannerImageUrl: u.BannerImageUrl,
 		Biography:      u.Biography,
-		CreatedAt:      u.CreatedAt.Time,
-		Name:           u.Name,
-		Nickname:       u.Nickname,
-		Id:             u.ID,
 		UpdatedAt:      u.UpdatedAt.Time,
+		CreatedAt:      u.CreatedAt.Time,
 	}, nil
 }

@@ -12,8 +12,10 @@ import (
 )
 
 const deletePost = `-- name: DeletePost :exec
-DELETE FROM posts
-WHERE id = $1::uuid
+DELETE FROM
+    posts
+WHERE
+    id = $1::uuid
 `
 
 func (q *Queries) DeletePost(ctx context.Context, postID uuid.UUID) error {

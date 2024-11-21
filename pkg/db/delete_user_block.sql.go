@@ -12,16 +12,19 @@ import (
 )
 
 const deleteUserBlock = `-- name: DeleteUserBlock :exec
-DELETE FROM user_blocks
-WHERE blocker_id = $1::uuid AND blocking_id = $2::uuid
+DELETE FROM
+    user_blocks
+WHERE
+    blocker_id = $1::uuid
+    AND blocked_id = $2::uuid
 `
 
 type DeleteUserBlockParams struct {
-	BlockerID  uuid.UUID
-	BlockingID uuid.UUID
+	BlockerID uuid.UUID `json:"blocker_id"`
+	BlockedID uuid.UUID `json:"blocked_id"`
 }
 
 func (q *Queries) DeleteUserBlock(ctx context.Context, arg DeleteUserBlockParams) error {
-	_, err := q.db.Exec(ctx, deleteUserBlock, arg.BlockerID, arg.BlockingID)
+	_, err := q.db.Exec(ctx, deleteUserBlock, arg.BlockerID, arg.BlockedID)
 	return err
 }

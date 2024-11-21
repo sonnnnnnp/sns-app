@@ -15,77 +15,65 @@ import (
 const getTimeline = `-- name: GetTimeline :many
 SELECT
     posts.id, posts.author_id, posts.reply_to_id, posts.text, posts.created_at, posts.updated_at,
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     (
-        SELECT COUNT(*)
-        FROM post_favorites
-        WHERE post_favorites.post_id = posts.id
+        SELECT
+            COUNT(*)
+        FROM
+            post_favorites
+        WHERE
+            post_favorites.post_id = posts.id
     ) AS favorites_count,
     EXISTS (
-        SELECT 1
-        FROM post_favorites
-        WHERE post_favorites.post_id = posts.id AND (
-            post_favorites.user_id = $2::uuid
-        )
+        SELECT
+            1
+        FROM
+            post_favorites
+        WHERE
+            post_favorites.post_id = posts.id
+            AND (
+                post_favorites.user_id = $2::uuid
+            )
     ) AS favorited
 FROM
     posts
-INNER JOIN
-    users ON posts.author_id = users.id
-LEFT JOIN
-    user_follows ON users.id = user_follows.following_id
-LEFT JOIN
-    user_blocks AS blocker ON
-    users.id = blocker.blocking_id
-    AND blocker.blocker_id = $2::uuid
-LEFT JOIN
-    user_blocks AS blocking ON
-    users.id = blocking.blocker_id
-    AND blocking.blocking_id = $2::uuid
+    INNER JOIN
+        users
+        ON posts.author_id = users.id
+    LEFT JOIN
+        user_blocks AS ub1
+        ON users.id = ub1.blocked_id AND ub1.blocker_id = $2::uuid
+    LEFT JOIN
+        user_blocks AS ub2
+        ON users.id = ub2.blocker_id AND ub2.blocked_id = $2::uuid
 WHERE
     (
-        $3::uuid IS NULL
-        OR posts.author_id = $3::uuid
+        $3::timestamptz IS NULL
+        OR posts.created_at < $3::timestamptz
     )
-    AND (
-        $4::timestamptz IS NULL
-        OR posts.created_at < $4::timestamptz
-    )
-    AND (
-        NOT $5::boolean
-        OR user_follows.follower_id = $2::uuid
-        OR posts.author_id = $2::uuid
-    )
-    AND blocker.blocking_id IS NULL
-    AND blocking.blocker_id IS NULL
+    AND ub1.blocked_id IS NULL
+    AND ub2.blocker_id IS NULL
 ORDER BY
     posts.created_at DESC
-LIMIT $1
+LIMIT
+    $1
 `
 
 type GetTimelineParams struct {
-	Limit         int64
-	SelfID        *uuid.UUID
-	AuthorID      *uuid.UUID
-	CreatedAt     *time.Time
-	OnlyFollowing bool
+	Limit     int64      `json:"limit"`
+	SelfID    uuid.UUID  `json:"self_id"`
+	CreatedAt *time.Time `json:"created_at"`
 }
 
 type GetTimelineRow struct {
-	Post           Post
-	User           User
-	FavoritesCount int64
-	Favorited      bool
+	Post           Post  `json:"post"`
+	User           User  `json:"user"`
+	FavoritesCount int64 `json:"favorites_count"`
+	Favorited      bool  `json:"favorited"`
 }
 
 func (q *Queries) GetTimeline(ctx context.Context, arg GetTimelineParams) ([]GetTimelineRow, error) {
-	rows, err := q.db.Query(ctx, getTimeline,
-		arg.Limit,
-		arg.SelfID,
-		arg.AuthorID,
-		arg.CreatedAt,
-		arg.OnlyFollowing,
-	)
+	rows, err := q.db.Query(ctx, getTimeline, arg.Limit, arg.SelfID, arg.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -106,6 +94,7 @@ func (q *Queries) GetTimeline(ctx context.Context, arg GetTimelineParams) ([]Get
 			&i.User.Biography,
 			&i.User.AvatarImageUrl,
 			&i.User.BannerImageUrl,
+			&i.User.IsPrivate,
 			&i.User.Birthdate,
 			&i.User.LineID,
 			&i.User.CreatedAt,

@@ -12,16 +12,21 @@ import (
 )
 
 const createPostFavorite = `-- name: CreatePostFavorite :exec
-INSERT INTO post_favorites (
-  user_id, post_id
-) VALUES (
-  $1::uuid, $2::uuid
-)
+INSERT INTO
+  post_favorites (
+    user_id,
+    post_id
+  )
+VALUES
+  (
+    $1::uuid,
+    $2::uuid
+  )
 `
 
 type CreatePostFavoriteParams struct {
-	UserID uuid.UUID
-	PostID uuid.UUID
+	UserID uuid.UUID `json:"user_id"`
+	PostID uuid.UUID `json:"post_id"`
 }
 
 func (q *Queries) CreatePostFavorite(ctx context.Context, arg CreatePostFavoriteParams) error {

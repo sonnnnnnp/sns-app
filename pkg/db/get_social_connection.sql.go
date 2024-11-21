@@ -14,25 +14,33 @@ import (
 const getSocialConnection = `-- name: GetSocialConnection :one
 SELECT
     EXISTS (
-        SELECT 1
-        FROM user_follows
-        WHERE follower_id = $1::uuid AND following_id = $2::uuid
+        SELECT
+            1
+        FROM
+            user_follows
+        WHERE
+            follower_id = $1::uuid
+            AND followed_id = $2::uuid
     ) AS following,
     EXISTS (
-        SELECT 1
-        FROM user_follows
-        WHERE follower_id = $2::uuid AND following_id = $1::uuid
+        SELECT
+            1
+        FROM
+            user_follows
+        WHERE
+            follower_id = $2::uuid
+            AND followed_id = $1::uuid
     ) AS followed_by
 `
 
 type GetSocialConnectionParams struct {
-	SelfID   uuid.UUID
-	TargetID uuid.UUID
+	SelfID   uuid.UUID `json:"self_id"`
+	TargetID uuid.UUID `json:"target_id"`
 }
 
 type GetSocialConnectionRow struct {
-	Following  bool
-	FollowedBy bool
+	Following  bool `json:"following"`
+	FollowedBy bool `json:"followed_by"`
 }
 
 func (q *Queries) GetSocialConnection(ctx context.Context, arg GetSocialConnectionParams) (GetSocialConnectionRow, error) {

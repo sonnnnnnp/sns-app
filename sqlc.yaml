@@ -2,8 +2,11 @@ version: "2"
 sql:
   - engine: "postgresql"
     queries:
+      - ./pkg/db/queries/call
+      - ./pkg/db/queries/call_timeline
       - ./pkg/db/queries/post_favorites
       - ./pkg/db/queries/posts
+      - ./pkg/db/queries/timeline
       - ./pkg/db/queries/user_blocks
       - ./pkg/db/queries/user_follows
       - ./pkg/db/queries/users
@@ -13,6 +16,7 @@ sql:
         package: "db"
         out: "./pkg/db"
         sql_package: pgx/v5
+        emit_json_tags: true
         emit_interface: true
         emit_empty_slices: true
         emit_pointers_for_null_types: true
