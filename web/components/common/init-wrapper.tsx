@@ -1,5 +1,8 @@
 "use client";
 
+import client from "@/lib/api";
+import { useUserStore } from "@/store/user";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export function InitWrapper({
@@ -8,7 +11,15 @@ export function InitWrapper({
   children: React.ReactNode;
 }>) {
   React.useEffect(() => {
-    console.log("InitWrapper");
+    (async () => {
+      const { data } = await client.GET("/users/me");
+
+      if (!data?.ok) {
+        redirect("/login");
+      }
+
+      useUserStore.getState().setUser(data.data);
+    })();
   }, []);
 
   return <>{children}</>;
