@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { PostList } from "@/app/home/components/post-list";
+import { PostList } from "@/app/(internal)/home/components/post-list";
 import { ConfirmActionDialog } from "@/components/dialog/confirm-action-dialog";
 import { MainCard } from "@/components/main-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

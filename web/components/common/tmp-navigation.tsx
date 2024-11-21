@@ -1,16 +1,15 @@
 "use client";
+import {
+  Bell,
+  Home,
+  MessageSquare,
+  Phone,
+  Search,
+  Settings,
+  Video,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Home,
-  Search,
-  Phone,
-  Video,
-  MessageSquare,
-  Bell,
-  Settings,
-} from "lucide-react";
-import { Separator } from "../ui/separator";
 
 export default function Navigation() {
   const pathname = usePathname();
