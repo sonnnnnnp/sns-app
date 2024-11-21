@@ -1,12 +1,7 @@
-import Layout from "@/layouts/layout";
 import { Profile } from "./components/profile";
 
 const ProfilePage = () => {
-  return (
-    <Layout>
-      <Profile />
-    </Layout>
-  );
+  return <Profile />;
 };
 
 export default ProfilePage;

@@ -1,9 +1,8 @@
-import { Toaster } from "@/components/ui/sonner";
-import { StreamProvider } from "@/providers/stream-provider";
-import type { Metadata } from "next";
+import { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import React from "react";
+import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,10 +27,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <StreamProvider>
-              {children}
-              <Toaster />
-            </StreamProvider>
+            {children}
           </ThemeProvider>
         </div>
       </body>

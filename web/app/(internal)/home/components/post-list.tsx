@@ -1,10 +1,10 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { Post } from "./post";
-import { components } from "@/lib/api/client";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { components } from "@/lib/api/client";
+import { Post } from "./post";
 
 type Props = {
-  posts: components["schemas"]["Timeline"]["posts"];
+  posts: components["schemas"]["PostTimeline"]["posts"];
 };
 
 export function PostList({ posts }: Props) {
