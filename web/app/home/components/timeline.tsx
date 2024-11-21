@@ -340,7 +340,7 @@ export function Timeline() {
   const [postContent, setPostContent] = useState("");
 
   const [posts, setPosts] = useState<
-    components["schemas"]["Timeline"]["posts"]
+    components["schemas"]["PostTimeline"]["posts"]
   >([]);
 
   useEffect(() => {
@@ -350,7 +350,7 @@ export function Timeline() {
   const onTabChange = async (value: string) => {
     setTabValue(value);
 
-    let timeline: components["schemas"]["Timeline"];
+    let timeline: components["schemas"]["PostTimeline"];
 
     if (value === "following") {
       const { data } = await client.GET("/timeline/following");

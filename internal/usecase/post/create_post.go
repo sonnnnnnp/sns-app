@@ -14,8 +14,9 @@ func (uc *PostUsecase) CreatePost(ctx context.Context, body *api.CreatePostJSONB
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	pID, err := queries.CreatePost(ctx, db.CreatePostParams{
-		AuthorID: selfUID,
-		Text:     body.Content,
+		AuthorID:  selfUID,
+		Text:      body.Content,
+		ReplyToID: body.ReplyToPostId,
 	})
 	if err != nil {
 		return nil, err

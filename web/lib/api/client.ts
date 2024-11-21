@@ -408,11 +408,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        CallParticipant: {
-            user: components["schemas"]["User"];
-            /** @enum {string} */
-            role: "host" | "co-host" | "participant";
-        };
         User: {
             /**
              * Format: uuid
@@ -434,6 +429,17 @@ export interface components {
             /** Format: date-time */
             created_at: string;
         };
+        SocialConnection: {
+            following: boolean;
+            followed_by: boolean;
+        };
+        Users: {
+            users: components["schemas"]["User"][];
+        };
+        BlockStatus: {
+            blocking: boolean;
+            blocked_by: boolean;
+        };
         SocialEngagement: {
             following_count: number;
             followers_count: number;
@@ -441,13 +447,52 @@ export interface components {
             media_count: number;
             favorites_count: number;
         };
-        SocialConnection: {
-            following: boolean;
-            followed_by: boolean;
+        Authorization: {
+            user_id: string;
+            access_token: string;
+            refresh_token: string;
+            is_new: boolean;
         };
-        BlockStatus: {
-            blocking: boolean;
-            blocked_by: boolean;
+        Post: {
+            /**
+             * Format: uuid
+             * @description ID番号
+             */
+            id: string;
+            author: components["schemas"]["User"];
+            text: string | null;
+            favorited: boolean;
+            favorites_count: number;
+            /** Format: date-time */
+            updated_at: string;
+            /** Format: date-time */
+            created_at: string;
+        };
+        PostFavorite: {
+            /** Format: uuid */
+            post_id: string;
+            /** Format: date-time */
+            created_at: string;
+            user: components["schemas"]["User"];
+        };
+        PostTimeline: {
+            posts: components["schemas"]["Post"][];
+            /**
+             * Format: uuid
+             * @description 次のページを取得するためのキー
+             */
+            next_cursor: string;
+        };
+        CallTimeline: {
+            rooms: components["schemas"]["CallRoom"][];
+            /**
+             * Format: uuid
+             * @description 次のページを取得するためのキー
+             */
+            next_cursor: string;
+        };
+        SocialSetting: {
+            lineId: string | null;
         };
         UserFollower: {
             /**
@@ -472,27 +517,8 @@ export interface components {
             /** Format: date-time */
             followed_at: string;
         };
-        Response: {
-            /** @description 正常に処理を終了したかどうか */
-            ok: boolean;
-            /** @description レスポンスコード */
-            code: number;
-            /** @description データ */
-            data: Record<string, never>;
-        };
-        Authorization: {
-            user_id: string;
-            access_token: string;
-            refresh_token: string;
-            is_new: boolean;
-        };
-        CallTimeline: {
-            rooms: components["schemas"]["CallRoom"][];
-            /**
-             * Format: uuid
-             * @description 次のページを取得するためのキー
-             */
-            next_cursor: string;
+        UserFollowers: {
+            users: components["schemas"]["UserFollower"][];
         };
         CallRoom: {
             /**
@@ -508,41 +534,18 @@ export interface components {
             joinable_by: "all" | "followers" | "friends" | "nobody";
             participants: components["schemas"]["CallParticipant"][];
         };
-        PostFavorite: {
-            /** Format: uuid */
-            post_id: string;
-            /** Format: date-time */
-            created_at: string;
+        CallParticipant: {
             user: components["schemas"]["User"];
+            /** @enum {string} */
+            role: "host" | "co-host" | "participant";
         };
-        UserFollowers: {
-            users: components["schemas"]["UserFollower"][];
-        };
-        Users: {
-            users: components["schemas"]["User"][];
-        };
-        PostTimeline: {
-            posts: components["schemas"]["Post"][];
-            /**
-             * Format: uuid
-             * @description 次のページを取得するためのキー
-             */
-            next_cursor: string;
-        };
-        Post: {
-            /**
-             * Format: uuid
-             * @description ID番号
-             */
-            id: string;
-            author: components["schemas"]["User"];
-            text: string | null;
-            favorited: boolean;
-            favorites_count: number;
-            /** Format: date-time */
-            updated_at: string;
-            /** Format: date-time */
-            created_at: string;
+        Response: {
+            /** @description 正常に処理を終了したかどうか */
+            ok: boolean;
+            /** @description レスポンスコード */
+            code: number;
+            /** @description データ */
+            data: Record<string, never>;
         };
     };
     responses: never;
@@ -785,6 +788,8 @@ export interface operations {
             content: {
                 "application/json": {
                     content?: string;
+                    /** Format: uuid */
+                    reply_to_post_id?: string;
                 };
             };
         };

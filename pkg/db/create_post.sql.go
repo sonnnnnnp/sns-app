@@ -15,23 +15,26 @@ const createPost = `-- name: CreatePost :one
 INSERT INTO
   posts (
     author_id,
-    text
+    text,
+    reply_to_id
   )
 VALUES
   (
     $1::uuid,
-    $2::text
+    $2::text,
+    $3::uuid
   )
 RETURNING posts.id
 `
 
 type CreatePostParams struct {
-	AuthorID uuid.UUID `json:"author_id"`
-	Text     *string   `json:"text"`
+	AuthorID  uuid.UUID  `json:"author_id"`
+	Text      *string    `json:"text"`
+	ReplyToID *uuid.UUID `json:"reply_to_id"`
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, createPost, arg.AuthorID, arg.Text)
+	row := q.db.QueryRow(ctx, createPost, arg.AuthorID, arg.Text, arg.ReplyToID)
 	var id uuid.UUID
 	err := row.Scan(&id)
 	return id, err

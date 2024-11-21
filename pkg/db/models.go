@@ -162,6 +162,7 @@ type CallParticipant struct {
 type Post struct {
 	ID        uuid.UUID          `json:"id"`
 	AuthorID  uuid.UUID          `json:"author_id"`
+	ReplyToID *uuid.UUID         `json:"reply_to_id"`
 	Text      *string            `json:"text"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 	UpdatedAt pgtype.Timestamptz `json:"updated_at"`
