@@ -5,8 +5,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/internal/usecase/stream"
 )
 
 type IPostUsecase interface {

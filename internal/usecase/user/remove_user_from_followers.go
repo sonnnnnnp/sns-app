@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/db"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/internal/errors"
+	"github.com/sonnnnnnp/reverie/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/reverie/pkg/db"
 )
 
 func (uc *UserUsecase) RemoveUserFromFollowers(ctx context.Context, uID uuid.UUID) (*api.SocialConnection, error) {

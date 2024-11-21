@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/authorize"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/call"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/call_timeline"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/post"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/stream"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/timeline"
-	"github.com/sonnnnnnp/sns-app/internal/usecase/user"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/internal/usecase/authorize"
+	"github.com/sonnnnnnp/reverie/internal/usecase/call"
+	"github.com/sonnnnnnp/reverie/internal/usecase/call_timeline"
+	"github.com/sonnnnnnp/reverie/internal/usecase/post"
+	"github.com/sonnnnnnp/reverie/internal/usecase/stream"
+	"github.com/sonnnnnnp/reverie/internal/usecase/timeline"
+	"github.com/sonnnnnnp/reverie/internal/usecase/user"
 )
 
 type Response struct {

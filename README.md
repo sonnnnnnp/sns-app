@@ -4,6 +4,6 @@
 
 みんなの居場所をつくる。
 
-[Learn more →](https://github.com/sonnnnnnp/sns-app/tree/main/docs)
+[Learn more →](https://github.com/sonnnnnnp/reverie/tree/main/docs)
 
 </div>

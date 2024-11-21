@@ -3,9 +3,9 @@ package post
 import (
 	"context"
 
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/db"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/reverie/pkg/db"
 )
 
 func (uc *PostUsecase) CreatePost(ctx context.Context, body *api.CreatePostJSONBody) (*api.Post, error) {

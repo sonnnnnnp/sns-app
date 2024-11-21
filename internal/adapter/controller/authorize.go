@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
 )
 
 func (c Controller) AuthorizeWithLine(ctx echo.Context, params api.AuthorizeWithLineParams) error {

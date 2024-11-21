@@ -7,10 +7,10 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/db"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	internal_errors "github.com/sonnnnnnp/reverie/internal/errors"
+	"github.com/sonnnnnnp/reverie/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/reverie/pkg/db"
 )
 
 func (uc *TimelineUsecase) GetUserTimeline(ctx context.Context, uID uuid.UUID, params *api.GetUserTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {

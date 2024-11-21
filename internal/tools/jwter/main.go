@@ -6,7 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 
-	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
+	internal_errors "github.com/sonnnnnnp/reverie/internal/errors"
 )
 
 func Verify(tokenString string, scope string, secret []byte) (uID uuid.UUID, err error) {

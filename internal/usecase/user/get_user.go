@@ -5,10 +5,10 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	internal_errors "github.com/sonnnnnnp/sns-app/internal/errors"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/db"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	internal_errors "github.com/sonnnnnnp/reverie/internal/errors"
+	"github.com/sonnnnnnp/reverie/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/reverie/pkg/db"
 )
 
 func (uc *UserUsecase) getUserByName(ctx context.Context, name string) (*api.User, error) {

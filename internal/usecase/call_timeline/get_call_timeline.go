@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/internal/tools/ctxhelper"
-	"github.com/sonnnnnnp/sns-app/pkg/db"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/internal/tools/ctxhelper"
+	"github.com/sonnnnnnp/reverie/pkg/db"
 )
 
 func (uc *CallTimelineUsecase) GetCallTimeline(ctx context.Context, params api.GetCallTimelineParams) (rooms []api.CallRoom, nextCursor uuid.UUID, err error) {

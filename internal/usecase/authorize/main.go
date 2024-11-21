@@ -7,12 +7,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/pkg/line"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/pkg/line"
 )
 
 type IAuthorizeUsecase interface {
-    AuthorizeWithUsername(ctx context.Context, name string) (*api.Authorization, error)
+	AuthorizeWithUsername(ctx context.Context, name string) (*api.Authorization, error)
 	AuthorizeWithLine(ctx context.Context, code string) (*api.Authorization, error)
 	RefreshAuthorization(ctx context.Context, body *api.RefreshAuthorizationJSONBody) (*api.Authorization, error)
 }

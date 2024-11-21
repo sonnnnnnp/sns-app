@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/sonnnnnnp/sns-app/internal/adapter/api"
-	"github.com/sonnnnnnp/sns-app/pkg/db"
+	"github.com/sonnnnnnp/reverie/internal/adapter/api"
+	"github.com/sonnnnnnp/reverie/pkg/db"
 )
 
 func (uc *PostUsecase) GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]api.PostFavorite, error) {

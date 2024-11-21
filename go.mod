@@ -1,4 +1,4 @@
-module github.com/sonnnnnnp/sns-app
+module github.com/sonnnnnnp/reverie
 
 go 1.23.0
 

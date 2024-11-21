@@ -2,7 +2,7 @@ package seeder
 
 import (
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/sonnnnnnp/sns-app/pkg/db"
+	"github.com/sonnnnnnp/reverie/pkg/db"
 )
 
 type Seeder struct {
