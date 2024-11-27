@@ -9,7 +9,6 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { PostList } from "./post-list";
 
-import { CallTimelineCarousel } from "@/components/call-timeline-carousel";
 import { PostDialog } from "@/components/dialog/post-dialog";
 import { MainCard } from "@/components/main-card";
 import { Card } from "@/components/ui/card";
@@ -409,7 +408,6 @@ export function Timeline() {
   return (
     <div>
       <MainCard>
-        <CallTimelineCarousel />
         <div className="flex flex-col w-full">
           <Tabs defaultValue="following" onValueChange={onTabChange}>
             <TabsContent className="my-0" value={tabValue}>
@@ -442,7 +440,7 @@ export function Timeline() {
       <div className="fixed bottom-[14%] right-[10%] sm:hidden">
         <Button
           size="icon"
-          className="h-14 w-14 overflow-hidden rounded-full"
+          className="h-14 w-14 overflow-hidden rounded-full bg-primary/80 backdrop-blur-sm"
           onClick={() => {
             setPostDialogOpen(true);
           }}
