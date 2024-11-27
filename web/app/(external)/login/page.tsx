@@ -66,7 +66,7 @@ export default function Login() {
     <div className="flex flex-col h-dvh justify-center items-center">
       <Vortex
         backgroundColor="black"
-        className="flex items-center flex-col justify-center w-full h-dvh"
+        className="flex items-center flex-col justify-center h-dvh"
       >
         <div className="grid gap-6 w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
