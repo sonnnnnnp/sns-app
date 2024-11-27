@@ -1,4 +1,6 @@
+import { CallTimelineCarousel } from "@/components/call-timeline-carousel";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import React from "react";
 import { Call } from "./call";
 
 type CallUser = {
@@ -20,13 +22,28 @@ type Props = {
 };
 
 export function CallList({ calls }: Props) {
+  const [isCarouselOpen, setCarouselOpen] = React.useState(false);
+  const [carouselIndex, setCarouselIndex] = React.useState(0);
+
+  const showCallListCarousel = (index: number) => {
+    setCarouselOpen(true);
+    setCarouselIndex(index);
+  };
+
   return (
     <div>
+      <CallTimelineCarousel
+        index={carouselIndex}
+        open={isCarouselOpen}
+        onOpenChange={() => setCarouselOpen(!isCarouselOpen)}
+      />
       <ScrollArea className="p-4 pb-5 border-b ">
         {calls.length > 0 ? (
           <div className="flex w-0 space-x-4">
             {calls.map((call, i) => (
-              <Call key={i} call={call} />
+              <a key={i} onClick={() => showCallListCarousel(i)}>
+                <Call call={call} />
+              </a>
             ))}
           </div>
         ) : (

@@ -1,23 +1,23 @@
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Images, Pencil, Type } from "lucide-react";
+import { Avatar, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { Avatar, AvatarImage } from "../ui/avatar";
-import { Textarea } from "../ui/textarea";
 import { Separator } from "../ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
-import { Button } from "../ui/button";
-import { Images, Pencil, Type } from "lucide-react";
+import { Textarea } from "../ui/textarea";
 
 type Props = {
   open: boolean;

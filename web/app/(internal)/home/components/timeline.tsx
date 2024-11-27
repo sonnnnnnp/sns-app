@@ -440,7 +440,7 @@ export function Timeline() {
       <div className="fixed bottom-[14%] right-[10%] sm:hidden">
         <Button
           size="icon"
-          className="h-14 w-14 overflow-hidden rounded-full"
+          className="h-14 w-14 overflow-hidden rounded-full bg-primary/80 backdrop-blur-sm"
           onClick={() => {
             setPostDialogOpen(true);
           }}

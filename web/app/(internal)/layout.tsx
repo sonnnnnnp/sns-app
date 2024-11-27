@@ -28,7 +28,7 @@ export default function RootLayout({
         <div className="fixed top-0 left-0 w-full h-full overflow-y-scroll">
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange
           >
