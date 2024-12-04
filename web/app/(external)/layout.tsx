@@ -1,3 +1,4 @@
+import { BackgroundTexture } from "@/components/common/background-texture";
 import { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Inter } from "next/font/google";
@@ -30,6 +31,7 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </div>
+        <BackgroundTexture />
       </body>
     </html>
   );

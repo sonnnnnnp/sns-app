@@ -37,7 +37,7 @@ export function CallList({ calls }: Props) {
         open={isCarouselOpen}
         onOpenChange={() => setCarouselOpen(!isCarouselOpen)}
       />
-      <ScrollArea className="p-4 pb-5 border-b ">
+      <ScrollArea className="p-4 pb-5 border-b">
         {calls.length > 0 ? (
           <div className="flex w-0 space-x-4">
             {calls.map((call, i) => (

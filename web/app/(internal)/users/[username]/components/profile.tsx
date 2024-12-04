@@ -184,8 +184,8 @@ export function Profile() {
                 </Button>
               </div>
             </div>
-            <div className="flex flex-col space-y-4 w-full p-4">
-              <Card className="p-0 overflow-hidden">
+            <div className="grid gap-4 w-full sm:p-4">
+              <Card className="p-0 overflow-hidden rounded-none sm:rounded-lg">
                 <div className="relative">
                   {user?.banner_image_url ? (
                     <img
@@ -410,14 +410,14 @@ export function Profile() {
                   </CardContent>
                 </Card>
               ) : (
-                <div>
+                <div className="grid gap-4">
                   {/* pinned posts (limit: 3..5) */}
-                  <Card>
+                  <Card className="rounded-none sm:rounded-lg">
                     <PostList posts={posts} />
                   </Card>
                   {/* normal posts ordered by create_at desc with tabs contains
                 posts, reply and media */}
-                  <Card>
+                  <Card className="rounded-none sm:rounded-lg">
                     <PostList posts={posts} />
                   </Card>
                 </div>
