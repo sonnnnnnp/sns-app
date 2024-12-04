@@ -3,7 +3,7 @@ import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 export function Widget() {
   return (
-    <aside className="sticky inset-y-0 h-dvh w-80 border-l hidden lg:block">
+    <aside className="sticky inset-y-0 h-dvh w-80 flex-shrink-0 border-l hidden min-[814px]:block">
       <ScrollArea className="p-4 h-dvh">
         <div className="flex flex-col space-y-4">
           {Array.from({ length: 4 }).map((_, i) => (
