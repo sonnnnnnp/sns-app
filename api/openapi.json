@@ -475,6 +475,10 @@
                   "reply_to_post_id": {
                     "type": "string",
                     "format": "uuid"
+                  },
+                  "repost_post_id": {
+                    "type": "string",
+                    "format": "uuid"
                   }
                 }
               }
