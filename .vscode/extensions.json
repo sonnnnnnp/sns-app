@@ -2,6 +2,7 @@
   "recommendations": [
     "golang.go",
     "biomejs.biome",
+    "esbenp.prettier-vscode",
     "bradlc.vscode-tailwindcss",
     "editorconfig.editorconfig"
   ]
