@@ -18,7 +18,7 @@ export default function User() {
           isIconOnly
           variant="light"
           radius="full"
-          onClick={() => navigate(-1)}
+          onPress={() => navigate(-1)}
         >
           <ArrowLeftIcon className="w-5 h-5" />
         </Button>

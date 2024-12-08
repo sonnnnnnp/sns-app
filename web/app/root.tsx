@@ -48,17 +48,15 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="font-primary">
+      <body className="dark font-primary">
         <NextUIProvider navigate={navigate} useHref={useHref}>
-          <div className="fixed top-0 left-0 w-full h-dvh overflow-y-scroll">
-            <div className="dark text-foreground bg-background">
-              <Outlet />
-              <BackgroundTexture />
-            </div>
+          <div className="fixed top-0 left-0 w-full h-dvh overflow-y-scroll text-foreground bg-background">
+            <Outlet />
           </div>
           <ScrollRestoration />
           <Scripts />
         </NextUIProvider>
+        <BackgroundTexture />
       </body>
     </html>
   );

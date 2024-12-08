@@ -11,7 +11,7 @@ export function MobileNavigation({ pathname }: { pathname: string }) {
         variant="light"
         classNames={{
           tabList: "h-16",
-          tab: "h-full",
+          tab: "h-full data-[focus-visible=true]:outline-0",
           tabContent: "flex items-center",
           cursor: "hidden",
         }}

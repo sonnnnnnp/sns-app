@@ -5,6 +5,7 @@ import {
   Listbox,
   ListboxItem,
   User,
+  useDisclosure,
 } from "@nextui-org/react";
 import {
   BellIcon,
@@ -16,9 +17,12 @@ import {
   SettingsIcon,
   UserRoundIcon,
 } from "lucide-react";
+import { PostModal } from "~/components/posts/post-modal";
 import ReactRouterLink from "~/utils/temp/react-router-link";
 
 export function LargeNavigation({ pathname }: { pathname: string }) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   return (
     <div className="sticky inset-y-0 h-dvh w-24 p-2 flex-shrink-0 border-r hidden lg:block lg:w-64 lg:p-6">
       <div className="flex flex-col gap-5 px-2 pt-4">
@@ -32,11 +36,13 @@ export function LargeNavigation({ pathname }: { pathname: string }) {
           name="ユーザー名"
         />
         <Button
+          onPress={onOpen}
           className="rounded-full bg-foreground text-default"
           endContent={<PencilIcon className="w-4 h-4" />}
         >
           投稿する
         </Button>
+        <PostModal isOpen={isOpen} onOpenChange={onOpenChange} />
       </div>
       <Divider className="my-4" />
       <Listbox
