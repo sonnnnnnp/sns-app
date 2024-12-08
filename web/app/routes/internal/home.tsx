@@ -13,7 +13,7 @@ export default function Home() {
           tabList: "p-0",
           tab: "h-14 font-bold",
           cursor: "w-20",
-          panel: "p-0 md:p-4",
+          panel: "p-0",
         }}
       >
         <Tab key="following" title="フォロー中">

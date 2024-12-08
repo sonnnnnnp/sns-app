@@ -7,11 +7,23 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["node_modules/**", ".react-router/**/*", "public/**/*"]
+    "ignore": [
+      "node_modules/**",
+      "web/react-router/**/*",
+      "web/public/**/*",
+      "web/lib/api/**/*"
+    ]
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space"
+    "indentStyle": "space",
+    "include": [
+      "web/**/*.json",
+      "web/**/*.js",
+      "web/**/*.jsx",
+      "web/**/*.ts",
+      "web/**/*.tsx"
+    ]
   },
   "organizeImports": {
     "enabled": true
@@ -23,7 +35,14 @@
       "correctness": {
         "noUnusedVariables": "error"
       }
-    }
+    },
+    "include": [
+      "web/**/*.json",
+      "web/**/*.js",
+      "web/**/*.jsx",
+      "web/**/*.ts",
+      "web/**/*.tsx"
+    ]
   },
   "javascript": {
     "formatter": {
