@@ -6,6 +6,26 @@ import {
   Repeat2Icon,
 } from "lucide-react";
 
+export function PostAction({
+  icon,
+  label,
+  ariaLabel,
+}: { icon: React.ReactNode; label?: string; ariaLabel: string }) {
+  return (
+    <span className="relative flex items-center text-xs text-foreground-400">
+      <Button
+        isIconOnly
+        variant="light"
+        aria-label={ariaLabel}
+        className="rounded-full h-8 w-8 min-w-8"
+      >
+        {icon}
+      </Button>
+      {label && <span className="absolute left-7">{label}</span>}
+    </span>
+  );
+}
+
 export function Post() {
   return (
     <div className="flex flex-col p-4 pb-1 border-b last:border-none">
@@ -20,49 +40,29 @@ export function Post() {
           <span className="break-all">ここに投稿本文が入ります。</span>
         </div>
       </div>
-      <div className="flex justify-between ml-10 text-xs text-foreground-400">
-        <span className="relative flex items-center">
-          <Button
-            isIconOnly
-            variant="light"
-            aria-label="reply"
-            className="rounded-full h-8 w-8 min-w-8"
-          >
+      <div className="flex justify-between ml-10">
+        <PostAction
+          label="4"
+          ariaLabel="reply"
+          icon={
             <MessageCircleIcon className="h-3.5 w-3.5 text-foreground-400" />
-          </Button>
-          <span className="absolute left-7">4</span>
-        </span>
-        <span className="relative flex items-center">
-          <Button
-            isIconOnly
-            variant="light"
-            aria-label="repost"
-            className="rounded-full h-8 w-8 min-w-8"
-          >
-            <Repeat2Icon className="h-3.5 w-3.5 text-foreground-400" />
-          </Button>
-        </span>
-        <span className="relative flex items-center">
-          <Button
-            isIconOnly
-            variant="light"
-            aria-label="favorite"
-            className="rounded-full h-8 w-8 min-w-8"
-          >
-            <HeartIcon className="h-3.5 w-3.5 text-foreground-400" />
-          </Button>
-          <span className="absolute left-7">34</span>
-        </span>
-        <span className="relative flex items-center">
-          <Button
-            isIconOnly
-            variant="light"
-            aria-label="options"
-            className="rounded-full h-8 w-8 min-w-8"
-          >
+          }
+        />
+        <PostAction
+          ariaLabel="repost"
+          icon={<Repeat2Icon className="h-3.5 w-3.5 text-foreground-400" />}
+        />
+        <PostAction
+          label="18"
+          ariaLabel="favorite"
+          icon={<HeartIcon className="h-3.5 w-3.5 text-foreground-400" />}
+        />
+        <PostAction
+          ariaLabel="options"
+          icon={
             <EllipsisVerticalIcon className="h-3.5 w-3.5 text-foreground-400" />
-          </Button>
-        </span>
+          }
+        />
       </div>
     </div>
   );
