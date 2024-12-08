@@ -790,6 +790,8 @@ export interface operations {
                     content?: string;
                     /** Format: uuid */
                     reply_to_post_id?: string;
+                    /** Format: uuid */
+                    repost_post_id?: string;
                 };
             };
         };

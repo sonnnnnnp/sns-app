@@ -13,7 +13,7 @@ import (
 
 const getPostByID = `-- name: GetPostByID :one
 SELECT
-    posts.id, posts.author_id, posts.reply_to_id, posts.text, posts.created_at, posts.updated_at,
+    posts.id, posts.author_id, posts.reply_to_id, posts.repost_id, posts.text, posts.created_at, posts.updated_at,
     users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     (
         SELECT
@@ -62,6 +62,7 @@ func (q *Queries) GetPostByID(ctx context.Context, arg GetPostByIDParams) (GetPo
 		&i.Post.ID,
 		&i.Post.AuthorID,
 		&i.Post.ReplyToID,
+		&i.Post.RepostID,
 		&i.Post.Text,
 		&i.Post.CreatedAt,
 		&i.Post.UpdatedAt,

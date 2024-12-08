@@ -16,13 +16,15 @@ INSERT INTO
   posts (
     author_id,
     text,
-    reply_to_id
+    reply_to_id,
+    repost_id
   )
 VALUES
   (
     $1::uuid,
     $2::text,
-    $3::uuid
+    $3::uuid,
+    $4::uuid
   )
 RETURNING posts.id
 `
@@ -31,10 +33,16 @@ type CreatePostParams struct {
 	AuthorID  uuid.UUID  `json:"author_id"`
 	Text      *string    `json:"text"`
 	ReplyToID *uuid.UUID `json:"reply_to_id"`
+	RepostID  *uuid.UUID `json:"repost_id"`
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, createPost, arg.AuthorID, arg.Text, arg.ReplyToID)
+	row := q.db.QueryRow(ctx, createPost,
+		arg.AuthorID,
+		arg.Text,
+		arg.ReplyToID,
+		arg.RepostID,
+	)
 	var id uuid.UUID
 	err := row.Scan(&id)
 	return id, err

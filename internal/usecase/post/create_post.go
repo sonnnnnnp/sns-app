@@ -17,6 +17,7 @@ func (uc *PostUsecase) CreatePost(ctx context.Context, body *api.CreatePostJSONB
 		AuthorID:  selfUID,
 		Text:      body.Content,
 		ReplyToID: body.ReplyToPostId,
+		RepostID:  body.RepostPostId,
 	})
 	if err != nil {
 		return nil, err
