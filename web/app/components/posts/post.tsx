@@ -1,4 +1,5 @@
-import { Avatar, AvatarIcon, Button } from "@nextui-org/react";
+import { Avatar, AvatarIcon } from "@nextui-org/avatar";
+import { Button } from "@nextui-org/button";
 import {
   EllipsisVerticalIcon,
   HeartIcon,

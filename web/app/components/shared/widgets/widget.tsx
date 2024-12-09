@@ -1,4 +1,4 @@
-import { Card, CardBody } from "@nextui-org/react";
+import { Card, CardBody } from "@nextui-org/card";
 
 export function Widget() {
   return (

@@ -1,12 +1,9 @@
-import {
-  Badge,
-  Button,
-  Divider,
-  Listbox,
-  ListboxItem,
-  User,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Badge } from "@nextui-org/badge";
+import { Button } from "@nextui-org/button";
+import { Divider } from "@nextui-org/divider";
+import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { useDisclosure } from "@nextui-org/modal";
+import { User } from "@nextui-org/user";
 import {
   BellIcon,
   Grid2x2CheckIcon,

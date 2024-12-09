@@ -1,4 +1,6 @@
-import { Avatar, Badge, Listbox, ListboxItem } from "@nextui-org/react";
+import { Avatar } from "@nextui-org/avatar";
+import { Badge } from "@nextui-org/badge";
+import { Listbox, ListboxItem } from "@nextui-org/listbox";
 import {
   BellIcon,
   Grid2x2CheckIcon,

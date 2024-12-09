@@ -1,4 +1,6 @@
-import { Avatar, Badge, Tab, Tabs } from "@nextui-org/react";
+import { Avatar } from "@nextui-org/avatar";
+import { Badge } from "@nextui-org/badge";
+import { Tab, Tabs } from "@nextui-org/tabs";
 import { BellIcon, Grid2x2CheckIcon, HomeIcon, MailIcon } from "lucide-react";
 import ReactRouterLink from "~/utils/temp/react-router-link";
 

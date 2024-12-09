@@ -1,4 +1,5 @@
-import { Avatar, Button } from "@nextui-org/react";
+import { Avatar } from "@nextui-org/avatar";
+import { Button } from "@nextui-org/button";
 import { PhoneIcon } from "lucide-react";
 
 export function Call() {
