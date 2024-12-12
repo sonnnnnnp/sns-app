@@ -36,12 +36,12 @@ tidy:
 
 #? api: OpenAPI からコードを生成
 api:
-	docker compose run --rm httpserver bash -c "cd pkg && oapi-codegen -package api /httpserver/api/openapi.json > /httpserver/internal/http/adapter/api/interface.go"
+	docker compose run --rm httpserver bash -c "cd pkg && oapi-codegen -package api /httpserver/api/openapi.json > /httpserver/internal/server/http/adapter/api/interface.go"
 	npx openapi-typescript ./api/openapi.json -o ./web/app/api/client.ts
 
 #? wire: サーバーの依存関係を自動生成
 wire:
-	docker compose run --rm httpserver bash -c "cd /httpserver/pkg/httpserver/http && wire gen && mv ./wire_gen.go /httpserver/internal/http/wire.go"
+	docker compose run --rm httpserver bash -c "cd /httpserver/pkg/httpserver/http && wire gen && mv ./wire_gen.go /httpserver/internal/server/http/wire.go"
 
 .PHONY: migrate migrate-down seed sql-gen
 

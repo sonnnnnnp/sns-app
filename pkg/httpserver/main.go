@@ -7,11 +7,11 @@ import (
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 
-	server "github.com/sonnnnnnp/reverie/internal/http"
-	"github.com/sonnnnnnp/reverie/internal/http/adapter/api"
-	"github.com/sonnnnnnp/reverie/internal/http/adapter/gateway/db"
-	"github.com/sonnnnnnp/reverie/internal/http/adapter/middleware"
-	"github.com/sonnnnnnp/reverie/internal/http/errors"
+	"github.com/sonnnnnnp/reverie/internal/pkg/errors"
+	server "github.com/sonnnnnnp/reverie/internal/server/http"
+	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/api"
+	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/gateway/db"
+	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/middleware"
 	"github.com/sonnnnnnp/reverie/pkg/config"
 	"github.com/sonnnnnnp/reverie/pkg/ws"
 
