@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/sonnnnnnp/reverie/internal/http/adapter/api"
-	"github.com/sonnnnnnp/reverie/internal/http/tools/ctxhelper"
-	"github.com/sonnnnnnp/reverie/internal/http/tools/jwter"
+	"github.com/sonnnnnnp/reverie/internal/pkg/ctxhelper"
+	"github.com/sonnnnnnp/reverie/internal/pkg/jwter"
 )
 
 func (uc *AuthorizeUsecase) RefreshAuthorization(ctx context.Context, body *api.RefreshAuthorizationJSONBody) (*api.Authorization, error) {

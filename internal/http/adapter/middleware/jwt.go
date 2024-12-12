@@ -6,8 +6,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/reverie/internal/http/errors"
-	"github.com/sonnnnnnp/reverie/internal/http/tools/ctxhelper"
-	"github.com/sonnnnnnp/reverie/internal/http/tools/jwter"
+	"github.com/sonnnnnnp/reverie/internal/pkg/ctxhelper"
+	"github.com/sonnnnnnp/reverie/internal/pkg/jwter"
 )
 
 func JWT(excludePaths []string) echo.MiddlewareFunc {
