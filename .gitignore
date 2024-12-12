@@ -1,9 +1,6 @@
-tmp/
-
 # compiled output
 /dist
 /node_modules
-/build
 
 # Logs
 logs
@@ -45,6 +42,8 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+tmp
+tmp_http
 
 # Runtime data
 pids
@@ -55,9 +54,5 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
-next-env.d.ts
