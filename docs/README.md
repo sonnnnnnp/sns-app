@@ -6,7 +6,7 @@
 
 [http://localhost:3000](http://localhost:3000)
 
-###### Backend
+###### API Server
 
 [http://localhost:1323](http://localhost:1323)
 

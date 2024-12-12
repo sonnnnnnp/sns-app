@@ -10,12 +10,10 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@nextui-org/react": "^2.6.3",
-    "@nextui-org/system": "^2.4.2",
-    "@nextui-org/theme": "^2.4.1",
+    "@nextui-org/react": "^2.6.8",
     "@react-router/node": "^7.0.2",
     "@react-router/serve": "^7.0.2",
-    "framer-motion": "^11.13.1",
+    "framer-motion": "^11.13.5",
     "isbot": "^5.1.17",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.468.0",
