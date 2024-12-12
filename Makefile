@@ -37,9 +37,9 @@ tidy:
 #? api: OpenAPI からコードを生成
 api:
 	docker compose run --rm api bash -c "cd pkg && oapi-codegen -package api /api/api/openapi.json > /api/internal/adapter/api/interface.go"
-	npx openapi-typescript ./api/openapi.json -o ./web/lib/api/client.ts
+	npx openapi-typescript ./api/openapi.json -o ./web/app/api/client.ts
 
-#? wire: 依存関係の自動生成
+#? wire: サーバーの依存関係を自動生成
 wire:
 	docker compose run --rm api bash -c "cd /api/pkg/server/internal && wire gen && mv ./wire_gen.go /api/internal/wire.go"
 
