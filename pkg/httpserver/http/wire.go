@@ -3,14 +3,14 @@ package http
 import (
 	"github.com/google/wire"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/sonnnnnnp/reverie/internal/http/adapter/controller"
-	"github.com/sonnnnnnp/reverie/internal/http/usecase/authorize"
-	"github.com/sonnnnnnp/reverie/internal/http/usecase/call"
-	"github.com/sonnnnnnp/reverie/internal/http/usecase/call_timeline"
-	"github.com/sonnnnnnp/reverie/internal/http/usecase/post"
-	"github.com/sonnnnnnp/reverie/internal/http/usecase/stream"
-	"github.com/sonnnnnnp/reverie/internal/http/usecase/timeline"
-	"github.com/sonnnnnnp/reverie/internal/http/usecase/user"
+	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/controller"
+	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/authorize"
+	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/call"
+	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/call_timeline"
+	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/post"
+	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/stream"
+	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/timeline"
+	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/user"
 	"github.com/sonnnnnnp/reverie/pkg/line"
 )
 
