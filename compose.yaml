@@ -1,13 +1,13 @@
 services:
-  api:
-    container_name: api
+  httpserver:
+    container_name: http-server
     build:
-      context: ./docker
+      context: ./build/httpserver
       dockerfile: Dockerfile
     ports:
       - 1323:1323
     volumes:
-      - .:/api
+      - .:/httpserver
     env_file:
       - .env
     depends_on:
@@ -28,7 +28,7 @@ services:
     ports:
       - 8888:80
     volumes:
-      - ./docker/pgadmin.json:/pgadmin4/servers.json
+      - ./build/pgadmin.json:/pgadmin4/servers.json
     environment:
       - PGADMIN_DEFAULT_EMAIL=user@example.com
       - PGADMIN_DEFAULT_PASSWORD=password
