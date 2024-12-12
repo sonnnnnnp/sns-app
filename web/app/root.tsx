@@ -13,7 +13,7 @@ import {
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
 
-import { NextUIProvider } from "@nextui-org/system";
+import { NextUIProvider } from "@nextui-org/react";
 
 import { BackgroundTexture } from "./components/shared/background-texture";
 

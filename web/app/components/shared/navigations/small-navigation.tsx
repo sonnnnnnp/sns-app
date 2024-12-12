@@ -1,6 +1,4 @@
-import { Avatar } from "@nextui-org/avatar";
-import { Badge } from "@nextui-org/badge";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Avatar, Badge, Listbox, ListboxItem } from "@nextui-org/react";
 import {
   BellIcon,
   Grid2x2CheckIcon,
@@ -9,7 +7,6 @@ import {
   SearchIcon,
   SettingsIcon,
 } from "lucide-react";
-import ReactRouterLink from "~/utils/temp/react-router-link";
 
 export function SmallNavigation({ pathname }: { pathname: string }) {
   return (
@@ -30,28 +27,24 @@ export function SmallNavigation({ pathname }: { pathname: string }) {
           href="/home"
           title="ホーム"
           startContent={<HomeIcon />}
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/explore"
           href="/explore"
           title="検索"
           startContent={<SearchIcon />}
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/groups"
           href="/groups"
           title="グループ"
           startContent={<Grid2x2CheckIcon />}
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/messages"
           href="/messages"
           title="メッセージ"
           startContent={<MailIcon />}
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/notifications"
@@ -62,7 +55,6 @@ export function SmallNavigation({ pathname }: { pathname: string }) {
               <BellIcon />
             </Badge>
           }
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/settings"
@@ -70,7 +62,6 @@ export function SmallNavigation({ pathname }: { pathname: string }) {
           title="設定"
           startContent={<SettingsIcon />}
           className="mt-auto"
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/users"
@@ -83,7 +74,6 @@ export function SmallNavigation({ pathname }: { pathname: string }) {
               className="w-6 h-6"
             />
           }
-          as={ReactRouterLink}
         />
       </Listbox>
     </div>

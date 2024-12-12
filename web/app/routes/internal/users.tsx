@@ -1,6 +1,4 @@
-import { Avatar } from "@nextui-org/avatar";
-import { Button } from "@nextui-org/button";
-import { Tab, Tabs } from "@nextui-org/tabs";
+import { Avatar, Button, Tab, Tabs } from "@nextui-org/react";
 import {
   ArrowLeftIcon,
   EllipsisVerticalIcon,

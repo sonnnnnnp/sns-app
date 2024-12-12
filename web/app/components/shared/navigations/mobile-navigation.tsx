@@ -1,8 +1,5 @@
-import { Avatar } from "@nextui-org/avatar";
-import { Badge } from "@nextui-org/badge";
-import { Tab, Tabs } from "@nextui-org/tabs";
+import { Avatar, Badge, Tab, Tabs } from "@nextui-org/react";
 import { BellIcon, Grid2x2CheckIcon, HomeIcon, MailIcon } from "lucide-react";
-import ReactRouterLink from "~/utils/temp/react-router-link";
 
 export function MobileNavigation({ pathname }: { pathname: string }) {
   return (
@@ -18,24 +15,9 @@ export function MobileNavigation({ pathname }: { pathname: string }) {
           cursor: "hidden",
         }}
       >
-        <Tab
-          key="/home"
-          href="/home"
-          title={<HomeIcon />}
-          as={ReactRouterLink}
-        />
-        <Tab
-          key="/groups"
-          href="/groups"
-          title={<Grid2x2CheckIcon />}
-          as={ReactRouterLink}
-        />
-        <Tab
-          key="/messages"
-          href="/messages"
-          title={<MailIcon />}
-          as={ReactRouterLink}
-        />
+        <Tab key="/home" href="/home" title={<HomeIcon />} />
+        <Tab key="/groups" href="/groups" title={<Grid2x2CheckIcon />} />
+        <Tab key="/messages" href="/messages" title={<MailIcon />} />
         <Tab
           key="/notifications"
           href="/notifications"
@@ -44,7 +26,6 @@ export function MobileNavigation({ pathname }: { pathname: string }) {
               <BellIcon />
             </Badge>
           }
-          as={ReactRouterLink}
         />
         <Tab
           key="/users"
@@ -56,7 +37,6 @@ export function MobileNavigation({ pathname }: { pathname: string }) {
               src="https://i.pravatar.cc/150?u=a04258114e29026702d"
             />
           }
-          as={ReactRouterLink}
         />
       </Tabs>
     </div>

@@ -1,5 +1,4 @@
-import { Avatar, AvatarIcon } from "@nextui-org/avatar";
-import { Button } from "@nextui-org/button";
+import { Avatar, AvatarIcon, Button } from "@nextui-org/react";
 import {
   EllipsisVerticalIcon,
   HeartIcon,
@@ -45,23 +44,21 @@ export function Post() {
         <PostAction
           label="4"
           ariaLabel="reply"
-          icon={
-            <MessageCircleIcon className="h-3.5 w-3.5 text-foreground-400" />
-          }
+          icon={<MessageCircleIcon className="h-4 w-4 text-foreground-400" />}
         />
         <PostAction
           ariaLabel="repost"
-          icon={<Repeat2Icon className="h-3.5 w-3.5 text-foreground-400" />}
+          icon={<Repeat2Icon className="h-4 w-4 text-foreground-400" />}
         />
         <PostAction
           label="18"
           ariaLabel="favorite"
-          icon={<HeartIcon className="h-3.5 w-3.5 text-foreground-400" />}
+          icon={<HeartIcon className="h-4 w-4 text-foreground-400" />}
         />
         <PostAction
           ariaLabel="options"
           icon={
-            <EllipsisVerticalIcon className="h-3.5 w-3.5 text-foreground-400" />
+            <EllipsisVerticalIcon className="h-4 w-4 text-foreground-400" />
           }
         />
       </div>

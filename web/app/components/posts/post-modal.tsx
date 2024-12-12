@@ -1,14 +1,14 @@
-import { Avatar } from "@nextui-org/avatar";
-import { Button } from "@nextui-org/button";
-import { Textarea } from "@nextui-org/input";
 import {
+  Avatar,
+  Button,
+  CircularProgress,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from "@nextui-org/modal";
-import { CircularProgress } from "@nextui-org/progress";
+  Textarea,
+} from "@nextui-org/react";
 import { ImageIcon, ListIcon, MicIcon, XIcon } from "lucide-react";
 
 export function PostModal({

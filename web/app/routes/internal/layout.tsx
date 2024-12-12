@@ -8,7 +8,7 @@ export default function Layout() {
     <AuthProvider>
       <div className="flex justify-center min-h-dvh">
         <Navigation />
-        <main className="flex-grow max-w-[750px] mb-16 md:mb-0">
+        <main className="flex-grow max-w-[750px] min-w-0 mb-16 md:mb-0">
           <Outlet />
         </main>
         <WidgetList />

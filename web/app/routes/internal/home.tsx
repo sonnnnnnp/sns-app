@@ -1,4 +1,4 @@
-import { Tab, Tabs } from "@nextui-org/tabs";
+import { Tab, Tabs } from "@nextui-org/react";
 import { Timeline } from "~/components/timeline/timeline";
 
 export default function Home() {

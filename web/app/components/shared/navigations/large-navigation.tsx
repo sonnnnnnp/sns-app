@@ -1,9 +1,12 @@
-import { Badge } from "@nextui-org/badge";
-import { Button } from "@nextui-org/button";
-import { Divider } from "@nextui-org/divider";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
-import { useDisclosure } from "@nextui-org/modal";
-import { User } from "@nextui-org/user";
+import {
+  Badge,
+  Button,
+  Divider,
+  Listbox,
+  ListboxItem,
+  User,
+  useDisclosure,
+} from "@nextui-org/react";
 import {
   BellIcon,
   Grid2x2CheckIcon,
@@ -15,7 +18,6 @@ import {
   UserRoundIcon,
 } from "lucide-react";
 import { PostModal } from "~/components/posts/post-modal";
-import ReactRouterLink from "~/utils/temp/react-router-link";
 
 export function LargeNavigation({ pathname }: { pathname: string }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -62,7 +64,6 @@ export function LargeNavigation({ pathname }: { pathname: string }) {
               ホーム
             </span>
           }
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/explore"
@@ -74,7 +75,6 @@ export function LargeNavigation({ pathname }: { pathname: string }) {
               見つける
             </span>
           }
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/groups"
@@ -86,7 +86,6 @@ export function LargeNavigation({ pathname }: { pathname: string }) {
               グループ
             </span>
           }
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/messages"
@@ -98,7 +97,6 @@ export function LargeNavigation({ pathname }: { pathname: string }) {
               メッセージ
             </span>
           }
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/notifications"
@@ -112,7 +110,6 @@ export function LargeNavigation({ pathname }: { pathname: string }) {
               通知
             </span>
           }
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/users"
@@ -124,7 +121,6 @@ export function LargeNavigation({ pathname }: { pathname: string }) {
               プロフィール
             </span>
           }
-          as={ReactRouterLink}
         />
         <ListboxItem
           key="/settings"
@@ -136,7 +132,6 @@ export function LargeNavigation({ pathname }: { pathname: string }) {
               設定
             </span>
           }
-          as={ReactRouterLink}
         />
       </Listbox>
     </div>
