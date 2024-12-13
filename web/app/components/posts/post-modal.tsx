@@ -2,6 +2,8 @@ import {
   Avatar,
   Button,
   CircularProgress,
+  Divider,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
@@ -9,12 +11,27 @@ import {
   ModalHeader,
   Textarea,
 } from "@nextui-org/react";
-import { ImageIcon, ListIcon, MicIcon, XIcon } from "lucide-react";
+import {
+  MaterialSymbolsCloseRounded,
+  SolarChecklistLinear,
+  SolarGalleryLinear,
+  SolarMicrophone2Linear,
+} from "../icons";
+import { PostContentHeader } from "./post-content-header";
+
+type Post = {
+  text: string;
+};
 
 export function PostModal({
   isOpen,
+  replyToPost,
   onOpenChange,
-}: { isOpen: boolean; onOpenChange: (isOpen: boolean) => void }) {
+}: {
+  isOpen: boolean;
+  replyToPost?: Post;
+  onOpenChange: (isOpen: boolean) => void;
+}) {
   return (
     <Modal
       isOpen={isOpen}
@@ -46,7 +63,7 @@ export function PostModal({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex space-x-2 px-3 py-2 border-b">
+            <ModalHeader className="flex gap-x-2 px-3 py-2 border-b">
               <Button
                 isIconOnly
                 radius="full"
@@ -54,7 +71,7 @@ export function PostModal({
                 className="mr-auto border-none"
                 onPress={onClose}
               >
-                <XIcon className="w-4 h-4" />
+                <MaterialSymbolsCloseRounded className="w-5 h-5" />
               </Button>
               <Button
                 radius="full"
@@ -70,10 +87,40 @@ export function PostModal({
                 className="font-medium"
                 onPress={onClose}
               >
-                投稿
+                {replyToPost ? "返信" : "投稿"}
               </Button>
             </ModalHeader>
-            <ModalBody className="p-4">
+            <ModalBody className="p-4 gap-0">
+              {replyToPost && (
+                <div className="flex gap-4">
+                  <div>
+                    <Avatar
+                      src="https://i.pravatar.cc/150?u=a04258114e29026702d"
+                      classNames={{ base: "flex-shrink-0" }}
+                    />
+                    <Divider
+                      orientation="vertical"
+                      className="mx-auto w-[2px]"
+                    />
+                  </div>
+                  <div>
+                    <PostContentHeader />
+                    <p className="text-sm">
+                      返信先の投稿本文返信先の投稿本文返信先の投稿本文
+                      <br />
+                      返信先の投稿本文返信先の投稿本文
+                      <br />
+                      返信先の投稿本文返信先の投稿本文返信先の投稿本文返信先の投稿本文
+                      <br />
+                      返信先の投稿本文返信先の投稿本文返信先の投稿本文返信先の投稿本文返信先の投稿本文返信先の投稿本文返信先の投稿本文返信先の投稿本文
+                    </p>
+                    <span className="flex gap-1 h-12 items-center text-sm text-foreground-400">
+                      <span>返信先:</span>
+                      <Link>@username</Link>
+                    </span>
+                  </div>
+                </div>
+              )}
               <div className="flex space-x-2">
                 <Avatar
                   src="https://i.pravatar.cc/150?u=a04258114e29026702d"
@@ -81,7 +128,11 @@ export function PostModal({
                 />
                 <Textarea
                   autoFocus
-                  placeholder="今日あったこと、興味のあること、なんでも気軽につぶやいてみよう！"
+                  placeholder={
+                    replyToPost
+                      ? "@username に返信する"
+                      : "今日あったこと、興味のあること、なんでも気軽につぶやいてみよう！"
+                  }
                   classNames={{
                     inputWrapper:
                       "bg-transparent shadow-none group-data-[focus=true]:bg-default-0 group-data-[focus-visible=true]:ring-0 group-data-[focus-visible=true]:ring-offset-0",
@@ -98,7 +149,7 @@ export function PostModal({
                 variant="light"
                 onPress={onClose}
               >
-                <ImageIcon className="w-6 h-6" />
+                <SolarGalleryLinear className="w-6 h-6" />
               </Button>
               <Button
                 isIconOnly
@@ -107,7 +158,7 @@ export function PostModal({
                 variant="light"
                 onPress={onClose}
               >
-                <ListIcon className="w-6 h-6" />
+                <SolarChecklistLinear className="w-6 h-6" />
               </Button>
               <Button
                 isIconOnly
@@ -117,7 +168,7 @@ export function PostModal({
                 className="mr-auto"
                 onPress={onClose}
               >
-                <MicIcon className="w-6 h-6" />
+                <SolarMicrophone2Linear className="w-6 h-6" />
               </Button>
               <CircularProgress
                 color="primary"

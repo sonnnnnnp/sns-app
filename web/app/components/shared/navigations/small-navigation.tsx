@@ -1,12 +1,12 @@
 import { Avatar, Badge, Listbox, ListboxItem } from "@nextui-org/react";
 import {
-  BellIcon,
-  Grid2x2CheckIcon,
-  HomeIcon,
-  MailIcon,
-  SearchIcon,
-  SettingsIcon,
-} from "lucide-react";
+  SolarBellLinear,
+  SolarHome2Linear,
+  SolarLetterLinear,
+  SolarMagniferLinear,
+  SolarSettingsLinear,
+  SolarUsersGroupTwoRoundedLinear,
+} from "~/components/icons";
 
 export function SmallNavigation({ pathname }: { pathname: string }) {
   return (
@@ -26,25 +26,25 @@ export function SmallNavigation({ pathname }: { pathname: string }) {
           key="/home"
           href="/home"
           title="ホーム"
-          startContent={<HomeIcon />}
+          startContent={<SolarHome2Linear />}
         />
         <ListboxItem
           key="/explore"
           href="/explore"
           title="検索"
-          startContent={<SearchIcon />}
+          startContent={<SolarMagniferLinear />}
         />
         <ListboxItem
           key="/groups"
           href="/groups"
           title="グループ"
-          startContent={<Grid2x2CheckIcon />}
+          startContent={<SolarUsersGroupTwoRoundedLinear />}
         />
         <ListboxItem
           key="/messages"
           href="/messages"
           title="メッセージ"
-          startContent={<MailIcon />}
+          startContent={<SolarLetterLinear />}
         />
         <ListboxItem
           key="/notifications"
@@ -52,7 +52,7 @@ export function SmallNavigation({ pathname }: { pathname: string }) {
           title="通知"
           startContent={
             <Badge color="primary" size="sm" content="">
-              <BellIcon />
+              <SolarBellLinear />
             </Badge>
           }
         />
@@ -60,7 +60,7 @@ export function SmallNavigation({ pathname }: { pathname: string }) {
           key="/settings"
           href="/settings"
           title="設定"
-          startContent={<SettingsIcon />}
+          startContent={<SolarSettingsLinear />}
           className="mt-auto"
         />
         <ListboxItem

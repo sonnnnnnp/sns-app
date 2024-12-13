@@ -1,10 +1,10 @@
 import { Button } from "@nextui-org/react";
 import {
-  EllipsisVerticalIcon,
-  HeartIcon,
-  MessageCircleIcon,
-  Repeat2Icon,
-} from "lucide-react";
+  SolarChatRoundLinear,
+  SolarHeartLinear,
+  SolarMenuDotsBold,
+  SolarRepeatLinear,
+} from "../icons";
 
 export function PostActionButton({
   icon,
@@ -33,20 +33,22 @@ export function PostActions() {
       <PostActionButton
         label="4"
         ariaLabel="reply"
-        icon={<MessageCircleIcon className="h-4 w-4 text-foreground-400" />}
+        icon={<SolarChatRoundLinear className="h-4 w-4 text-foreground-400" />}
       />
       <PostActionButton
         ariaLabel="repost"
-        icon={<Repeat2Icon className="h-4 w-4 text-foreground-400" />}
+        icon={<SolarRepeatLinear className="h-4 w-4 text-foreground-400" />}
       />
       <PostActionButton
         label="18"
         ariaLabel="favorite"
-        icon={<HeartIcon className="h-4 w-4 text-foreground-400" />}
+        icon={<SolarHeartLinear className="h-4 w-4 text-foreground-400" />}
       />
       <PostActionButton
         ariaLabel="options"
-        icon={<EllipsisVerticalIcon className="h-4 w-4 text-foreground-400" />}
+        icon={
+          <SolarMenuDotsBold className="h-4 w-4 rotate-90 text-foreground-400" />
+        }
       />
     </div>
   );

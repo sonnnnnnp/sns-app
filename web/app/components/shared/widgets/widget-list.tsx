@@ -1,5 +1,5 @@
 import { Input } from "@nextui-org/react";
-import { SearchIcon } from "lucide-react";
+import { SolarMagniferLinear } from "~/components/icons";
 import { Widget } from "./widget";
 
 export function WidgetList() {
@@ -11,7 +11,7 @@ export function WidgetList() {
           placeholder="検索する"
           radius="full"
           aria-label="search"
-          startContent={<SearchIcon />}
+          startContent={<SolarMagniferLinear className="w-5 h-5" />}
         />
         {Array.from({ length: 4 }).map((_, i) => (
           // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
