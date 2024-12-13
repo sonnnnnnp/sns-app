@@ -1,5 +1,5 @@
 import { Avatar, Button } from "@nextui-org/react";
-import { PhoneIcon } from "lucide-react";
+import { SolarMicrophone2Linear } from "../icons/solar";
 
 export function Call() {
   return (
@@ -17,8 +17,8 @@ export function Call() {
         </div>
       </Button>
       <span className="flex items-center gap-1 text-nowrap text-xs">
-        <span className="p-1 bg-default rounded-full">
-          <PhoneIcon className="w-3 h-3" />
+        <span className="p-0.5 bg-default rounded-full">
+          <SolarMicrophone2Linear width={14} height={14} />
         </span>
         4人参加中
       </span>

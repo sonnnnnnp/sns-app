@@ -11,7 +11,12 @@ import {
   ModalHeader,
   Textarea,
 } from "@nextui-org/react";
-import { ImageIcon, ListIcon, MicIcon, XIcon } from "lucide-react";
+import {
+  MaterialSymbolsCloseRounded,
+  SolarChecklistLinear,
+  SolarGalleryLinear,
+  SolarMicrophone2Linear,
+} from "../icons";
 import { PostContentHeader } from "./post-content-header";
 
 type Post = {
@@ -66,7 +71,7 @@ export function PostModal({
                 className="mr-auto border-none"
                 onPress={onClose}
               >
-                <XIcon className="w-4 h-4" />
+                <MaterialSymbolsCloseRounded className="w-5 h-5" />
               </Button>
               <Button
                 radius="full"
@@ -144,7 +149,7 @@ export function PostModal({
                 variant="light"
                 onPress={onClose}
               >
-                <ImageIcon className="w-6 h-6" />
+                <SolarGalleryLinear className="w-6 h-6" />
               </Button>
               <Button
                 isIconOnly
@@ -153,7 +158,7 @@ export function PostModal({
                 variant="light"
                 onPress={onClose}
               >
-                <ListIcon className="w-6 h-6" />
+                <SolarChecklistLinear className="w-6 h-6" />
               </Button>
               <Button
                 isIconOnly
@@ -163,7 +168,7 @@ export function PostModal({
                 className="mr-auto"
                 onPress={onClose}
               >
-                <MicIcon className="w-6 h-6" />
+                <SolarMicrophone2Linear className="w-6 h-6" />
               </Button>
               <CircularProgress
                 color="primary"

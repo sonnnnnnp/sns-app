@@ -1,5 +1,10 @@
 import { Avatar, Badge, Tab, Tabs } from "@nextui-org/react";
-import { BellIcon, Grid2x2CheckIcon, HomeIcon, MailIcon } from "lucide-react";
+import {
+  SolarBellLinear,
+  SolarHome2Linear,
+  SolarLetterLinear,
+  SolarUsersGroupTwoRoundedLinear,
+} from "~/components/icons";
 
 export function MobileNavigation({ pathname }: { pathname: string }) {
   return (
@@ -15,15 +20,19 @@ export function MobileNavigation({ pathname }: { pathname: string }) {
           cursor: "hidden",
         }}
       >
-        <Tab key="/home" href="/home" title={<HomeIcon />} />
-        <Tab key="/groups" href="/groups" title={<Grid2x2CheckIcon />} />
-        <Tab key="/messages" href="/messages" title={<MailIcon />} />
+        <Tab key="/home" href="/home" title={<SolarHome2Linear />} />
+        <Tab
+          key="/groups"
+          href="/groups"
+          title={<SolarUsersGroupTwoRoundedLinear />}
+        />
+        <Tab key="/messages" href="/messages" title={<SolarLetterLinear />} />
         <Tab
           key="/notifications"
           href="/notifications"
           title={
             <Badge color="primary" size="sm" content="">
-              <BellIcon />
+              <SolarBellLinear />
             </Badge>
           }
         />

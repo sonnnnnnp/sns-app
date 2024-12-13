@@ -1,6 +1,6 @@
 import { Avatar, Button } from "@nextui-org/react";
-import { MailIcon, SearchIcon } from "lucide-react";
 import { Link } from "react-router";
+import { SolarLetterLinear, SolarMagniferLinear } from "../icons";
 
 export default function UserProfile() {
   return (
@@ -23,7 +23,7 @@ export default function UserProfile() {
           radius="full"
           className="h-8 w-8 min-w-8"
         >
-          <SearchIcon className="w-4 h-4" />
+          <SolarMagniferLinear className="w-4 h-4" />
         </Button>
         <Button
           isIconOnly
@@ -31,7 +31,7 @@ export default function UserProfile() {
           radius="full"
           className="h-8 w-8 min-w-8"
         >
-          <MailIcon className="w-4 h-4" />
+          <SolarLetterLinear className="w-4 h-4" />
         </Button>
         <Button radius="full" className="h-8 bg-foreground text-default">
           フォローする
