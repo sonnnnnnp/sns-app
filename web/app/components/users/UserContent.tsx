@@ -1,5 +1,5 @@
 import { Tab, Tabs } from "@nextui-org/react";
-import { PostTimeline } from "~/components/timeline/post-timeline";
+import { PostTimeline } from "~/components/timeline/PostTimeline";
 
 export default function UserContent() {
   return (

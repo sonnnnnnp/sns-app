@@ -17,7 +17,7 @@ import {
   SolarGalleryLinear,
   SolarMicrophone2Linear,
 } from "../icons";
-import { PostContentHeader } from "./post-content-header";
+import { PostContentHeader } from "./PostContentHeader";
 
 type Post = {
   text: string;

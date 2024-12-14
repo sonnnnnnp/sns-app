@@ -1,6 +1,6 @@
 import { Input } from "@nextui-org/react";
 import { SolarMagniferLinear } from "~/components/icons";
-import { Widget } from "./widget";
+import { Widget } from "./Widget";
 
 export function WidgetList() {
   return (

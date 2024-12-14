@@ -1,5 +1,5 @@
 import { Avatar, AvatarIcon } from "@nextui-org/react";
-import { PostContentHeader } from "./post-content-header";
+import { PostContentHeader } from "./PostContentHeader";
 
 export function PostContent() {
   return (

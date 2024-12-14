@@ -11,7 +11,7 @@ import {
   SolarMenuDotsBold,
   SolarRepeatLinear,
 } from "../icons";
-import { PostOptionsList } from "./post-options-list";
+import { PostOptionsList } from "./PostOptionsList";
 
 export function PostActionButton({
   icon,

@@ -20,7 +20,7 @@ import {
 } from "~/components/icons";
 import { SolarPenLinear } from "~/components/icons/solar/linear/SolarPenLinear";
 import { SolarUsersGroupTwoRoundedLinear } from "~/components/icons/solar/linear/SolarUsersGroupTwoRoundedLinear";
-import { PostModal } from "~/components/posts/post-modal";
+import { PostModal } from "~/components/posts/PostModal";
 
 export function LargeNavigation({ pathname }: { pathname: string }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

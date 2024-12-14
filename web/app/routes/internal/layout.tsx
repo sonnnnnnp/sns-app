@@ -1,7 +1,7 @@
 import { Outlet } from "react-router";
-import { Navigation } from "~/components/shared/navigations/navigation";
-import { WidgetList } from "~/components/shared/widgets/widget-list";
-import { AuthProvider } from "~/providers/auth-provider";
+import { Navigation } from "~/components/shared/navigations/Navigation";
+import { WidgetList } from "~/components/shared/widgets/WidgetList";
+import { AuthProvider } from "~/providers/AuthProvider";
 
 export default function Layout() {
   return (

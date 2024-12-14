@@ -1,7 +1,7 @@
 import { useDisclosure } from "@nextui-org/react";
-import { PostActions } from "./post-actions";
-import { PostContent } from "./post-content";
-import { PostModal } from "./post-modal";
+import { PostActions } from "./PostActions";
+import { PostModal } from "./PostModal";
+import { PostContent } from "./PostContent";
 
 export function Post() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
