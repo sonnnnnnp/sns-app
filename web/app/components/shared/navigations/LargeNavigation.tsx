@@ -52,11 +52,7 @@ export function LargeNavigation({ pathname }: { pathname: string }) {
         >
           投稿する
         </Button>
-        <PostModal
-          // replyToPost={{ text: "返信先の投稿本文" }}
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
-        />
+        <PostModal isOpen={isOpen} onOpenChange={onOpenChange} />
       </div>
       <Divider className="my-4" />
       <Listbox

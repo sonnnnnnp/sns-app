@@ -41,9 +41,9 @@ export function PostActionButton({
   );
 }
 
-export function PostActions({
-  onPressCreateReply,
-}: { onPressCreateReply: () => void }) {
+export function PostFooter({
+  onAction,
+}: { onAction: (key: "reply" | "repost" | "favorite") => void }) {
   const [isOptionsPopoverOpen, setIsOptionsPopoverOpen] = React.useState(false);
 
   return (
@@ -52,17 +52,19 @@ export function PostActions({
         label="4"
         ariaLabel="reply"
         icon={<SolarChatRoundLinear className="h-4 w-4 text-foreground-400" />}
-        onPress={onPressCreateReply}
+        onPress={() => onAction?.("reply")}
       />
       <PostActionButton
         label=""
         ariaLabel="repost"
         icon={<SolarRepeatLinear className="h-4 w-4 text-foreground-400" />}
+        onPress={() => onAction?.("repost")}
       />
       <PostActionButton
         label="18"
         ariaLabel="favorite"
         icon={<SolarHeartLinear className="h-4 w-4 text-foreground-400" />}
+        onPress={() => onAction?.("favorite")}
       />
       <Popover
         placement="left-end"

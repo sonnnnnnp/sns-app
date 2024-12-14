@@ -1,17 +1,30 @@
 import { useDisclosure } from "@nextui-org/react";
-import { PostActions } from "./PostActions";
+import React from "react";
+import { PostBody } from "./PostBody";
+import { PostFooter } from "./PostFooter";
 import { PostModal } from "./PostModal";
-import { PostContent } from "./PostContent";
 
 export function Post() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [actionKey, setActionKey] = React.useState<
+    "reply" | "repost" | "favorite"
+  >();
 
   return (
     <div className="flex flex-col p-4 pb-1 border-b last:border-none">
-      <PostContent />
-      <PostActions onPressCreateReply={onOpen} />
+      <PostBody />
+      <PostFooter
+        onAction={(key) => {
+          setActionKey(key);
+
+          if (key === "reply" || key === "repost") {
+            onOpen();
+          }
+        }}
+      />
       <PostModal
-        replyToPost={{ text: "返信先の投稿本文" }}
+        replyToPost={actionKey === "reply" ? { text: "" } : undefined}
+        repost={actionKey === "repost" ? { text: "" } : undefined}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
       />
