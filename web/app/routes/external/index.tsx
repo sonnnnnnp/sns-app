@@ -1,12 +1,18 @@
+import { Button, Link } from "@nextui-org/react";
+
 export function meta() {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Reverie" },
+    { name: "description", content: "Welcome to Reverie!" },
   ];
 }
 
 export default function Index() {
   return (
-    <div className="flex w-full items-center justify-center">いんでっくす</div>
+    <main className="grid place-items-center h-dvh w-full">
+      <Button as={Link} href="/login" color="primary">
+        ログイン
+      </Button>
+    </main>
   );
 }
