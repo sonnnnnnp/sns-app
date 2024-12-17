@@ -43,23 +43,29 @@ export default function Login() {
                 現実の外で、もっとリアルなつながりを。
               </p>
             </div>
-            <div className="grid gap-3">
-              <Input
-                size="sm"
-                label="カスタムID"
-                variant="bordered"
-                classNames={{ inputWrapper: "rounded-large" }}
-                onValueChange={(value) => setCustomId(value)}
-              />
-              <Button color="primary" onPress={handleLoginWithCustomId}>
-                ログイン
-              </Button>
-            </div>
-            <div className="flex items-center gap-4 py-2">
-              <Divider className="flex-1" />
-              <p className="shrink-0 text-tiny text-default-500">もしくは</p>
-              <Divider className="flex-1" />
-            </div>
+            {import.meta.env.VITE_APP_ENV === "development" && (
+              <>
+                <div className="grid gap-3">
+                  <Input
+                    size="sm"
+                    label="カスタムID"
+                    variant="bordered"
+                    classNames={{ inputWrapper: "rounded-large" }}
+                    onValueChange={(value) => setCustomId(value)}
+                  />
+                  <Button color="primary" onPress={handleLoginWithCustomId}>
+                    ログイン
+                  </Button>
+                </div>
+                <div className="flex items-center gap-4 py-2">
+                  <Divider className="flex-1" />
+                  <p className="shrink-0 text-tiny text-default-500">
+                    もしくは
+                  </p>
+                  <Divider className="flex-1" />
+                </div>
+              </>
+            )}
             <div className="grid gap-2">
               <Button className="bg-default/60">
                 <SimpleIconsGoogle className="w-5 h-5 mr-1" />
