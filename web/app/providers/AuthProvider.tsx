@@ -10,7 +10,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log("check cookies");
 
     if (!Cookies.get("access-token")) {
-      // window.location.href = "/";
+      window.location.href = "/";
       return;
     }
 

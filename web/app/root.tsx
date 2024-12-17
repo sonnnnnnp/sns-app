@@ -15,7 +15,7 @@ import stylesheet from "./app.css?url";
 
 import { NextUIProvider } from "@nextui-org/react";
 
-import { BackgroundTexture } from "./components/shared/BackgroundTexture";
+import { BackgroundTexture } from "./components/ui/BackgroundTexture";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
