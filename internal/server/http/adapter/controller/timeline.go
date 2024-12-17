@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/reverie/internal/pkg/response"
 	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/api"
 )
 
@@ -14,7 +15,7 @@ func (c Controller) GetTimeline(ctx echo.Context, params api.GetTimelineParams) 
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.PostTimeline{
+	return response.JSON(ctx, http.StatusOK, &api.PostTimeline{
 		Posts:      posts,
 		NextCursor: nextCursor,
 	})
@@ -26,7 +27,7 @@ func (c Controller) GetFollowingTimeline(ctx echo.Context, params api.GetFollowi
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.PostTimeline{
+	return response.JSON(ctx, http.StatusOK, &api.PostTimeline{
 		Posts:      posts,
 		NextCursor: nextCursor,
 	})
@@ -38,7 +39,7 @@ func (c Controller) GetUserTimeline(ctx echo.Context, uID uuid.UUID, params api.
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.PostTimeline{
+	return response.JSON(ctx, http.StatusOK, &api.PostTimeline{
 		Posts:      posts,
 		NextCursor: nextCursor,
 	})

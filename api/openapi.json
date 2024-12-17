@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "reverie",
+    "title": "sns-app",
     "description": "",
     "version": "1.0.0"
   },
@@ -469,7 +469,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "content": {
+                  "text": {
                     "type": "string"
                   },
                   "reply_to_post_id": {
@@ -1649,12 +1649,12 @@
         ]
       }
     },
-    "/stream": {
+    "/gateway": {
       "get": {
-        "summary": "WebSocket ストリーム",
+        "summary": "ゲートウェイの接続 URI を取得する",
         "deprecated": false,
-        "description": "Note: This endpoint is designated for WebSocket gateway usage and cannot be used as a REST API.",
-        "operationId": "stream",
+        "description": "",
+        "operationId": "getGatewayURI",
         "tags": [],
         "parameters": [],
         "responses": {
@@ -1664,7 +1664,25 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {}
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/GatewayURI"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
                 }
               }
             },
@@ -2091,6 +2109,17 @@
         "required": [
           "user",
           "role"
+        ]
+      },
+      "GatewayURI": {
+        "type": "object",
+        "properties": {
+          "uri": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uri"
         ]
       },
       "Response": {

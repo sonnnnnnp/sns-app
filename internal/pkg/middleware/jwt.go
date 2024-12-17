@@ -35,9 +35,9 @@ func JWT(excludePaths []string) echo.MiddlewareFunc {
 				return errors.ErrInvalidToken
 			}
 
-			// 認証トークンを検証
 			cfg := ctxhelper.GetConfig(ctx.Request().Context())
 
+			// 認証トークンを検証
 			if uID, err := jwter.Verify(token, "access", []byte(cfg.JWTSecret)); err == nil {
 				c := ctxhelper.SetUserID(ctx.Request().Context(), uID)
 				ctx.SetRequest(ctx.Request().WithContext(c))

@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/api"
-	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/stream"
 )
 
 type IPostUsecase interface {
@@ -27,18 +26,13 @@ type IPostUsecase interface {
 
 type PostUsecase struct {
 	pool *pgxpool.Pool
-
-	streamUsecase *stream.StreamUsecase
 }
 
 func New(
 	pool *pgxpool.Pool,
-	streamUsecase *stream.StreamUsecase,
 ) *PostUsecase {
 	return &PostUsecase{
 		pool: pool,
-
-		streamUsecase: streamUsecase,
 	}
 }
 

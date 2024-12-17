@@ -42,4 +42,4 @@ sql:
               pointer: true
             nullable: true
     database:
-      uri: "postgresql://user:password@db:5432/db"
+      uri: "postgresql://user:password@postgres:5432/db"

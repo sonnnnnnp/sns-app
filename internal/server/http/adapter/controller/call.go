@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/reverie/internal/pkg/response"
 	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/api"
 )
 
@@ -19,7 +20,7 @@ func (c Controller) CreateCall(ctx echo.Context) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &room)
+	return response.JSON(ctx, http.StatusOK, &room)
 }
 
 func (c Controller) EndCall(ctx echo.Context, cID uuid.UUID) error {
@@ -27,5 +28,5 @@ func (c Controller) EndCall(ctx echo.Context, cID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
+	return response.JSON(ctx, http.StatusOK, make(map[string]interface{}))
 }
