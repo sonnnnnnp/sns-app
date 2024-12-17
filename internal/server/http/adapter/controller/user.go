@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/reverie/internal/pkg/response"
 	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/api"
 )
 
@@ -16,7 +17,7 @@ func (c Controller) GetSelf(ctx echo.Context) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, u)
+	return response.JSON(ctx, http.StatusOK, u)
 }
 
 func (c Controller) GetUser(ctx echo.Context, params api.GetUserParams) error {
@@ -25,7 +26,7 @@ func (c Controller) GetUser(ctx echo.Context, params api.GetUserParams) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, u)
+	return response.JSON(ctx, http.StatusOK, u)
 }
 
 func (c Controller) UpdateUser(ctx echo.Context) error {
@@ -39,7 +40,7 @@ func (c Controller) UpdateUser(ctx echo.Context) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, u)
+	return response.JSON(ctx, http.StatusOK, u)
 }
 
 // block
@@ -50,7 +51,7 @@ func (c Controller) BlockUser(ctx echo.Context, uID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
+	return response.JSON(ctx, http.StatusOK, make(map[string]interface{}))
 }
 
 func (c Controller) GetUserBlocking(ctx echo.Context) error {
@@ -59,7 +60,7 @@ func (c Controller) GetUserBlocking(ctx echo.Context) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.Users{
+	return response.JSON(ctx, http.StatusOK, &api.Users{
 		Users: users,
 	})
 }
@@ -70,7 +71,7 @@ func (c Controller) UnblockUser(ctx echo.Context, uID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
+	return response.JSON(ctx, http.StatusOK, make(map[string]interface{}))
 }
 
 // follow
@@ -81,7 +82,7 @@ func (c Controller) GetUserFollowing(ctx echo.Context, uID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.UserFollowers{
+	return response.JSON(ctx, http.StatusOK, &api.UserFollowers{
 		Users: users,
 	})
 }
@@ -92,7 +93,7 @@ func (c Controller) GetUserFollowers(ctx echo.Context, uID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.UserFollowers{
+	return response.JSON(ctx, http.StatusOK, &api.UserFollowers{
 		Users: users,
 	})
 }
@@ -103,7 +104,7 @@ func (c Controller) FollowUser(ctx echo.Context, uID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, sc)
+	return response.JSON(ctx, http.StatusOK, sc)
 }
 
 func (c Controller) UnfollowUser(ctx echo.Context, uID uuid.UUID) error {
@@ -112,7 +113,7 @@ func (c Controller) UnfollowUser(ctx echo.Context, uID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, sc)
+	return response.JSON(ctx, http.StatusOK, sc)
 }
 
 func (c Controller) RemoveUserFromFollowers(ctx echo.Context, uID uuid.UUID) error {
@@ -121,5 +122,5 @@ func (c Controller) RemoveUserFromFollowers(ctx echo.Context, uID uuid.UUID) err
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, sc)
+	return response.JSON(ctx, http.StatusOK, sc)
 }

@@ -7,7 +7,7 @@ tmp_dir = "tmp_ws"
 
 [build]
 # Just plain old shell command. You could use `make` as well.
-cmd = "go build -buildvcs=false -o ./tmp_ws/main ./cmd/httpserver"
+cmd = "go build -buildvcs=false -o ./tmp_ws/main ./cmd/wsserver"
 # Binary file yields from `cmd`.
 bin = "./tmp_ws/main"
 # Customize binary, can setup environment variables when run your app.

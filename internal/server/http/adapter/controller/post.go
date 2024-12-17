@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/reverie/internal/pkg/response"
 	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/api"
 )
 
@@ -14,7 +15,7 @@ func (c Controller) GetPostByID(ctx echo.Context, pID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, p)
+	return response.JSON(ctx, http.StatusOK, p)
 }
 
 func (c Controller) CreatePost(ctx echo.Context) error {
@@ -28,7 +29,7 @@ func (c Controller) CreatePost(ctx echo.Context) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, p)
+	return response.JSON(ctx, http.StatusOK, p)
 }
 
 func (c Controller) DeletePost(ctx echo.Context, pID uuid.UUID) error {
@@ -37,7 +38,7 @@ func (c Controller) DeletePost(ctx echo.Context, pID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
+	return response.JSON(ctx, http.StatusOK, make(map[string]interface{}))
 }
 
 func (c Controller) FavoritePost(ctx echo.Context, pID uuid.UUID) error {
@@ -46,7 +47,7 @@ func (c Controller) FavoritePost(ctx echo.Context, pID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
+	return response.JSON(ctx, http.StatusOK, make(map[string]interface{}))
 }
 
 func (c Controller) UnfavoritePost(ctx echo.Context, pID uuid.UUID) error {
@@ -55,7 +56,7 @@ func (c Controller) UnfavoritePost(ctx echo.Context, pID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, make(map[string]interface{}))
+	return response.JSON(ctx, http.StatusOK, make(map[string]interface{}))
 }
 
 func (c Controller) GetPostFavorites(ctx echo.Context, pID uuid.UUID) error {
@@ -64,5 +65,5 @@ func (c Controller) GetPostFavorites(ctx echo.Context, pID uuid.UUID) error {
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, favorites)
+	return response.JSON(ctx, http.StatusOK, favorites)
 }

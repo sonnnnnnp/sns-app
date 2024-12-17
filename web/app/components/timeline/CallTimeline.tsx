@@ -1,4 +1,4 @@
-import { Call } from "../calls/call";
+import { Call } from "../calls/Call";
 
 export function CallTimeline() {
   return (

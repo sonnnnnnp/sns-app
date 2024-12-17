@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/reverie/internal/pkg/response"
 	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/api"
 )
 
@@ -14,7 +15,7 @@ func (c Controller) GetCallTimeline(ctx echo.Context, params api.GetCallTimeline
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.CallTimeline{
+	return response.JSON(ctx, http.StatusOK, &api.CallTimeline{
 		Rooms:      rooms,
 		NextCursor: nextCursor,
 	})
@@ -26,7 +27,7 @@ func (c Controller) GetFollowingCallTimeline(ctx echo.Context, params api.GetFol
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.CallTimeline{
+	return response.JSON(ctx, http.StatusOK, &api.CallTimeline{
 		Rooms:      rooms,
 		NextCursor: nextCursor,
 	})
@@ -38,7 +39,7 @@ func (c Controller) GetUserCallTimeline(ctx echo.Context, uID uuid.UUID, params 
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &api.CallTimeline{
+	return response.JSON(ctx, http.StatusOK, &api.CallTimeline{
 		Rooms:      rooms,
 		NextCursor: nextCursor,
 	})

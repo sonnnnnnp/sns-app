@@ -1,8 +1,8 @@
 import { Button } from "@nextui-org/react";
 import { useNavigate } from "react-router";
 import { SolarAltArrowLeftLinear, SolarMenuDotsBold } from "~/components/icons";
-import UserContent from "~/components/users/user-content";
-import UserProfile from "~/components/users/user-profile";
+import UserContent from "~/components/users/UserContent";
+import UserProfile from "~/components/users/UserProfile";
 
 export default function User() {
   const navigate = useNavigate();

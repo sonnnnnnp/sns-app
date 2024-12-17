@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/sonnnnnnp/reverie/internal/pkg/response"
 	"github.com/sonnnnnnp/reverie/internal/server/http/adapter/api"
 )
 
@@ -13,7 +14,7 @@ func (c Controller) AuthorizeWithLine(ctx echo.Context, params api.AuthorizeWith
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &auth)
+	return response.JSON(ctx, http.StatusOK, &auth)
 }
 
 func (c Controller) RefreshAuthorization(ctx echo.Context) error {
@@ -27,9 +28,7 @@ func (c Controller) RefreshAuthorization(ctx echo.Context) error {
 		return err
 	}
 
-
-
-	return c.json(ctx, http.StatusOK, &auth)
+	return response.JSON(ctx, http.StatusOK, &auth)
 }
 
 // for development only
@@ -40,5 +39,5 @@ func (c Controller) AuthorizeWithUsername(ctx echo.Context, params api.Authorize
 		return err
 	}
 
-	return c.json(ctx, http.StatusOK, &auth)
+	return response.JSON(ctx, http.StatusOK, &auth)
 }

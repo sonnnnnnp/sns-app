@@ -109,6 +109,11 @@ type CallTimeline struct {
 	Rooms      []CallRoom         `json:"rooms"`
 }
 
+// GatewayURI defines model for GatewayURI.
+type GatewayURI struct {
+	Uri string `json:"uri"`
+}
+
 // Post defines model for Post.
 type Post struct {
 	Author         User      `json:"author"`
@@ -266,9 +271,9 @@ type CreateCallJSONBodyType string
 
 // CreatePostJSONBody defines parameters for CreatePost.
 type CreatePostJSONBody struct {
-	Content       *string             `json:"content,omitempty"`
 	ReplyToPostId *openapi_types.UUID `json:"reply_to_post_id,omitempty"`
 	RepostPostId  *openapi_types.UUID `json:"repost_post_id,omitempty"`
+	Text          *string             `json:"text,omitempty"`
 }
 
 // GetTimelineParams defines parameters for GetTimeline.
@@ -421,6 +426,9 @@ type ClientInterface interface {
 	// EndCall request
 	EndCall(ctx context.Context, callId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetGatewayURI request
+	GetGatewayURI(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// CreatePostWithBody request with any body
 	CreatePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -440,9 +448,6 @@ type ClientInterface interface {
 
 	// FavoritePost request
 	FavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// Stream request
-	Stream(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTimeline request
 	GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -609,6 +614,18 @@ func (c *Client) EndCall(ctx context.Context, callId openapi_types.UUID, reqEdit
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetGatewayURI(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGatewayURIRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) CreatePostWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreatePostRequestWithBody(c.Server, contentType, body)
 	if err != nil {
@@ -683,18 +700,6 @@ func (c *Client) GetPostFavorites(ctx context.Context, postId openapi_types.UUID
 
 func (c *Client) FavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewFavoritePostRequest(c.Server, postId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) Stream(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewStreamRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -1291,6 +1296,33 @@ func NewEndCallRequest(server string, callId openapi_types.UUID) (*http.Request,
 	return req, nil
 }
 
+// NewGetGatewayURIRequest generates requests for GetGatewayURI
+func NewGetGatewayURIRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/gateway")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewCreatePostRequest calls the generic CreatePost builder with application/json body
 func NewCreatePostRequest(server string, body CreatePostJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -1494,33 +1526,6 @@ func NewFavoritePostRequest(server string, postId openapi_types.UUID) (*http.Req
 	}
 
 	req, err := http.NewRequest("POST", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewStreamRequest generates requests for Stream
-func NewStreamRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/stream")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -2182,6 +2187,9 @@ type ClientWithResponsesInterface interface {
 	// EndCallWithResponse request
 	EndCallWithResponse(ctx context.Context, callId openapi_types.UUID, reqEditors ...RequestEditorFn) (*EndCallResponse, error)
 
+	// GetGatewayURIWithResponse request
+	GetGatewayURIWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetGatewayURIResponse, error)
+
 	// CreatePostWithBodyWithResponse request with any body
 	CreatePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePostResponse, error)
 
@@ -2201,9 +2209,6 @@ type ClientWithResponsesInterface interface {
 
 	// FavoritePostWithResponse request
 	FavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error)
-
-	// StreamWithResponse request
-	StreamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*StreamResponse, error)
 
 	// GetTimelineWithResponse request
 	GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
@@ -2482,6 +2487,35 @@ func (r EndCallResponse) StatusCode() int {
 	return 0
 }
 
+type GetGatewayURIResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int        `json:"code"`
+		Data GatewayURI `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGatewayURIResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGatewayURIResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type CreatePostResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2640,28 +2674,6 @@ func (r FavoritePostResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r FavoritePostResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type StreamResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *map[string]interface{}
-}
-
-// Status returns HTTPResponse.Status
-func (r StreamResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r StreamResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3148,6 +3160,15 @@ func (c *ClientWithResponses) EndCallWithResponse(ctx context.Context, callId op
 	return ParseEndCallResponse(rsp)
 }
 
+// GetGatewayURIWithResponse request returning *GetGatewayURIResponse
+func (c *ClientWithResponses) GetGatewayURIWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetGatewayURIResponse, error) {
+	rsp, err := c.GetGatewayURI(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGatewayURIResponse(rsp)
+}
+
 // CreatePostWithBodyWithResponse request with arbitrary body returning *CreatePostResponse
 func (c *ClientWithResponses) CreatePostWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePostResponse, error) {
 	rsp, err := c.CreatePostWithBody(ctx, contentType, body, reqEditors...)
@@ -3208,15 +3229,6 @@ func (c *ClientWithResponses) FavoritePostWithResponse(ctx context.Context, post
 		return nil, err
 	}
 	return ParseFavoritePostResponse(rsp)
-}
-
-// StreamWithResponse request returning *StreamResponse
-func (c *ClientWithResponses) StreamWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*StreamResponse, error) {
-	rsp, err := c.Stream(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseStreamResponse(rsp)
 }
 
 // GetTimelineWithResponse request returning *GetTimelineResponse
@@ -3617,6 +3629,39 @@ func ParseEndCallResponse(rsp *http.Response) (*EndCallResponse, error) {
 	return response, nil
 }
 
+// ParseGetGatewayURIResponse parses an HTTP response from a GetGatewayURIWithResponse call
+func ParseGetGatewayURIResponse(rsp *http.Response) (*GetGatewayURIResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGatewayURIResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int        `json:"code"`
+			Data GatewayURI `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseCreatePostResponse parses an HTTP response from a CreatePostWithResponse call
 func ParseCreatePostResponse(rsp *http.Response) (*CreatePostResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -3795,32 +3840,6 @@ func ParseFavoritePostResponse(rsp *http.Response) (*FavoritePostResponse, error
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Response
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseStreamResponse parses an HTTP response from a StreamWithResponse call
-func ParseStreamResponse(rsp *http.Response) (*StreamResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &StreamResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4305,6 +4324,9 @@ type ServerInterface interface {
 	// 通話を終了する
 	// (PUT /calls/{call_id}/end)
 	EndCall(ctx echo.Context, callId openapi_types.UUID) error
+	// ゲートウェイの接続 URI を取得する
+	// (GET /gateway)
+	GetGatewayURI(ctx echo.Context) error
 	// 投稿を作成する
 	// (POST /posts)
 	CreatePost(ctx echo.Context) error
@@ -4323,9 +4345,6 @@ type ServerInterface interface {
 	// 投稿にいいねする
 	// (POST /posts/{post_id}/favorites)
 	FavoritePost(ctx echo.Context, postId openapi_types.UUID) error
-	// WebSocket ストリーム
-	// (GET /stream)
-	Stream(ctx echo.Context) error
 	// オープンのタイムラインを取得する
 	// (GET /timeline)
 	GetTimeline(ctx echo.Context, params GetTimelineParams) error
@@ -4541,6 +4560,17 @@ func (w *ServerInterfaceWrapper) EndCall(ctx echo.Context) error {
 	return err
 }
 
+// GetGatewayURI converts echo context to params.
+func (w *ServerInterfaceWrapper) GetGatewayURI(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetGatewayURI(ctx)
+	return err
+}
+
 // CreatePost converts echo context to params.
 func (w *ServerInterfaceWrapper) CreatePost(ctx echo.Context) error {
 	var err error
@@ -4639,17 +4669,6 @@ func (w *ServerInterfaceWrapper) FavoritePost(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.FavoritePost(ctx, postId)
-	return err
-}
-
-// Stream converts echo context to params.
-func (w *ServerInterfaceWrapper) Stream(ctx echo.Context) error {
-	var err error
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.Stream(ctx)
 	return err
 }
 
@@ -4956,13 +4975,13 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.GET(baseURL+"/call_timeline/users/:user_id", wrapper.GetUserCallTimeline)
 	router.POST(baseURL+"/calls", wrapper.CreateCall)
 	router.PUT(baseURL+"/calls/:call_id/end", wrapper.EndCall)
+	router.GET(baseURL+"/gateway", wrapper.GetGatewayURI)
 	router.POST(baseURL+"/posts", wrapper.CreatePost)
 	router.DELETE(baseURL+"/posts/:post_id", wrapper.DeletePost)
 	router.GET(baseURL+"/posts/:post_id", wrapper.GetPostByID)
 	router.DELETE(baseURL+"/posts/:post_id/favorites", wrapper.UnfavoritePost)
 	router.GET(baseURL+"/posts/:post_id/favorites", wrapper.GetPostFavorites)
 	router.POST(baseURL+"/posts/:post_id/favorites", wrapper.FavoritePost)
-	router.GET(baseURL+"/stream", wrapper.Stream)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
 	router.GET(baseURL+"/timeline/following", wrapper.GetFollowingTimeline)
 	router.GET(baseURL+"/timeline/users/:user_id", wrapper.GetUserTimeline)
@@ -4983,44 +5002,43 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xb3W8bxxH/V4hrHxlTad/4FtlWISAIBMlCHgyBWN2NyLXubi97SzmsQCAkC1mKYcQQ",
-	"ahtJWzRtAn8lslO4H2qh1n/MmZLylH+h2L3vu70PSXQiMgcECK3dm5ud+c1vZ2fnthWVGBYxwWS20txW",
-	"bLUDBhI/3+uyDqH4t4hhYvI/WJRYQBkGMYxUFWy7xcgmiFHWs0BpKjaj2Gwr/bqC7ZYJtyND64TogEw+",
-	"RmGDgt3JebprA21hTTImHv+oiyloSvNmMLEe1yj5jkCftbovkKzfApXxl83rRN1cYYh17fRC1/kgaK31",
-	"nnwtYpxrJhlN6BpMrUelyjS6inR9CVGGVWwhk6W1okQH/n8wuwYX3SE2U+qKSt7xflmRp8M3xA3MBfyS",
-	"wobSVH7RCIHQ8FDQWOVzZAbn5uUKZKm+TIiR1tl1pwa2SrHlokpZvHby4Pn4s38pdWWDUAMxpal0u8Kf",
-	"MkQhleEtkDviFsEmWtfB85RvGaTrQriuk9tAbf6bYjA1/ssk60TrSe0TsZ+rPAPDLjJY0m39QDCiFPXE",
-	"vzHTQQp59w+h4lsEq6DUlS2sAZHomPCLsFloIm96YiH+++PWynLjDWyAjk1Iu9KEj1lL7VKb0LRPj7/9",
-	"izN44Yy+cEZHzvDQGe6PP3s4/t8jZ/C5M7zrDP7sDAd8wvDAGR2VcTwlxDibEwQAU9ZPWMwVW48tRmaK",
-	"JR5RaQIU/FguhOqKSgEx0FpISApWrCEG7zBsgGzZG2iLUMxAk+PdH7ZbKum6HOFNwiaDtvvei8Ycg4+F",
-	"ZLOr6xwuSpPRLsj4xNLOuEAZfj2jxsTFjOdplF591FxZTlzwZqSdeR73WMRm3hZVaMZzs63/koQRhLys",
-	"ZV6WsOW6lw9bEWVFIeuKLA7ZZbAtYtoyTxMN0mt3Rt86w387oz85o1f8x/AVN8JoL1xWJKY0xJBMxB1h",
-	"uNeKRB+yKbH3wVfjw0Nn8M34zuOT+zvOcP/kH8M3/9lxBo+4sQd3ncEzZ7DjDO6GErMyC7IpNn+NA1Wo",
-	"JzPKClEx0q8S0wRVntR5u2R2suNOKJfthHPrMcHZql0326gNBsgSnlJsF+zyxZOw2c6bZICGUd4EgcTs",
-	"CVm2CNkqoWpcYlyBNNvJbLjqcUxim9pCDNEWNlAbWl2qlyLzdWSacOaHMGlTZHV65WbzBLhlB0l3HjVE",
-	"8/Nz7qUTyD0tircQy0g+TWRIaGV8/954755MnonVTf+Z1KAtoqGlxiI1z0CpyA6FQCymioVEYnBiu7pY",
-	"aGTN9TQqJZiLIiovIYi4JissFrxgq8IjK9X0+bmKqcsfU1Fn1ScXYRF3ZIdbUYRJCig8Vy2fBsbCtSgd",
-	"dEVn6TQRXc6tA4cLqF2KWW+Fy/OqSYCoy0PiJQLx7p8CAR3GLKXPn8fmBhFgdmsGCoUtoFjUBIDabji8",
-	"e2XuypxIMS0wkYWVpvLrK3NX3hUnf9YRL20gr5YHjeBc4J1puXFEhW9RU5pBzQ8+xKzzPp8q6gfIACbs",
-	"dnNbwfylH3WB9nzYNf3EM7SKS2quGWUlvDU+2c3QhYK/mptzc3OTeUGFLEvHqtCscct2ozWU99ZS+jw0",
-	"xAuilyOp54/EFYgBT2neXKsrdtcwEO0pTeX9xQ+u15zBE2d04Ay/c4ZfO6NX4oEIQry6aTZIlt0JcXO4",
-	"moPN5onWu4AviyrDyRJObLrMPv0Kaj8W1EJ2u7nWj+Hu9Pm906dHzmhXnJBfCjPtH//h78cPv0vCj9Op",
-	"v4mXIKlVf3qKqDKyBhl/eQIq/poqUDmjxwJO/3RGR+P79xK09sPRrjPaERbcPfn90x+O9lykqUjXWyxS",
-	"IWuDBGO/ARYrgBeg66ylM+km6lazorAryKD7dfl2rGMDM0WC37A6MZUAjnlkBvA7fC4M8ojbZ/Di+0++",
-	"OH32N2f4WuD3S2f0zAVyAkwSFDdiVbksPC/4kypgV8B+y8T8wBk+42Q8OnpzeHAxbIvjVWPbu+bv5yGc",
-	"5wL54Bag4seiEFNh/0D29l8CrlXYVGEzwXzmPDFjZ6fMV0UB56rbCjGZg9pkuy0m2hUxG2fAaBvDlCPb",
-	"h/L+m//+8Xj3fgq4jW3B+VjrN8AURWWrK0HxdVPzIFxM657AC9H6WgWbywEbX8MQNkFrQR7fLbmdcJPh",
-	"u8hj6f4ksPRei5HWWVpCKIjZ5R+ZGWbzOz2mHJ7Hnz44efpaymoCno1tz7d9d5k6uBddcaheE39fCpo2",
-	"C3gt7AeaQV6broaaiWBnvPfp959/7WOnnnm24QCZ7y1eq0Dyc2KWdKKfYJZG0BiUxzGrpj9tqngmz9NB",
-	"g98kDD144Qx+J/47cIb7p0++Kh2SC4H5K/LOJO/S7Z9Bf66kb342QnrwTYg0V8nooT8Z8PWM9Hahiuay",
-	"Ng6Z02YUkBGpH8Zf8wFh0Kzd6GC7BqZmEWyyGrZrGti4bSIGWm2D0NqHsL5C1E1gtTZicBv1al0btaGG",
-	"TK2mItMkrLYOta4NWg3ZNVRbvr5yo/be0uIVpZ7w4YqrzgWNOkGEhktzL82ckXs98aVrvjJXZtWtwmVL",
-	"hmb3uqxkYfScd2QVkisk/4j3Y2cF8xkvxaoLsSpOpv9CrGSQBC2+eRExiXaxGWsP85udZwk0mfhoiO8r",
-	"CmEyH36wP50OtWeQBkYPxdY5coYv3xx+cvr4SY6bjdzzygroG0oVqz9dW/Cd5+PdnRz3uV+hZF4Ir4ph",
-	"j88nc80n+x6s1Pdf+d97SUYp6/iLK/e5VeanTTnfPc3MneFs7k5uC3wa90FmH9mnsov7Yo48q3lL+f3l",
-	"rwUmDO0M/8qRGNk6imqs85VRC40qMacMwxvRbwPz0q2FSNvYdNj8J+PC0FQzmOAF5ZGXokJSkOMlgebV",
-	"+LL4chkMsiWShgVKjApypSAn+xh6trbiBOq4qsO9st0ZYUS6h8UKST+/U2m0pntGxipq3hCTpioXqUjq",
-	"7ZCUl8aGWCtsFaiwU2EnucEFqOn3+/8PAAD//5sX6IECVgAA",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

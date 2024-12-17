@@ -384,18 +384,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/stream": {
+    "/gateway": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * WebSocket ストリーム
-         * @description Note: This endpoint is designated for WebSocket gateway usage and cannot be used as a REST API.
-         */
-        get: operations["stream"];
+        /** ゲートウェイの接続 URI を取得する */
+        get: operations["getGatewayURI"];
         put?: never;
         post?: never;
         delete?: never;
@@ -538,6 +535,9 @@ export interface components {
             user: components["schemas"]["User"];
             /** @enum {string} */
             role: "host" | "co-host" | "participant";
+        };
+        GatewayURI: {
+            uri: string;
         };
         Response: {
             /** @description 正常に処理を終了したかどうか */
@@ -787,7 +787,7 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": {
-                    content?: string;
+                    text?: string;
                     /** Format: uuid */
                     reply_to_post_id?: string;
                     /** Format: uuid */
@@ -1346,7 +1346,7 @@ export interface operations {
             };
         };
     };
-    stream: {
+    getGatewayURI: {
         parameters: {
             query?: never;
             header?: never;
@@ -1360,7 +1360,14 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["GatewayURI"];
+                    };
                 };
             };
         };

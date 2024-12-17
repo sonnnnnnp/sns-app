@@ -12,8 +12,8 @@ import (
 	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/authorize"
 	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/call"
 	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/call_timeline"
+	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/gateway"
 	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/post"
-	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/stream"
 	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/timeline"
 	"github.com/sonnnnnnp/reverie/internal/server/http/usecase/user"
 	"github.com/sonnnnnnp/reverie/pkg/line"
@@ -26,10 +26,10 @@ func Wire(pool *pgxpool.Pool) *controller.Controller {
 	authorizeUsecase := authorize.New(pool, client)
 	callUsecase := call.New(pool)
 	callTimelineUsecase := call_timeline.New(pool)
-	streamUsecase := stream.New()
-	postUsecase := post.New(pool, streamUsecase)
+	postUsecase := post.New(pool)
+	gatewayUsecase := gateway.New()
 	timelineUsecase := timeline.New(pool)
 	userUsecase := user.New(pool)
-	controllerController := controller.New(authorizeUsecase, callUsecase, callTimelineUsecase, postUsecase, streamUsecase, timelineUsecase, userUsecase)
+	controllerController := controller.New(authorizeUsecase, callUsecase, callTimelineUsecase, postUsecase, gatewayUsecase, timelineUsecase, userUsecase)
 	return controllerController
 }

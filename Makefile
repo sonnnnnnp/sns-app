@@ -1,4 +1,4 @@
-.PHONY: help build up down shell tidy
+.PHONY: help build up down shell-http shell-ws
 
 #? help: ヘルプコマンド
 help: Makefile
@@ -24,13 +24,13 @@ up:
 down:
 	docker compose down
 
-#? shell: API コンテナのシェルを起動
-shell:
+#? shell-http: HTTP サーバーのシェルを起動
+shell-http:
 	docker compose exec -it httpserver bash
 
-#? tidy: Go モジュールの依存関係を整理
-tidy:
-	docker compose run --rm httpserver bash -c "go mod tidy"
+#? shell-ws: WebSocket サーバーのシェルを起動
+shell-ws:
+	docker compose exec -it wsserver bash
 
 .PHONY: api wire
 
@@ -39,7 +39,7 @@ api:
 	docker compose run --rm httpserver bash -c "cd pkg && oapi-codegen -package api /httpserver/api/openapi.json > /httpserver/internal/server/http/adapter/api/interface.go"
 	npx openapi-typescript ./api/openapi.json -o ./web/app/api/client.ts
 
-#? wire: サーバーの依存関係を自動生成
+#? wire: HTTP サーバーの依存関係を自動生成
 wire:
 	docker compose run --rm httpserver bash -c "cd /httpserver/pkg/httpserver/http && wire gen && mv ./wire_gen.go /httpserver/internal/server/http/wire.go"
 
@@ -47,15 +47,15 @@ wire:
 
 #? migrate: データベースの構造をマイグレート
 migrate:
-	docker compose run --rm httpserver bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@db:5432/db?sslmode=disable up"
+	docker compose run --rm httpserver bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@postgres:5432/db?sslmode=disable up"
 
 #? migrate-down: データベースの構造を初期化
 migrate-down:
-	docker compose run --rm httpserver bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@db:5432/db?sslmode=disable down"
+	docker compose run --rm httpserver bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@postgres:5432/db?sslmode=disable down"
 
 #? seed: データベースへ初期データを投入
 seed:
-	docker compose run --rm httpserver bash -c "go run ./cmd/seeder"
+	docker compose run --rm httpserver bash -c "go run ./cmd/seed"
 
 #? sql-gen: SQL クエリから Go コードを生成
 sql-gen:

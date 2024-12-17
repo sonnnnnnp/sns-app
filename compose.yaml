@@ -11,9 +11,20 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
-  db:
-    container_name: db
+      - postgres
+  wsserver:
+    container_name: websocket-server
+    build:
+      context: ./build/wsserver
+      dockerfile: Dockerfile
+    ports:
+      - 4649:4649
+    volumes:
+      - .:/wsserver
+    env_file:
+      - .env
+  postgres:
+    container_name: postgres
     image: postgres:15
     environment:
       - POSTGRES_DB=db
@@ -35,4 +46,4 @@ services:
       - PGADMIN_CONFIG_SERVER_MODE=False
       - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
     depends_on:
-      - db
+      - postgres

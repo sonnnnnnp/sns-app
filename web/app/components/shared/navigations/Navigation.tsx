@@ -1,7 +1,7 @@
 import { useLocation } from "react-router";
-import { LargeNavigation } from "./large-navigation";
-import { MobileNavigation } from "./mobile-navigation";
-import { SmallNavigation } from "./small-navigation";
+import { LargeNavigation } from "./LargeNavigation";
+import { MobileNavigation } from "./MobileNavigation";
+import { SmallNavigation } from "./SmallNavigation";
 
 export function Navigation() {
   const { pathname } = useLocation();
