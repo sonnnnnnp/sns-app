@@ -1,4 +1,4 @@
--- name: GetUserByName :one
+-- name: GetUserByCustomID :one
 SELECT
     sqlc.embed(users),
     (
@@ -45,4 +45,4 @@ SELECT
 FROM
     users
 WHERE
-    name = @name::text;
+    custom_id = @custom_id::text;

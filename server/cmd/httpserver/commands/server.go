@@ -40,9 +40,7 @@ func Run(cfg *config.Config) {
 	}
 
 	jwtExcludePaths := []string{
-		"/authorize/username",
-		"/authorize/line",
-		"/authorize/refresh",
+		"^/authorize/.*",
 	}
 
 	websocket := ws.NewHub()

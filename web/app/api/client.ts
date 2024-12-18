@@ -38,7 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/authorize/username": {
+    "/authorize/custom_id/{custom_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -47,8 +47,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** ユーザー名でログイン（テスト用） */
-        post: operations["authorizeWithUsername"];
+        /** カスタムIDでログイン（テスト用） */
+        post: operations["authorizeWithCustomID"];
         delete?: never;
         options?: never;
         head?: never;
@@ -82,6 +82,23 @@ export interface paths {
         get?: never;
         /** 通話を終了する */
         put: operations["endCall"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/gateway": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ゲートウェイの接続 URI を取得する */
+        get: operations["getGatewayURI"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
@@ -231,15 +248,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users": {
+    "/users/custom_id/{custom_id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** ユーザーを取得する */
-        get: operations["getUser"];
+        /** カスタムIDでユーザーを取得する */
+        get: operations["getUserByCustomID"];
         put?: never;
         post?: never;
         delete?: never;
@@ -274,6 +291,23 @@ export interface paths {
         };
         /** 自分を取得する */
         get: operations["getSelf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/search/users/typeahead": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ユーザーの検索候補を取得する */
+        get: operations["searchUsersTypeahead"];
         put?: never;
         post?: never;
         delete?: never;
@@ -384,23 +418,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/gateway": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** ゲートウェイの接続 URI を取得する */
-        get: operations["getGatewayURI"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -412,19 +429,19 @@ export interface components {
              */
             id: string;
             /** @description 名前 */
-            name: string;
+            custom_id: string;
             nickname: string;
             avatar_image_url: string | null;
-            banner_image_url: string | null;
-            biography: string | null;
-            is_private: boolean;
+            banner_image_url?: string | null;
+            biography?: string | null;
+            is_private?: boolean;
             block_status?: components["schemas"]["BlockStatus"];
             social_connection?: components["schemas"]["SocialConnection"];
             social_engagement?: components["schemas"]["SocialEngagement"];
             /** Format: date-time */
-            updated_at: string;
+            updated_at?: string;
             /** Format: date-time */
-            created_at: string;
+            created_at?: string;
         };
         SocialConnection: {
             following: boolean;
@@ -498,19 +515,19 @@ export interface components {
              */
             id: string;
             /** @description 名前 */
-            name: string;
+            custom_id: string;
             nickname: string;
             avatar_image_url: string | null;
-            banner_image_url: string | null;
-            biography: string | null;
-            is_private: boolean;
+            banner_image_url?: string | null;
+            biography?: string | null;
+            is_private?: boolean;
             block_status?: components["schemas"]["BlockStatus"];
             social_connection?: components["schemas"]["SocialConnection"];
             social_engagement?: components["schemas"]["SocialEngagement"];
             /** Format: date-time */
-            updated_at: string;
+            updated_at?: string;
             /** Format: date-time */
-            created_at: string;
+            created_at?: string;
             /** Format: date-time */
             followed_at: string;
         };
@@ -616,14 +633,13 @@ export interface operations {
             };
         };
     };
-    authorizeWithUsername: {
+    authorizeWithCustomID: {
         parameters: {
-            query: {
-                /** @description 名前 */
-                name: string;
-            };
+            query?: never;
             header?: never;
-            path?: never;
+            path: {
+                custom_id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -702,6 +718,32 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         data: components["schemas"]["CallRoom"];
+                    };
+                };
+            };
+        };
+    };
+    getGatewayURI: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["GatewayURI"];
                     };
                 };
             };
@@ -1072,14 +1114,13 @@ export interface operations {
             };
         };
     };
-    getUser: {
+    getUserByCustomID: {
         parameters: {
-            query?: {
-                /** @description 名前 */
-                name?: string;
-            };
+            query?: never;
             header?: never;
-            path?: never;
+            path: {
+                custom_id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -1110,7 +1151,7 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": {
-                    name?: string;
+                    custom_id?: string;
                     nickname?: string;
                     avatar_image_url?: string;
                     banner_image_url?: string;
@@ -1157,6 +1198,34 @@ export interface operations {
                         /** @description レスポンスコード */
                         code: number;
                         data: components["schemas"]["User"];
+                    };
+                };
+            };
+        };
+    };
+    searchUsersTypeahead: {
+        parameters: {
+            query: {
+                custom_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @description 正常に処理を終了したかどうか */
+                        ok: boolean;
+                        /** @description レスポンスコード */
+                        code: number;
+                        /** @description データ */
+                        data: components["schemas"]["Users"];
                     };
                 };
             };
@@ -1341,32 +1410,6 @@ export interface operations {
                         code: number;
                         /** @description データ */
                         data: components["schemas"]["CallTimeline"];
-                    };
-                };
-            };
-        };
-    };
-    getGatewayURI: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** @description 正常に処理を終了したかどうか */
-                        ok: boolean;
-                        /** @description レスポンスコード */
-                        code: number;
-                        /** @description データ */
-                        data: components["schemas"]["GatewayURI"];
                     };
                 };
             };

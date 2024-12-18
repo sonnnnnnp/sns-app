@@ -11,7 +11,7 @@ import (
 	internal_errors "github.com/sonnnnnnp/reverie/server/pkg/errors"
 )
 
-func (uc *AuthorizeUsecase) AuthorizeWithUsername(ctx context.Context, name string) (*api.Authorization, error) {
+func (uc *AuthorizeUsecase) AuthorizeWithCustomID(ctx context.Context, customID string) (*api.Authorization, error) {
 	cfg := ctxhelper.GetConfig(ctx)
 
 	if cfg.APPEnv != "development" {
@@ -20,7 +20,7 @@ func (uc *AuthorizeUsecase) AuthorizeWithUsername(ctx context.Context, name stri
 
 	queries := db.New(uc.pool)
 
-	row, err := queries.GetUserByName(ctx, name)
+	row, err := queries.GetUserByCustomID(ctx, customID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, internal_errors.ErrUserNotFound

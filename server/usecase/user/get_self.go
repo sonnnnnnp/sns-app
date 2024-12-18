@@ -11,12 +11,12 @@ import (
 	internal_errors "github.com/sonnnnnnp/reverie/server/pkg/errors"
 )
 
-func (uc *UserUsecase) getUserByName(ctx context.Context, name string) (*api.User, error) {
+func (uc *UserUsecase) GetSelf(ctx context.Context) (*api.User, error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	queries := db.New(uc.pool)
 
-	row, err := queries.GetUserByName(ctx, name)
+	row, err := queries.GetSelf(ctx, selfUID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, internal_errors.ErrUserNotFound
@@ -24,29 +24,25 @@ func (uc *UserUsecase) getUserByName(ctx context.Context, name string) (*api.Use
 		return nil, err
 	}
 
-	var scRow db.GetSocialConnectionRow
-	var bsRow db.GetBlockStatusRow
-	if row.User.ID != selfUID {
-		scRow, err = queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
-			SelfID:   selfUID,
-			TargetID: row.User.ID,
-		})
-		if err != nil {
-			return nil, err
-		}
+	scRow, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+		SelfID:   selfUID,
+		TargetID: row.User.ID,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-		bsRow, err = queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
-			SelfID:   selfUID,
-			TargetID: row.User.ID,
-		})
-		if err != nil {
-			return nil, err
-		}
+	bsRow, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+		SelfID:   selfUID,
+		TargetID: row.User.ID,
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	return &api.User{
 		Id:             row.User.ID,
-		Name:           row.User.Name,
+		CustomId:       row.User.CustomID,
 		Nickname:       row.User.Nickname,
 		AvatarImageUrl: row.User.AvatarImageUrl,
 		BannerImageUrl: row.User.BannerImageUrl,
@@ -66,15 +62,7 @@ func (uc *UserUsecase) getUserByName(ctx context.Context, name string) (*api.Use
 			MediaCount:     int(row.MediaCount),
 			FavoritesCount: int(row.FavoritesCount),
 		},
-		UpdatedAt: row.User.UpdatedAt.Time,
-		CreatedAt: row.User.CreatedAt.Time,
+		UpdatedAt: &row.User.UpdatedAt.Time,
+		CreatedAt: &row.User.CreatedAt.Time,
 	}, nil
-}
-
-func (uc *UserUsecase) GetUser(ctx context.Context, params api.GetUserParams) (*api.User, error) {
-	if params.Name != nil {
-		return uc.getUserByName(ctx, *params.Name)
-	}
-
-	return nil, internal_errors.ErrInsufficientParameters
 }

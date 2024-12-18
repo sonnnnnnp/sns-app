@@ -33,8 +33,8 @@ func (c Controller) RefreshAuthorization(ctx echo.Context) error {
 
 // for development only
 
-func (c Controller) AuthorizeWithUsername(ctx echo.Context, params api.AuthorizeWithUsernameParams) error {
-	auth, err := c.authUsecase.AuthorizeWithUsername(ctx.Request().Context(), params.Name)
+func (c Controller) AuthorizeWithCustomID(ctx echo.Context, customID string) error {
+	auth, err := c.authUsecase.AuthorizeWithCustomID(ctx.Request().Context(), customID)
 	if err != nil {
 		return err
 	}

@@ -13,10 +13,23 @@ import (
 	internal_errors "github.com/sonnnnnnp/reverie/server/pkg/errors"
 )
 
-func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *api.GetTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {
+func (uc *TimelineUsecase) GetUserTimeline(ctx context.Context, uID uuid.UUID, params *api.GetUserTimelineParams) (posts []api.Post, nextCursor uuid.UUID, err error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	queries := db.New(uc.pool)
+
+	// ブロックされていないかを検証
+	bs, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+		SelfID:   selfUID,
+		TargetID: uID,
+	})
+	if err != nil {
+		return nil, uuid.Nil, err
+	}
+
+	if bs.BlockedBy {
+		return nil, uuid.Nil, internal_errors.ErrUserBlockedBy
+	}
 
 	// 指定されたカーソル投稿 ID から検索用日時を取得する
 	var fromCursor *time.Time
@@ -43,8 +56,9 @@ func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *api.GetTimel
 	}
 
 	// タイムラインを取得
-	rows, err := queries.GetTimeline(ctx, db.GetTimelineParams{
+	rows, err := queries.GetUserTimeline(ctx, db.GetUserTimelineParams{
 		SelfID:    selfUID,
+		AuthorID:  uID,
 		CreatedAt: fromCursor,
 		Limit:     int64(*params.Limit),
 	})
@@ -59,11 +73,10 @@ func (uc *TimelineUsecase) GetTimeline(ctx context.Context, params *api.GetTimel
 				AvatarImageUrl: r.User.AvatarImageUrl,
 				BannerImageUrl: r.User.BannerImageUrl,
 				Biography:      r.User.Biography,
-				CreatedAt:      r.User.CreatedAt.Time,
+				CreatedAt:      &r.User.CreatedAt.Time,
 				Id:             r.User.ID,
-				Name:           r.User.Name,
+				CustomId:       r.User.CustomID,
 				Nickname:       r.User.Nickname,
-				UpdatedAt:      r.User.UpdatedAt.Time,
 			},
 			CreatedAt:      r.Post.CreatedAt.Time,
 			Favorited:      r.Favorited,

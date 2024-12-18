@@ -21,13 +21,12 @@ func (uc *PostUsecase) GetPostFavorites(ctx context.Context, pID uuid.UUID) ([]a
 			PostId:    r.PostFavorite.PostID,
 			User: api.User{
 				Id:             r.User.ID,
-				Name:           r.User.Name,
+				CustomId:       r.User.CustomID,
 				Nickname:       r.User.Nickname,
 				AvatarImageUrl: r.User.AvatarImageUrl,
 				BannerImageUrl: r.User.BannerImageUrl,
 				Biography:      r.User.Biography,
-				CreatedAt:      r.User.CreatedAt.Time,
-				UpdatedAt:      r.User.UpdatedAt.Time,
+				CreatedAt:      &r.User.CreatedAt.Time,
 			},
 		})
 	}

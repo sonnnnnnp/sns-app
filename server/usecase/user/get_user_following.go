@@ -12,10 +12,9 @@ import (
 	internal_errors "github.com/sonnnnnnp/reverie/server/pkg/errors"
 )
 
-func (uc *UserUsecase) GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]api.UserFollower, error) {
+func (uc *UserUsecase) GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]api.UserFollower, error) {
 	queries := db.New(uc.pool)
 
-	// TODO: これいる？
 	_, err := queries.GetUserByID(ctx, uID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -42,20 +41,19 @@ func (uc *UserUsecase) GetUserFollowers(ctx context.Context, uID uuid.UUID) ([]a
 		return nil, err
 	}
 
-	followers := make([]api.UserFollower, 0)
-	for _, r := range rows {
-		followers = append(followers, api.UserFollower{
-			AvatarImageUrl: r.AvatarImageUrl,
-			Biography:      r.Biography,
-			BannerImageUrl: r.BannerImageUrl,
-			CreatedAt:      r.CreatedAt.Time,
-			FollowedAt:     r.FollowedAt.Time,
-			Nickname:       r.Nickname,
-			Id:             r.ID,
-			UpdatedAt:      r.UpdatedAt.Time,
-			Name:           r.Name,
+	following := make([]api.UserFollower, 0)
+	for _, u := range rows {
+		following = append(following, api.UserFollower{
+			AvatarImageUrl: u.AvatarImageUrl,
+			BannerImageUrl: u.BannerImageUrl,
+			Biography:      u.Biography,
+			CreatedAt:      &u.CreatedAt.Time,
+			FollowedAt:     u.FollowedAt.Time,
+			Nickname:       u.Nickname,
+			Id:             u.ID,
+			CustomId:       u.CustomID,
 		})
 	}
 
-	return followers, nil
+	return following, nil
 }

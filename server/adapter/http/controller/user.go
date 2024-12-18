@@ -20,8 +20,8 @@ func (c Controller) GetSelf(ctx echo.Context) error {
 	return response.JSON(ctx, http.StatusOK, u)
 }
 
-func (c Controller) GetUser(ctx echo.Context, params api.GetUserParams) error {
-	u, err := c.userUsecase.GetUser(ctx.Request().Context(), params)
+func (c Controller) GetUserByCustomID(ctx echo.Context, customID string) error {
+	u, err := c.userUsecase.GetUserByCustomID(ctx.Request().Context(), customID)
 	if err != nil {
 		return err
 	}

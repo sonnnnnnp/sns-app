@@ -2,27 +2,32 @@ package post
 
 import (
 	"context"
-	"errors"
 
-	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/sonnnnnnp/reverie/server/adapter/http/api"
 	"github.com/sonnnnnnp/reverie/server/infra/db"
 	"github.com/sonnnnnnp/reverie/server/pkg/ctxhelper"
-	internal_errors "github.com/sonnnnnnp/reverie/server/pkg/errors"
 )
 
-func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*api.Post, error) {
+func (uc *PostUsecase) CreatePost(ctx context.Context, body *api.CreatePostJSONBody) (*api.Post, error) {
+	queries := db.New(uc.pool)
+
 	selfUID := ctxhelper.GetUserID(ctx)
 
-	r, err := db.New(uc.pool).GetPostByID(ctx, db.GetPostByIDParams{
+	pID, err := queries.CreatePost(ctx, db.CreatePostParams{
+		AuthorID:  selfUID,
+		Text:      body.Text,
+		ReplyToID: body.ReplyToPostId,
+		RepostID:  body.RepostPostId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r, err := queries.GetPostByID(ctx, db.GetPostByIDParams{
 		SelfID: selfUID,
 		PostID: pID,
 	})
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, internal_errors.ErrPostNotFound
-		}
 		return nil, err
 	}
 
@@ -31,16 +36,15 @@ func (uc *PostUsecase) GetPostByID(ctx context.Context, pID uuid.UUID) (*api.Pos
 			AvatarImageUrl: r.User.AvatarImageUrl,
 			BannerImageUrl: r.User.BannerImageUrl,
 			Biography:      r.User.Biography,
-			CreatedAt:      r.User.CreatedAt.Time,
+			CreatedAt:      &r.User.CreatedAt.Time,
 			Id:             r.User.ID,
-			Name:           r.User.Name,
+			CustomId:       r.User.CustomID,
 			Nickname:       r.User.Nickname,
-			UpdatedAt:      r.User.UpdatedAt.Time,
 		},
 		Id:             r.Post.ID,
 		Text:           r.Post.Text,
-		Favorited:      r.Favorited,
-		FavoritesCount: int(r.FavoritesCount),
+		Favorited:      false,
+		FavoritesCount: 0,
 		CreatedAt:      r.Post.CreatedAt.Time,
 		UpdatedAt:      r.Post.UpdatedAt.Time,
 	}, nil

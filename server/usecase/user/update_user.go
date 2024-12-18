@@ -15,7 +15,7 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, body *api.UpdateUserJSONB
 
 	if err := queries.UpdateUser(ctx, db.UpdateUserParams{
 		UserID:         selfUID,
-		Name:           body.Name,
+		CustomID:       body.CustomId,
 		Nickname:       body.Nickname,
 		Biography:      body.Biography,
 		AvatarImageUrl: body.AvatarImageUrl,
@@ -32,12 +32,11 @@ func (uc *UserUsecase) UpdateUser(ctx context.Context, body *api.UpdateUserJSONB
 
 	return &api.User{
 		Id:             u.ID,
-		Name:           u.Name,
+		CustomId:       u.CustomID,
 		Nickname:       u.Nickname,
 		AvatarImageUrl: u.AvatarImageUrl,
 		BannerImageUrl: u.BannerImageUrl,
 		Biography:      u.Biography,
-		UpdatedAt:      u.UpdatedAt.Time,
-		CreatedAt:      u.CreatedAt.Time,
+		CreatedAt:      &u.CreatedAt.Time,
 	}, nil
 }

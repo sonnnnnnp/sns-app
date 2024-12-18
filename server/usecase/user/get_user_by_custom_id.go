@@ -11,12 +11,12 @@ import (
 	internal_errors "github.com/sonnnnnnp/reverie/server/pkg/errors"
 )
 
-func (uc *UserUsecase) GetSelf(ctx context.Context) (*api.User, error) {
+func (uc *UserUsecase) GetUserByCustomID(ctx context.Context, customID string) (*api.User, error) {
 	selfUID := ctxhelper.GetUserID(ctx)
 
 	queries := db.New(uc.pool)
 
-	row, err := queries.GetSelf(ctx, selfUID)
+	row, err := queries.GetUserByCustomID(ctx, customID)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, internal_errors.ErrUserNotFound
@@ -24,25 +24,29 @@ func (uc *UserUsecase) GetSelf(ctx context.Context) (*api.User, error) {
 		return nil, err
 	}
 
-	scRow, err := queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
-		SelfID:   selfUID,
-		TargetID: row.User.ID,
-	})
-	if err != nil {
-		return nil, err
-	}
+	var scRow db.GetSocialConnectionRow
+	var bsRow db.GetBlockStatusRow
+	if row.User.ID != selfUID {
+		scRow, err = queries.GetSocialConnection(ctx, db.GetSocialConnectionParams{
+			SelfID:   selfUID,
+			TargetID: row.User.ID,
+		})
+		if err != nil {
+			return nil, err
+		}
 
-	bsRow, err := queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
-		SelfID:   selfUID,
-		TargetID: row.User.ID,
-	})
-	if err != nil {
-		return nil, err
+		bsRow, err = queries.GetBlockStatus(ctx, db.GetBlockStatusParams{
+			SelfID:   selfUID,
+			TargetID: row.User.ID,
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &api.User{
 		Id:             row.User.ID,
-		Name:           row.User.Name,
+		CustomId:       row.User.CustomID,
 		Nickname:       row.User.Nickname,
 		AvatarImageUrl: row.User.AvatarImageUrl,
 		BannerImageUrl: row.User.BannerImageUrl,
@@ -62,7 +66,6 @@ func (uc *UserUsecase) GetSelf(ctx context.Context) (*api.User, error) {
 			MediaCount:     int(row.MediaCount),
 			FavoritesCount: int(row.FavoritesCount),
 		},
-		UpdatedAt: row.User.UpdatedAt.Time,
-		CreatedAt: row.User.CreatedAt.Time,
+		CreatedAt: &row.User.CreatedAt.Time,
 	}, nil
 }

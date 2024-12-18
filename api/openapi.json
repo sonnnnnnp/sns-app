@@ -124,18 +124,18 @@
         "security": []
       }
     },
-    "/authorize/username": {
+    "/authorize/custom_id/{custom_id}": {
       "post": {
-        "summary": "ユーザー名でログイン（テスト用）",
+        "summary": "カスタムIDでログイン（テスト用）",
         "deprecated": false,
         "description": "",
-        "operationId": "authorizeWithUsername",
+        "operationId": "authorizeWithCustomID",
         "tags": [],
         "parameters": [
           {
-            "name": "name",
-            "in": "query",
-            "description": "名前",
+            "name": "custom_id",
+            "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "string"
@@ -294,6 +294,53 @@
                     },
                     "data": {
                       "$ref": "#/components/schemas/CallRoom"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/gateway": {
+      "get": {
+        "summary": "ゲートウェイの接続 URI を取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getGatewayURI",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/GatewayURI"
                     }
                   },
                   "required": [
@@ -1049,19 +1096,19 @@
         ]
       }
     },
-    "/users": {
+    "/users/custom_id/{custom_id}": {
       "get": {
-        "summary": "ユーザーを取得する",
+        "summary": "カスタムIDでユーザーを取得する",
         "deprecated": false,
         "description": "",
-        "operationId": "getUser",
+        "operationId": "getUserByCustomID",
         "tags": [],
         "parameters": [
           {
-            "name": "name",
-            "in": "query",
-            "description": "名前",
-            "required": false,
+            "name": "custom_id",
+            "in": "path",
+            "description": "",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1119,7 +1166,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
+                  "custom_id": {
                     "type": "string"
                   },
                   "nickname": {
@@ -1207,6 +1254,63 @@
                     },
                     "data": {
                       "$ref": "#/components/schemas/User"
+                    }
+                  },
+                  "required": [
+                    "ok",
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/search/users/typeahead": {
+      "get": {
+        "summary": "ユーザーの検索候補を取得する",
+        "deprecated": false,
+        "description": "",
+        "operationId": "searchUsersTypeahead",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "custom_id",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "description": "正常に処理を終了したかどうか"
+                    },
+                    "code": {
+                      "type": "integer",
+                      "description": "レスポンスコード"
+                    },
+                    "data": {
+                      "description": "データ",
+                      "$ref": "#/components/schemas/Users"
                     }
                   },
                   "required": [
@@ -1648,53 +1752,6 @@
           }
         ]
       }
-    },
-    "/gateway": {
-      "get": {
-        "summary": "ゲートウェイの接続 URI を取得する",
-        "deprecated": false,
-        "description": "",
-        "operationId": "getGatewayURI",
-        "tags": [],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ok": {
-                      "type": "boolean",
-                      "description": "正常に処理を終了したかどうか"
-                    },
-                    "code": {
-                      "type": "integer",
-                      "description": "レスポンスコード"
-                    },
-                    "data": {
-                      "description": "データ",
-                      "$ref": "#/components/schemas/GatewayURI"
-                    }
-                  },
-                  "required": [
-                    "ok",
-                    "code",
-                    "data"
-                  ]
-                }
-              }
-            },
-            "headers": {}
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
     }
   },
   "components": {
@@ -1707,7 +1764,7 @@
             "description": "ID番号",
             "format": "uuid"
           },
-          "name": {
+          "custom_id": {
             "type": "string",
             "description": "名前"
           },
@@ -1749,14 +1806,9 @@
         },
         "required": [
           "id",
-          "name",
+          "custom_id",
           "nickname",
-          "avatar_image_url",
-          "banner_image_url",
-          "biography",
-          "updated_at",
-          "created_at",
-          "is_private"
+          "avatar_image_url"
         ]
       },
       "SocialConnection": {
@@ -1974,7 +2026,7 @@
             "description": "ID番号",
             "format": "uuid"
           },
-          "name": {
+          "custom_id": {
             "type": "string",
             "description": "名前"
           },
@@ -2021,14 +2073,9 @@
         "required": [
           "followed_at",
           "id",
-          "name",
+          "custom_id",
           "nickname",
-          "avatar_image_url",
-          "banner_image_url",
-          "biography",
-          "is_private",
-          "updated_at",
-          "created_at"
+          "avatar_image_url"
         ]
       },
       "UserFollowers": {

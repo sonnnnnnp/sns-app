@@ -11,7 +11,7 @@ import (
 type IUserUsecase interface {
 	// users
 	GetSelf(ctx context.Context) (*api.User, error)
-	GetUser(ctx context.Context, params api.GetUserParams) (*api.User, error)
+	GetUserByCustomID(ctx context.Context, customID string) (*api.User, error)
 
 	UpdateUser(ctx context.Context, body *api.UpdateUserJSONBody) (*api.User, error)
 

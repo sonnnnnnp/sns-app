@@ -13,7 +13,7 @@ import (
 
 const getPostFavorite = `-- name: GetPostFavorite :one
 SELECT
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    users.id, users.custom_id, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     post_favorites.user_id, post_favorites.post_id, post_favorites.created_at
 FROM
     post_favorites
@@ -40,7 +40,7 @@ func (q *Queries) GetPostFavorite(ctx context.Context, arg GetPostFavoriteParams
 	var i GetPostFavoriteRow
 	err := row.Scan(
 		&i.User.ID,
-		&i.User.Name,
+		&i.User.CustomID,
 		&i.User.Nickname,
 		&i.User.Biography,
 		&i.User.AvatarImageUrl,
