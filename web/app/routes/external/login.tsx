@@ -23,6 +23,7 @@ export default function Login() {
     });
 
     if (!data?.ok) {
+      alert(`ユーザー「${customId}」は見つかりませんでした。`);
       return;
     }
 
