@@ -9,4 +9,4 @@ RUN go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.3.0
 
 RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
-CMD ["air", "-c", "http.air.toml"]
+CMD ["sh", "-c", "cd ./server && air -c http.air.toml"]

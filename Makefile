@@ -12,7 +12,7 @@ help: Makefile
 #? build: アプリケーションのセットアップ
 build:
 	docker compose build --no-cache
-	[ -f .env ] || cp .env.local .env
+	[ -f ./server/.env ] || cp ./server/.env.local ./server/.env
 	npm ci && cd web && npm ci
 
 #? up: アプリケーションの起動
@@ -36,26 +36,26 @@ shell-ws:
 
 #? api: OpenAPI からコードを生成
 api:
-	docker compose run --rm httpserver bash -c "cd pkg && oapi-codegen -package api /httpserver/api/openapi.json > /httpserver/internal/server/http/adapter/api/interface.go"
+	docker compose run --rm httpserver bash -c "oapi-codegen -package api /httpserver/api/openapi.json > /httpserver/server/adapter/http/api/interface.go"
 	npx openapi-typescript ./api/openapi.json -o ./web/app/api/client.ts
 
 #? wire: HTTP サーバーの依存関係を自動生成
 wire:
-	docker compose run --rm httpserver bash -c "cd /httpserver/pkg/httpserver/http && wire gen && mv ./wire_gen.go /httpserver/internal/server/http/wire.go"
+	docker compose run --rm httpserver bash -c "cd /httpserver/server/cmd/httpserver/wire && wire gen && mv ./wire_gen.go /httpserver/server/cmd/httpserver/commands/wire.go"
 
 .PHONY: migrate migrate-down seed sql-gen
 
 #? migrate: データベースの構造をマイグレート
 migrate:
-	docker compose run --rm httpserver bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@postgres:5432/db?sslmode=disable up"
+	docker compose run --rm httpserver bash -c "migrate -source file://migrations -database postgres://user:password@postgres:5432/db?sslmode=disable up"
 
 #? migrate-down: データベースの構造を初期化
 migrate-down:
-	docker compose run --rm httpserver bash -c "migrate -source file://pkg/db/migrations -database postgres://user:password@postgres:5432/db?sslmode=disable down"
+	docker compose run --rm httpserver bash -c "migrate -source file://migrations -database postgres://user:password@postgres:5432/db?sslmode=disable down"
 
 #? seed: データベースへ初期データを投入
 seed:
-	docker compose run --rm httpserver bash -c "go run ./cmd/seed"
+	docker compose run --rm httpserver bash -c "cd server && go run ./cmd/seed"
 
 #? sql-gen: SQL クエリから Go コードを生成
 sql-gen:

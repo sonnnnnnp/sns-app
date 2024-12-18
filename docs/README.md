@@ -10,6 +10,10 @@
 
 [http://localhost:1323](http://localhost:1323)
 
+###### WebSocket Server
+
+[http://localhost:4649](http://localhost:4649)
+
 ###### Database GUI
 
 [http://localhost:8888](http://localhost:8888)
