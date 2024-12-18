@@ -1,21 +1,20 @@
 package middleware
 
 import (
-	"slices"
 	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/sonnnnnnp/reverie/server/pkg/ctxhelper"
 	"github.com/sonnnnnnp/reverie/server/pkg/errors"
 	"github.com/sonnnnnnp/reverie/server/pkg/jwter"
+	"github.com/sonnnnnnp/reverie/server/pkg/utils"
 )
 
 func JWT(excludePaths []string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			// 認証が不必要なパスの除外
-			path := ctx.Path()
-			if slices.Contains(excludePaths, path) {
+			if utils.IsExcludedPath(ctx.Path(), excludePaths) {
 				return next(ctx)
 			}
 
@@ -45,7 +44,7 @@ func JWT(excludePaths []string) echo.MiddlewareFunc {
 				return err
 			}
 
-			// 認証トークンを挿入
+			// 認証トークンをコンテキストに挿入
 			c := ctxhelper.SetAccessToken(ctx.Request().Context(), token)
 			ctx.SetRequest(ctx.Request().WithContext(c))
 

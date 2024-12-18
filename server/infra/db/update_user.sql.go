@@ -16,7 +16,7 @@ const updateUser = `-- name: UpdateUser :exec
 UPDATE
     users
 SET
-    name = COALESCE($1, name)::text,
+    custom_id = COALESCE($1, custom_id)::text,
     nickname = COALESCE($2, nickname)::text,
     biography = COALESCE($3, biography)::text,
     avatar_image_url = COALESCE($4, avatar_image_url)::text,
@@ -29,7 +29,7 @@ WHERE
 `
 
 type UpdateUserParams struct {
-	Name           *string    `json:"name"`
+	CustomID       *string    `json:"custom_id"`
 	Nickname       *string    `json:"nickname"`
 	Biography      *string    `json:"biography"`
 	AvatarImageUrl *string    `json:"avatar_image_url"`
@@ -42,7 +42,7 @@ type UpdateUserParams struct {
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 	_, err := q.db.Exec(ctx, updateUser,
-		arg.Name,
+		arg.CustomID,
 		arg.Nickname,
 		arg.Biography,
 		arg.AvatarImageUrl,

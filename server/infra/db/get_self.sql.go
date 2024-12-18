@@ -13,7 +13,7 @@ import (
 
 const getSelf = `-- name: GetSelf :one
 SELECT
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    users.id, users.custom_id, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     (
         SELECT
             COUNT(*)
@@ -75,7 +75,7 @@ func (q *Queries) GetSelf(ctx context.Context, selfID uuid.UUID) (GetSelfRow, er
 	var i GetSelfRow
 	err := row.Scan(
 		&i.User.ID,
-		&i.User.Name,
+		&i.User.CustomID,
 		&i.User.Nickname,
 		&i.User.Biography,
 		&i.User.AvatarImageUrl,

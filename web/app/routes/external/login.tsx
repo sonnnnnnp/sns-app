@@ -18,8 +18,8 @@ export default function Login() {
   }, []);
 
   const handleLoginWithCustomId = async () => {
-    const { data } = await client.POST("/authorize/username", {
-      params: { query: { name: customId } },
+    const { data } = await client.POST("/authorize/custom_id/{custom_id}", {
+      params: { path: { custom_id: customId } },
     });
 
     if (!data?.ok) {

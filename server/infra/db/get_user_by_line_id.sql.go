@@ -11,7 +11,7 @@ import (
 
 const getUserByLineID = `-- name: GetUserByLineID :one
 SELECT
-    id, name, nickname, biography, avatar_image_url, banner_image_url, is_private, birthdate, line_id, created_at, updated_at
+    id, custom_id, nickname, biography, avatar_image_url, banner_image_url, is_private, birthdate, line_id, created_at, updated_at
 FROM
     users
 WHERE
@@ -23,7 +23,7 @@ func (q *Queries) GetUserByLineID(ctx context.Context, lineID string) (User, err
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
+		&i.CustomID,
 		&i.Nickname,
 		&i.Biography,
 		&i.AvatarImageUrl,

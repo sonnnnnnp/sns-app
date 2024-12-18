@@ -174,18 +174,18 @@ type User struct {
 	BannerImageUrl *string      `json:"banner_image_url"`
 	Biography      *string      `json:"biography"`
 	BlockStatus    *BlockStatus `json:"block_status,omitempty"`
-	CreatedAt      time.Time    `json:"created_at"`
+	CreatedAt      *time.Time   `json:"created_at,omitempty"`
+
+	// CustomId 名前
+	CustomId string `json:"custom_id"`
 
 	// Id ID番号
-	Id        openapi_types.UUID `json:"id"`
-	IsPrivate bool               `json:"is_private"`
-
-	// Name 名前
-	Name             string            `json:"name"`
-	Nickname         string            `json:"nickname"`
-	SocialConnection *SocialConnection `json:"social_connection,omitempty"`
-	SocialEngagement *SocialEngagement `json:"social_engagement,omitempty"`
-	UpdatedAt        time.Time         `json:"updated_at"`
+	Id               openapi_types.UUID `json:"id"`
+	IsPrivate        *bool              `json:"is_private,omitempty"`
+	Nickname         string             `json:"nickname"`
+	SocialConnection *SocialConnection  `json:"social_connection,omitempty"`
+	SocialEngagement *SocialEngagement  `json:"social_engagement,omitempty"`
+	UpdatedAt        *time.Time         `json:"updated_at,omitempty"`
 }
 
 // UserFollower defines model for UserFollower.
@@ -194,19 +194,19 @@ type UserFollower struct {
 	BannerImageUrl *string      `json:"banner_image_url"`
 	Biography      *string      `json:"biography"`
 	BlockStatus    *BlockStatus `json:"block_status,omitempty"`
-	CreatedAt      time.Time    `json:"created_at"`
-	FollowedAt     time.Time    `json:"followed_at"`
+	CreatedAt      *time.Time   `json:"created_at,omitempty"`
+
+	// CustomId 名前
+	CustomId   string    `json:"custom_id"`
+	FollowedAt time.Time `json:"followed_at"`
 
 	// Id ID番号
-	Id        openapi_types.UUID `json:"id"`
-	IsPrivate bool               `json:"is_private"`
-
-	// Name 名前
-	Name             string            `json:"name"`
-	Nickname         string            `json:"nickname"`
-	SocialConnection *SocialConnection `json:"social_connection,omitempty"`
-	SocialEngagement *SocialEngagement `json:"social_engagement,omitempty"`
-	UpdatedAt        time.Time         `json:"updated_at"`
+	Id               openapi_types.UUID `json:"id"`
+	IsPrivate        *bool              `json:"is_private,omitempty"`
+	Nickname         string             `json:"nickname"`
+	SocialConnection *SocialConnection  `json:"social_connection,omitempty"`
+	SocialEngagement *SocialEngagement  `json:"social_engagement,omitempty"`
+	UpdatedAt        *time.Time         `json:"updated_at,omitempty"`
 }
 
 // UserFollowers defines model for UserFollowers.
@@ -227,12 +227,6 @@ type AuthorizeWithLineParams struct {
 // RefreshAuthorizationJSONBody defines parameters for RefreshAuthorization.
 type RefreshAuthorizationJSONBody struct {
 	RefreshToken string `json:"refresh_token"`
-}
-
-// AuthorizeWithUsernameParams defines parameters for AuthorizeWithUsername.
-type AuthorizeWithUsernameParams struct {
-	// Name 名前
-	Name string `form:"name" json:"name"`
 }
 
 // GetCallTimelineParams defines parameters for GetCallTimeline.
@@ -276,6 +270,11 @@ type CreatePostJSONBody struct {
 	Text          *string             `json:"text,omitempty"`
 }
 
+// SearchUsersTypeaheadParams defines parameters for SearchUsersTypeahead.
+type SearchUsersTypeaheadParams struct {
+	CustomId string `form:"custom_id" json:"custom_id"`
+}
+
 // GetTimelineParams defines parameters for GetTimeline.
 type GetTimelineParams struct {
 	// Cursor 次のページを取得するためのキー
@@ -297,19 +296,13 @@ type GetUserTimelineParams struct {
 	Limit  *int                `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
-// GetUserParams defines parameters for GetUser.
-type GetUserParams struct {
-	// Name 名前
-	Name *string `form:"name,omitempty" json:"name,omitempty"`
-}
-
 // UpdateUserJSONBody defines parameters for UpdateUser.
 type UpdateUserJSONBody struct {
 	AvatarImageUrl *string    `json:"avatar_image_url,omitempty"`
 	BannerImageUrl *string    `json:"banner_image_url,omitempty"`
 	Biography      *string    `json:"biography,omitempty"`
 	Birthdate      *time.Time `json:"birthdate,omitempty"`
-	Name           *string    `json:"name,omitempty"`
+	CustomId       *string    `json:"custom_id,omitempty"`
 	Nickname       *string    `json:"nickname,omitempty"`
 }
 
@@ -398,6 +391,9 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// AuthorizeWithCustomID request
+	AuthorizeWithCustomID(ctx context.Context, customId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// AuthorizeWithLine request
 	AuthorizeWithLine(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -405,9 +401,6 @@ type ClientInterface interface {
 	RefreshAuthorizationWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	RefreshAuthorization(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// AuthorizeWithUsername request
-	AuthorizeWithUsername(ctx context.Context, params *AuthorizeWithUsernameParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetCallTimeline request
 	GetCallTimeline(ctx context.Context, params *GetCallTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -449,6 +442,9 @@ type ClientInterface interface {
 	// FavoritePost request
 	FavoritePost(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// SearchUsersTypeahead request
+	SearchUsersTypeahead(ctx context.Context, params *SearchUsersTypeaheadParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetTimeline request
 	GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -458,11 +454,11 @@ type ClientInterface interface {
 	// GetUserTimeline request
 	GetUserTimeline(ctx context.Context, userId openapi_types.UUID, params *GetUserTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetUser request
-	GetUser(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// GetUserBlocking request
 	GetUserBlocking(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetUserByCustomID request
+	GetUserByCustomID(ctx context.Context, customId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetSelf request
 	GetSelf(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -494,6 +490,18 @@ type ClientInterface interface {
 	FollowUser(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
+func (c *Client) AuthorizeWithCustomID(ctx context.Context, customId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAuthorizeWithCustomIDRequest(c.Server, customId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) AuthorizeWithLine(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewAuthorizeWithLineRequest(c.Server, params)
 	if err != nil {
@@ -520,18 +528,6 @@ func (c *Client) RefreshAuthorizationWithBody(ctx context.Context, contentType s
 
 func (c *Client) RefreshAuthorization(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewRefreshAuthorizationRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) AuthorizeWithUsername(ctx context.Context, params *AuthorizeWithUsernameParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAuthorizeWithUsernameRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -710,6 +706,18 @@ func (c *Client) FavoritePost(ctx context.Context, postId openapi_types.UUID, re
 	return c.Client.Do(req)
 }
 
+func (c *Client) SearchUsersTypeahead(ctx context.Context, params *SearchUsersTypeaheadParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSearchUsersTypeaheadRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetTimeline(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTimelineRequest(c.Server, params)
 	if err != nil {
@@ -746,8 +754,8 @@ func (c *Client) GetUserTimeline(ctx context.Context, userId openapi_types.UUID,
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetUser(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUserRequest(c.Server, params)
+func (c *Client) GetUserBlocking(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserBlockingRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -758,8 +766,8 @@ func (c *Client) GetUser(ctx context.Context, params *GetUserParams, reqEditors 
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetUserBlocking(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUserBlockingRequest(c.Server)
+func (c *Client) GetUserByCustomID(ctx context.Context, customId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserByCustomIDRequest(c.Server, customId)
 	if err != nil {
 		return nil, err
 	}
@@ -890,6 +898,40 @@ func (c *Client) FollowUser(ctx context.Context, userId openapi_types.UUID, reqE
 	return c.Client.Do(req)
 }
 
+// NewAuthorizeWithCustomIDRequest generates requests for AuthorizeWithCustomID
+func NewAuthorizeWithCustomIDRequest(server string, customId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "custom_id", runtime.ParamLocationPath, customId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/authorize/custom_id/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewAuthorizeWithLineRequest generates requests for AuthorizeWithLine
 func NewAuthorizeWithLineRequest(server string, params *AuthorizeWithLineParams) (*http.Request, error) {
 	var err error
@@ -971,51 +1013,6 @@ func NewRefreshAuthorizationRequestWithBody(server string, contentType string, b
 	}
 
 	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewAuthorizeWithUsernameRequest generates requests for AuthorizeWithUsername
-func NewAuthorizeWithUsernameRequest(server string, params *AuthorizeWithUsernameParams) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/authorize/username")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, params.Name); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
 
 	return req, nil
 }
@@ -1533,6 +1530,51 @@ func NewFavoritePostRequest(server string, postId openapi_types.UUID) (*http.Req
 	return req, nil
 }
 
+// NewSearchUsersTypeaheadRequest generates requests for SearchUsersTypeahead
+func NewSearchUsersTypeaheadRequest(server string, params *SearchUsersTypeaheadParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/search/users/typeahead")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "custom_id", runtime.ParamLocationQuery, params.CustomId); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetTimelineRequest generates requests for GetTimeline
 func NewGetTimelineRequest(server string, params *GetTimelineParams) (*http.Request, error) {
 	var err error
@@ -1735,55 +1777,6 @@ func NewGetUserTimelineRequest(server string, userId openapi_types.UUID, params 
 	return req, nil
 }
 
-// NewGetUserRequest generates requests for GetUser
-func NewGetUserRequest(server string, params *GetUserParams) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if params.Name != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "name", runtime.ParamLocationQuery, *params.Name); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewGetUserBlockingRequest generates requests for GetUserBlocking
 func NewGetUserBlockingRequest(server string) (*http.Request, error) {
 	var err error
@@ -1794,6 +1787,40 @@ func NewGetUserBlockingRequest(server string) (*http.Request, error) {
 	}
 
 	operationPath := fmt.Sprintf("/users/blocks")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetUserByCustomIDRequest generates requests for GetUserByCustomID
+func NewGetUserByCustomIDRequest(server string, customId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "custom_id", runtime.ParamLocationPath, customId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/custom_id/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2159,6 +2186,9 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// AuthorizeWithCustomIDWithResponse request
+	AuthorizeWithCustomIDWithResponse(ctx context.Context, customId string, reqEditors ...RequestEditorFn) (*AuthorizeWithCustomIDResponse, error)
+
 	// AuthorizeWithLineWithResponse request
 	AuthorizeWithLineWithResponse(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*AuthorizeWithLineResponse, error)
 
@@ -2166,9 +2196,6 @@ type ClientWithResponsesInterface interface {
 	RefreshAuthorizationWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error)
 
 	RefreshAuthorizationWithResponse(ctx context.Context, body RefreshAuthorizationJSONRequestBody, reqEditors ...RequestEditorFn) (*RefreshAuthorizationResponse, error)
-
-	// AuthorizeWithUsernameWithResponse request
-	AuthorizeWithUsernameWithResponse(ctx context.Context, params *AuthorizeWithUsernameParams, reqEditors ...RequestEditorFn) (*AuthorizeWithUsernameResponse, error)
 
 	// GetCallTimelineWithResponse request
 	GetCallTimelineWithResponse(ctx context.Context, params *GetCallTimelineParams, reqEditors ...RequestEditorFn) (*GetCallTimelineResponse, error)
@@ -2210,6 +2237,9 @@ type ClientWithResponsesInterface interface {
 	// FavoritePostWithResponse request
 	FavoritePostWithResponse(ctx context.Context, postId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FavoritePostResponse, error)
 
+	// SearchUsersTypeaheadWithResponse request
+	SearchUsersTypeaheadWithResponse(ctx context.Context, params *SearchUsersTypeaheadParams, reqEditors ...RequestEditorFn) (*SearchUsersTypeaheadResponse, error)
+
 	// GetTimelineWithResponse request
 	GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error)
 
@@ -2219,11 +2249,11 @@ type ClientWithResponsesInterface interface {
 	// GetUserTimelineWithResponse request
 	GetUserTimelineWithResponse(ctx context.Context, userId openapi_types.UUID, params *GetUserTimelineParams, reqEditors ...RequestEditorFn) (*GetUserTimelineResponse, error)
 
-	// GetUserWithResponse request
-	GetUserWithResponse(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*GetUserResponse, error)
-
 	// GetUserBlockingWithResponse request
 	GetUserBlockingWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetUserBlockingResponse, error)
+
+	// GetUserByCustomIDWithResponse request
+	GetUserByCustomIDWithResponse(ctx context.Context, customId string, reqEditors ...RequestEditorFn) (*GetUserByCustomIDResponse, error)
 
 	// GetSelfWithResponse request
 	GetSelfWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetSelfResponse, error)
@@ -2253,6 +2283,35 @@ type ClientWithResponsesInterface interface {
 
 	// FollowUserWithResponse request
 	FollowUserWithResponse(ctx context.Context, userId openapi_types.UUID, reqEditors ...RequestEditorFn) (*FollowUserResponse, error)
+}
+
+type AuthorizeWithCustomIDResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int           `json:"code"`
+		Data Authorization `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r AuthorizeWithCustomIDResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r AuthorizeWithCustomIDResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type AuthorizeWithLineResponse struct {
@@ -2307,35 +2366,6 @@ func (r RefreshAuthorizationResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r RefreshAuthorizationResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type AuthorizeWithUsernameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		// Code レスポンスコード
-		Code int           `json:"code"`
-		Data Authorization `json:"data"`
-
-		// Ok 正常に処理を終了したかどうか
-		Ok bool `json:"ok"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r AuthorizeWithUsernameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r AuthorizeWithUsernameResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2680,6 +2710,35 @@ func (r FavoritePostResponse) StatusCode() int {
 	return 0
 }
 
+type SearchUsersTypeaheadResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int   `json:"code"`
+		Data Users `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r SearchUsersTypeaheadResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SearchUsersTypeaheadResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetTimelineResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2767,35 +2826,6 @@ func (r GetUserTimelineResponse) StatusCode() int {
 	return 0
 }
 
-type GetUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		// Code レスポンスコード
-		Code int  `json:"code"`
-		Data User `json:"data"`
-
-		// Ok 正常に処理を終了したかどうか
-		Ok bool `json:"ok"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type GetUserBlockingResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2819,6 +2849,35 @@ func (r GetUserBlockingResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetUserBlockingResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetUserByCustomIDResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Code レスポンスコード
+		Code int  `json:"code"`
+		Data User `json:"data"`
+
+		// Ok 正常に処理を終了したかどうか
+		Ok bool `json:"ok"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetUserByCustomIDResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUserByCustomIDResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3072,6 +3131,15 @@ func (r FollowUserResponse) StatusCode() int {
 	return 0
 }
 
+// AuthorizeWithCustomIDWithResponse request returning *AuthorizeWithCustomIDResponse
+func (c *ClientWithResponses) AuthorizeWithCustomIDWithResponse(ctx context.Context, customId string, reqEditors ...RequestEditorFn) (*AuthorizeWithCustomIDResponse, error) {
+	rsp, err := c.AuthorizeWithCustomID(ctx, customId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAuthorizeWithCustomIDResponse(rsp)
+}
+
 // AuthorizeWithLineWithResponse request returning *AuthorizeWithLineResponse
 func (c *ClientWithResponses) AuthorizeWithLineWithResponse(ctx context.Context, params *AuthorizeWithLineParams, reqEditors ...RequestEditorFn) (*AuthorizeWithLineResponse, error) {
 	rsp, err := c.AuthorizeWithLine(ctx, params, reqEditors...)
@@ -3096,15 +3164,6 @@ func (c *ClientWithResponses) RefreshAuthorizationWithResponse(ctx context.Conte
 		return nil, err
 	}
 	return ParseRefreshAuthorizationResponse(rsp)
-}
-
-// AuthorizeWithUsernameWithResponse request returning *AuthorizeWithUsernameResponse
-func (c *ClientWithResponses) AuthorizeWithUsernameWithResponse(ctx context.Context, params *AuthorizeWithUsernameParams, reqEditors ...RequestEditorFn) (*AuthorizeWithUsernameResponse, error) {
-	rsp, err := c.AuthorizeWithUsername(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseAuthorizeWithUsernameResponse(rsp)
 }
 
 // GetCallTimelineWithResponse request returning *GetCallTimelineResponse
@@ -3231,6 +3290,15 @@ func (c *ClientWithResponses) FavoritePostWithResponse(ctx context.Context, post
 	return ParseFavoritePostResponse(rsp)
 }
 
+// SearchUsersTypeaheadWithResponse request returning *SearchUsersTypeaheadResponse
+func (c *ClientWithResponses) SearchUsersTypeaheadWithResponse(ctx context.Context, params *SearchUsersTypeaheadParams, reqEditors ...RequestEditorFn) (*SearchUsersTypeaheadResponse, error) {
+	rsp, err := c.SearchUsersTypeahead(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSearchUsersTypeaheadResponse(rsp)
+}
+
 // GetTimelineWithResponse request returning *GetTimelineResponse
 func (c *ClientWithResponses) GetTimelineWithResponse(ctx context.Context, params *GetTimelineParams, reqEditors ...RequestEditorFn) (*GetTimelineResponse, error) {
 	rsp, err := c.GetTimeline(ctx, params, reqEditors...)
@@ -3258,15 +3326,6 @@ func (c *ClientWithResponses) GetUserTimelineWithResponse(ctx context.Context, u
 	return ParseGetUserTimelineResponse(rsp)
 }
 
-// GetUserWithResponse request returning *GetUserResponse
-func (c *ClientWithResponses) GetUserWithResponse(ctx context.Context, params *GetUserParams, reqEditors ...RequestEditorFn) (*GetUserResponse, error) {
-	rsp, err := c.GetUser(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetUserResponse(rsp)
-}
-
 // GetUserBlockingWithResponse request returning *GetUserBlockingResponse
 func (c *ClientWithResponses) GetUserBlockingWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetUserBlockingResponse, error) {
 	rsp, err := c.GetUserBlocking(ctx, reqEditors...)
@@ -3274,6 +3333,15 @@ func (c *ClientWithResponses) GetUserBlockingWithResponse(ctx context.Context, r
 		return nil, err
 	}
 	return ParseGetUserBlockingResponse(rsp)
+}
+
+// GetUserByCustomIDWithResponse request returning *GetUserByCustomIDResponse
+func (c *ClientWithResponses) GetUserByCustomIDWithResponse(ctx context.Context, customId string, reqEditors ...RequestEditorFn) (*GetUserByCustomIDResponse, error) {
+	rsp, err := c.GetUserByCustomID(ctx, customId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserByCustomIDResponse(rsp)
 }
 
 // GetSelfWithResponse request returning *GetSelfResponse
@@ -3365,6 +3433,39 @@ func (c *ClientWithResponses) FollowUserWithResponse(ctx context.Context, userId
 	return ParseFollowUserResponse(rsp)
 }
 
+// ParseAuthorizeWithCustomIDResponse parses an HTTP response from a AuthorizeWithCustomIDWithResponse call
+func ParseAuthorizeWithCustomIDResponse(rsp *http.Response) (*AuthorizeWithCustomIDResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &AuthorizeWithCustomIDResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int           `json:"code"`
+			Data Authorization `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseAuthorizeWithLineResponse parses an HTTP response from a AuthorizeWithLineWithResponse call
 func ParseAuthorizeWithLineResponse(rsp *http.Response) (*AuthorizeWithLineResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -3407,39 +3508,6 @@ func ParseRefreshAuthorizationResponse(rsp *http.Response) (*RefreshAuthorizatio
 	}
 
 	response := &RefreshAuthorizationResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			// Code レスポンスコード
-			Code int           `json:"code"`
-			Data Authorization `json:"data"`
-
-			// Ok 正常に処理を終了したかどうか
-			Ok bool `json:"ok"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseAuthorizeWithUsernameResponse parses an HTTP response from a AuthorizeWithUsernameWithResponse call
-func ParseAuthorizeWithUsernameResponse(rsp *http.Response) (*AuthorizeWithUsernameResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &AuthorizeWithUsernameResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -3850,6 +3918,39 @@ func ParseFavoritePostResponse(rsp *http.Response) (*FavoritePostResponse, error
 	return response, nil
 }
 
+// ParseSearchUsersTypeaheadResponse parses an HTTP response from a SearchUsersTypeaheadWithResponse call
+func ParseSearchUsersTypeaheadResponse(rsp *http.Response) (*SearchUsersTypeaheadResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SearchUsersTypeaheadResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int   `json:"code"`
+			Data Users `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetTimelineResponse parses an HTTP response from a GetTimelineWithResponse call
 func ParseGetTimelineResponse(rsp *http.Response) (*GetTimelineResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -3949,39 +4050,6 @@ func ParseGetUserTimelineResponse(rsp *http.Response) (*GetUserTimelineResponse,
 	return response, nil
 }
 
-// ParseGetUserResponse parses an HTTP response from a GetUserWithResponse call
-func ParseGetUserResponse(rsp *http.Response) (*GetUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			// Code レスポンスコード
-			Code int  `json:"code"`
-			Data User `json:"data"`
-
-			// Ok 正常に処理を終了したかどうか
-			Ok bool `json:"ok"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
 // ParseGetUserBlockingResponse parses an HTTP response from a GetUserBlockingWithResponse call
 func ParseGetUserBlockingResponse(rsp *http.Response) (*GetUserBlockingResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4001,6 +4069,39 @@ func ParseGetUserBlockingResponse(rsp *http.Response) (*GetUserBlockingResponse,
 			// Code レスポンスコード
 			Code int   `json:"code"`
 			Data Users `json:"data"`
+
+			// Ok 正常に処理を終了したかどうか
+			Ok bool `json:"ok"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetUserByCustomIDResponse parses an HTTP response from a GetUserByCustomIDWithResponse call
+func ParseGetUserByCustomIDResponse(rsp *http.Response) (*GetUserByCustomIDResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetUserByCustomIDResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Code レスポンスコード
+			Code int  `json:"code"`
+			Data User `json:"data"`
 
 			// Ok 正常に処理を終了したかどうか
 			Ok bool `json:"ok"`
@@ -4300,15 +4401,15 @@ func ParseFollowUserResponse(rsp *http.Response) (*FollowUserResponse, error) {
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// カスタムIDでログイン（テスト用）
+	// (POST /authorize/custom_id/{custom_id})
+	AuthorizeWithCustomID(ctx echo.Context, customId string) error
 	// LINE でログイン
 	// (POST /authorize/line)
 	AuthorizeWithLine(ctx echo.Context, params AuthorizeWithLineParams) error
 	// 認証トークンを更新
 	// (POST /authorize/refresh)
 	RefreshAuthorization(ctx echo.Context) error
-	// ユーザー名でログイン（テスト用）
-	// (POST /authorize/username)
-	AuthorizeWithUsername(ctx echo.Context, params AuthorizeWithUsernameParams) error
 	// オープンの通話タイムラインを取得する
 	// (GET /call_timeline)
 	GetCallTimeline(ctx echo.Context, params GetCallTimelineParams) error
@@ -4345,6 +4446,9 @@ type ServerInterface interface {
 	// 投稿にいいねする
 	// (POST /posts/{post_id}/favorites)
 	FavoritePost(ctx echo.Context, postId openapi_types.UUID) error
+	// ユーザーの検索候補を取得する
+	// (GET /search/users/typeahead)
+	SearchUsersTypeahead(ctx echo.Context, params SearchUsersTypeaheadParams) error
 	// オープンのタイムラインを取得する
 	// (GET /timeline)
 	GetTimeline(ctx echo.Context, params GetTimelineParams) error
@@ -4354,12 +4458,12 @@ type ServerInterface interface {
 	// ユーザーのタイムラインを取得する
 	// (GET /timeline/users/{user_id})
 	GetUserTimeline(ctx echo.Context, userId openapi_types.UUID, params GetUserTimelineParams) error
-	// ユーザーを取得する
-	// (GET /users)
-	GetUser(ctx echo.Context, params GetUserParams) error
 	// ユーザーのブロック一覧を取得する
 	// (GET /users/blocks)
 	GetUserBlocking(ctx echo.Context) error
+	// カスタムIDでユーザーを取得する
+	// (GET /users/custom_id/{custom_id})
+	GetUserByCustomID(ctx echo.Context, customId string) error
 	// 自分を取得する
 	// (GET /users/me)
 	GetSelf(ctx echo.Context) error
@@ -4394,6 +4498,24 @@ type ServerInterfaceWrapper struct {
 	Handler ServerInterface
 }
 
+// AuthorizeWithCustomID converts echo context to params.
+func (w *ServerInterfaceWrapper) AuthorizeWithCustomID(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "custom_id" -------------
+	var customId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "custom_id", ctx.Param("custom_id"), &customId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter custom_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.AuthorizeWithCustomID(ctx, customId)
+	return err
+}
+
 // AuthorizeWithLine converts echo context to params.
 func (w *ServerInterfaceWrapper) AuthorizeWithLine(ctx echo.Context) error {
 	var err error
@@ -4420,26 +4542,6 @@ func (w *ServerInterfaceWrapper) RefreshAuthorization(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.RefreshAuthorization(ctx)
-	return err
-}
-
-// AuthorizeWithUsername converts echo context to params.
-func (w *ServerInterfaceWrapper) AuthorizeWithUsername(ctx echo.Context) error {
-	var err error
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params AuthorizeWithUsernameParams
-	// ------------- Required query parameter "name" -------------
-
-	err = runtime.BindQueryParameter("form", true, true, "name", ctx.QueryParams(), &params.Name)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.AuthorizeWithUsername(ctx, params)
 	return err
 }
 
@@ -4672,6 +4774,26 @@ func (w *ServerInterfaceWrapper) FavoritePost(ctx echo.Context) error {
 	return err
 }
 
+// SearchUsersTypeahead converts echo context to params.
+func (w *ServerInterfaceWrapper) SearchUsersTypeahead(ctx echo.Context) error {
+	var err error
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params SearchUsersTypeaheadParams
+	// ------------- Required query parameter "custom_id" -------------
+
+	err = runtime.BindQueryParameter("form", true, true, "custom_id", ctx.QueryParams(), &params.CustomId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter custom_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.SearchUsersTypeahead(ctx, params)
+	return err
+}
+
 // GetTimeline converts echo context to params.
 func (w *ServerInterfaceWrapper) GetTimeline(ctx echo.Context) error {
 	var err error
@@ -4760,26 +4882,6 @@ func (w *ServerInterfaceWrapper) GetUserTimeline(ctx echo.Context) error {
 	return err
 }
 
-// GetUser converts echo context to params.
-func (w *ServerInterfaceWrapper) GetUser(ctx echo.Context) error {
-	var err error
-
-	ctx.Set(BearerScopes, []string{})
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params GetUserParams
-	// ------------- Optional query parameter "name" -------------
-
-	err = runtime.BindQueryParameter("form", true, false, "name", ctx.QueryParams(), &params.Name)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter name: %s", err))
-	}
-
-	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetUser(ctx, params)
-	return err
-}
-
 // GetUserBlocking converts echo context to params.
 func (w *ServerInterfaceWrapper) GetUserBlocking(ctx echo.Context) error {
 	var err error
@@ -4788,6 +4890,24 @@ func (w *ServerInterfaceWrapper) GetUserBlocking(ctx echo.Context) error {
 
 	// Invoke the callback with all the unmarshaled arguments
 	err = w.Handler.GetUserBlocking(ctx)
+	return err
+}
+
+// GetUserByCustomID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUserByCustomID(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "custom_id" -------------
+	var customId string
+
+	err = runtime.BindStyledParameterWithOptions("simple", "custom_id", ctx.Param("custom_id"), &customId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter custom_id: %s", err))
+	}
+
+	ctx.Set(BearerScopes, []string{})
+
+	// Invoke the callback with all the unmarshaled arguments
+	err = w.Handler.GetUserByCustomID(ctx, customId)
 	return err
 }
 
@@ -4967,9 +5087,9 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.POST(baseURL+"/authorize/custom_id/:custom_id", wrapper.AuthorizeWithCustomID)
 	router.POST(baseURL+"/authorize/line", wrapper.AuthorizeWithLine)
 	router.POST(baseURL+"/authorize/refresh", wrapper.RefreshAuthorization)
-	router.POST(baseURL+"/authorize/username", wrapper.AuthorizeWithUsername)
 	router.GET(baseURL+"/call_timeline", wrapper.GetCallTimeline)
 	router.GET(baseURL+"/call_timeline/following", wrapper.GetFollowingCallTimeline)
 	router.GET(baseURL+"/call_timeline/users/:user_id", wrapper.GetUserCallTimeline)
@@ -4982,11 +5102,12 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.DELETE(baseURL+"/posts/:post_id/favorites", wrapper.UnfavoritePost)
 	router.GET(baseURL+"/posts/:post_id/favorites", wrapper.GetPostFavorites)
 	router.POST(baseURL+"/posts/:post_id/favorites", wrapper.FavoritePost)
+	router.GET(baseURL+"/search/users/typeahead", wrapper.SearchUsersTypeahead)
 	router.GET(baseURL+"/timeline", wrapper.GetTimeline)
 	router.GET(baseURL+"/timeline/following", wrapper.GetFollowingTimeline)
 	router.GET(baseURL+"/timeline/users/:user_id", wrapper.GetUserTimeline)
-	router.GET(baseURL+"/users", wrapper.GetUser)
 	router.GET(baseURL+"/users/blocks", wrapper.GetUserBlocking)
+	router.GET(baseURL+"/users/custom_id/:custom_id", wrapper.GetUserByCustomID)
 	router.GET(baseURL+"/users/me", wrapper.GetSelf)
 	router.PUT(baseURL+"/users/update", wrapper.UpdateUser)
 	router.DELETE(baseURL+"/users/:user_id/blocks", wrapper.UnblockUser)
@@ -5002,43 +5123,44 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

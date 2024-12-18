@@ -14,7 +14,7 @@ import (
 
 const getUserFollowing = `-- name: GetUserFollowing :many
 SELECT
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    users.id, users.custom_id, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     user_follows.created_at AS followed_at
 FROM
     users
@@ -29,7 +29,7 @@ ORDER BY
 
 type GetUserFollowingRow struct {
 	ID             uuid.UUID          `json:"id"`
-	Name           string             `json:"name"`
+	CustomID       string             `json:"custom_id"`
 	Nickname       string             `json:"nickname"`
 	Biography      *string            `json:"biography"`
 	AvatarImageUrl *string            `json:"avatar_image_url"`
@@ -53,7 +53,7 @@ func (q *Queries) GetUserFollowing(ctx context.Context, userID uuid.UUID) ([]Get
 		var i GetUserFollowingRow
 		if err := rows.Scan(
 			&i.ID,
-			&i.Name,
+			&i.CustomID,
 			&i.Nickname,
 			&i.Biography,
 			&i.AvatarImageUrl,

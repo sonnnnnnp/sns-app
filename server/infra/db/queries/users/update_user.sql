@@ -2,7 +2,7 @@
 UPDATE
     users
 SET
-    name = COALESCE(sqlc.narg(name), name)::text,
+    custom_id = COALESCE(sqlc.narg(custom_id), custom_id)::text,
     nickname = COALESCE(sqlc.narg(nickname), nickname)::text,
     biography = COALESCE(sqlc.narg(biography), biography)::text,
     avatar_image_url = COALESCE(sqlc.narg(avatar_image_url), avatar_image_url)::text,

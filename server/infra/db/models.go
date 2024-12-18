@@ -177,7 +177,7 @@ type PostFavorite struct {
 
 type User struct {
 	ID             uuid.UUID          `json:"id"`
-	Name           string             `json:"name"`
+	CustomID       string             `json:"custom_id"`
 	Nickname       string             `json:"nickname"`
 	Biography      *string            `json:"biography"`
 	AvatarImageUrl *string            `json:"avatar_image_url"`

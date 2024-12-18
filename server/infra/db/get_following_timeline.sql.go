@@ -15,7 +15,7 @@ import (
 const getFollowingTimeline = `-- name: GetFollowingTimeline :many
 SELECT
     posts.id, posts.author_id, posts.reply_to_id, posts.repost_id, posts.text, posts.created_at, posts.updated_at,
-    users.id, users.name, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
+    users.id, users.custom_id, users.nickname, users.biography, users.avatar_image_url, users.banner_image_url, users.is_private, users.birthdate, users.line_id, users.created_at, users.updated_at,
     (
         SELECT
             COUNT(*)
@@ -89,7 +89,7 @@ func (q *Queries) GetFollowingTimeline(ctx context.Context, arg GetFollowingTime
 			&i.Post.CreatedAt,
 			&i.Post.UpdatedAt,
 			&i.User.ID,
-			&i.User.Name,
+			&i.User.CustomID,
 			&i.User.Nickname,
 			&i.User.Biography,
 			&i.User.AvatarImageUrl,

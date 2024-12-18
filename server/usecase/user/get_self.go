@@ -42,7 +42,7 @@ func (uc *UserUsecase) GetSelf(ctx context.Context) (*api.User, error) {
 
 	return &api.User{
 		Id:             row.User.ID,
-		Name:           row.User.Name,
+		CustomId:       row.User.CustomID,
 		Nickname:       row.User.Nickname,
 		AvatarImageUrl: row.User.AvatarImageUrl,
 		BannerImageUrl: row.User.BannerImageUrl,
@@ -62,7 +62,7 @@ func (uc *UserUsecase) GetSelf(ctx context.Context) (*api.User, error) {
 			MediaCount:     int(row.MediaCount),
 			FavoritesCount: int(row.FavoritesCount),
 		},
-		UpdatedAt: row.User.UpdatedAt.Time,
-		CreatedAt: row.User.CreatedAt.Time,
+		UpdatedAt: &row.User.UpdatedAt.Time,
+		CreatedAt: &row.User.CreatedAt.Time,
 	}, nil
 }

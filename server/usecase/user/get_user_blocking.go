@@ -20,11 +20,10 @@ func (uc *UserUsecase) GetUserBlocking(ctx context.Context) ([]api.User, error) 
 			AvatarImageUrl: u.AvatarImageUrl,
 			BannerImageUrl: u.BannerImageUrl,
 			Biography:      u.Biography,
-			CreatedAt:      u.CreatedAt.Time,
+			CreatedAt:      &u.CreatedAt.Time,
 			Nickname:       u.Nickname,
 			Id:             u.ID,
-			UpdatedAt:      u.UpdatedAt.Time,
-			Name:           u.Name,
+			CustomId:       u.CustomID,
 		})
 	}
 

@@ -47,12 +47,11 @@ func (uc *UserUsecase) GetUserFollowing(ctx context.Context, uID uuid.UUID) ([]a
 			AvatarImageUrl: u.AvatarImageUrl,
 			BannerImageUrl: u.BannerImageUrl,
 			Biography:      u.Biography,
-			CreatedAt:      u.CreatedAt.Time,
+			CreatedAt:      &u.CreatedAt.Time,
 			FollowedAt:     u.FollowedAt.Time,
 			Nickname:       u.Nickname,
 			Id:             u.ID,
-			UpdatedAt:      u.UpdatedAt.Time,
-			Name:           u.Name,
+			CustomId:       u.CustomID,
 		})
 	}
 
