@@ -4,7 +4,7 @@ import client from "~/api";
 import SimpleIconsGoogle from "~/components/icons/simple-icons/SimpleIconsGoogle";
 import SimpleIconsLine from "~/components/icons/simple-icons/SimpleIconsLine";
 import SimpleIconsX from "~/components/icons/simple-icons/SimpleIconsX";
-import { WavyBackground } from "~/components/ui/WavyBackground";
+import { WavyBackground } from "~/components/shared/WavyBackground";
 import { Cookie } from "~/lib/cookies";
 
 export default function Login() {
