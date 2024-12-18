@@ -22,7 +22,12 @@
       "web/**/*.js",
       "web/**/*.jsx",
       "web/**/*.ts",
-      "web/**/*.tsx"
+      "web/**/*.tsx",
+      "native/**/*.json",
+      "native/**/*.js",
+      "native/**/*.jsx",
+      "native/**/*.ts",
+      "native/**/*.tsx"
     ]
   },
   "organizeImports": {
@@ -41,7 +46,12 @@
       "web/**/*.js",
       "web/**/*.jsx",
       "web/**/*.ts",
-      "web/**/*.tsx"
+      "web/**/*.tsx",
+      "native/**/*.json",
+      "native/**/*.js",
+      "native/**/*.jsx",
+      "native/**/*.ts",
+      "native/**/*.tsx"
     ]
   },
   "javascript": {

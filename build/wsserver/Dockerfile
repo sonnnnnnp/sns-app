@@ -4,4 +4,4 @@ WORKDIR /wsserver
 
 RUN go install github.com/air-verse/air@latest
 
-CMD ["air", "-c", "ws.air.toml"]
+CMD ["sh", "-c", "cd ./server && air -c ws.air.toml"]

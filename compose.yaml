@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/httpserver
     env_file:
-      - .env
+      - ./server/.env
     depends_on:
       - postgres
   wsserver:
@@ -22,7 +22,7 @@ services:
     volumes:
       - .:/wsserver
     env_file:
-      - .env
+      - ./server/.env
   postgres:
     container_name: postgres
     image: postgres:15

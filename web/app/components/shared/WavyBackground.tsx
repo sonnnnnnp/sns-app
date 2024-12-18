@@ -15,6 +15,7 @@ export const WavyBackground = ({
   waveOpacity = 0.5,
   ...props
 }: {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   children?: any;
   className?: string;
   containerClassName?: string;
@@ -24,15 +25,19 @@ export const WavyBackground = ({
   blur?: number;
   speed?: "slow" | "fast";
   waveOpacity?: number;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   [key: string]: any;
 }) => {
   const noise = createNoise3D();
+  // biome-ignore lint/style/useSingleVarDeclarator: <explanation>
   let w: number,
     h: number,
     nt: number,
     i: number,
     x: number,
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     ctx: any,
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     canvas: any;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const getSpeed = () => {
@@ -75,6 +80,8 @@ export const WavyBackground = ({
       ctx.lineWidth = waveWidth || 50;
       ctx.strokeStyle = waveColors[i % waveColors.length];
       for (x = 0; x < w; x += 5) {
+        // biome-ignore lint/correctness/noInnerDeclarations: <explanation>
+        // biome-ignore lint/style/noVar: <explanation>
         var y = noise(x / 800, 0.3 * i, nt) * 100;
         ctx.lineTo(x, y + h * 0.5); // adjust for height, currently at 50% of the container
       }
@@ -92,6 +99,7 @@ export const WavyBackground = ({
     animationId = requestAnimationFrame(render);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     init();
     return () => {
@@ -118,7 +126,7 @@ export const WavyBackground = ({
         style={{
           ...(isSafari ? { filter: `blur(${blur}px)` } : {}),
         }}
-      ></canvas>
+      />
       <div className={cn("relative z-10", className)} {...props}>
         {children}
       </div>
