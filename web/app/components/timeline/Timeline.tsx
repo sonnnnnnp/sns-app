@@ -1,11 +1,11 @@
 import { CallTimeline } from "./CallTimeline";
 import { PostTimeline } from "./PostTimeline";
 
-export function Timeline() {
+export function Timeline({ type }: { type: "following" | "public" }) {
   return (
     <div>
       <CallTimeline />
-      <PostTimeline />
+      <PostTimeline type={type} />
     </div>
   );
 }

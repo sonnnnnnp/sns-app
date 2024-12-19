@@ -16,10 +16,10 @@ export default function Home() {
       }}
     >
       <Tab key="following" title="フォロー中">
-        <Timeline />
+        <Timeline type="following" />
       </Tab>
-      <Tab key="public" title="オープン">
-        <Timeline />
+      <Tab key="public" title="発見">
+        <Timeline type="public" />
       </Tab>
     </Tabs>
   );
