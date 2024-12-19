@@ -39,11 +39,13 @@ export function SwipeableTabs({
   classNames,
   cursorWidth,
   defaultKey,
+  onSelectedKeyChange,
 }: {
   tabs: Tab[];
   classNames?: ClassNames;
   cursorWidth?: number;
   defaultKey?: string;
+  onSelectedKeyChange?: (key: Key) => void;
 }) {
   const [selectedKey, setSelectedKey] = React.useState<Key>(
     defaultKey ?? tabs[0].key,
@@ -52,8 +54,8 @@ export function SwipeableTabs({
     NodeListOf<HTMLDivElement> | []
   >([]);
 
-  const tabListRef = React.useRef<HTMLDivElement>(null);
-  const tabPanelsRef = React.useRef<HTMLDivElement>(null);
+  const tabListRef = React.useRef<HTMLDivElement | null>(null);
+  const tabPanelsRef = React.useRef<HTMLDivElement | null>(null);
   const animationRef = React.useRef<AnimationPlaybackControls | null>(null);
 
   const indicatorWidth = cursorWidth ?? 50;
@@ -71,15 +73,20 @@ export function SwipeableTabs({
     container: tabPanelsRef,
   });
 
-  const getIndex = React.useCallback(
-    (x: number) => Math.max(0, Math.floor((tabElements.length - 1) * x)),
-    [tabElements],
+  const getTabIndex = React.useCallback(
+    (x: number) => Math.round((tabs.length - 1) * x),
+    [tabs],
+  );
+
+  const getCursorIndex = React.useCallback(
+    (x: number) => Math.max(0, Math.floor((tabs.length - 1) * x)),
+    [tabs],
   );
 
   const transform = (x: number, property: "offsetLeft" | "offsetWidth") => {
     if (!tabElements.length) return 0;
 
-    const index = getIndex(x);
+    const index = getCursorIndex(x);
     const difference =
       index < tabElements.length - 1
         ? tabElements[index + 1][property] - tabElements[index][property]
@@ -102,14 +109,21 @@ export function SwipeableTabs({
   useMotionValueEvent(scrollXProgress, "change", (x) => {
     if (!tabElements.length) return;
 
-    const index = getIndex(x);
+    const index = getTabIndex(x);
+
+    // // Calculate the difference in index to determine if intermediate tabs are skipped
+    // const currentIndex = tabs.findIndex((tab) => tab.key === selectedKey);
+    // // Skip `onSelectedKeyChange` if more than one tab is skipped
+    // if (Math.abs(index - currentIndex) >= 1) return;
+
     if (tabs[index]?.key !== selectedKey) {
       setSelectedKey(tabs[index]?.key);
+      onSelectedKeyChange?.(tabs[index]?.key);
     }
   });
 
   const onSelectionChange = (selectedTab: Key) => {
-    setSelectedKey(selectedTab);
+    if (selectedTab === selectedKey) return;
 
     if (scrollXProgress.getVelocity() && !animationRef.current) {
       return;
@@ -128,7 +142,7 @@ export function SwipeableTabs({
       tabPanel?.scrollWidth! * (index / tabs.length),
       {
         type: "spring",
-        bounce: 0.2,
+        bounce: 0,
         duration: 0.6,
         onUpdate: (v) => {
           tabPanel.scrollLeft = v;
@@ -159,7 +173,7 @@ export function SwipeableTabs({
           {(tab) => (
             <AriaTab
               className={cn(
-                "grid place-items-center w-full cursor-pointer",
+                "grid place-items-center w-full cursor-pointer text-small text-default-500 transition-opacity rac-hover:opacity-disabled rac-hover:rac-selected:opacity-100 rac-selected:text-foreground",
                 classNames?.tab,
               )}
             >

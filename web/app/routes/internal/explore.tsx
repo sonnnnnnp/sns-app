@@ -4,6 +4,7 @@ export default function Explore() {
   return (
     <SwipeableTabs
       cursorWidth={80}
+      onSelectedKeyChange={(key) => console.log(key)}
       classNames={{ tabListWrapper: "sticky top-0 z-[99]" }}
       tabs={[
         {

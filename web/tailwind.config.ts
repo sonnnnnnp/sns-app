@@ -18,5 +18,8 @@ export default {
     },
   },
   darkMode: "class",
-  plugins: [nextui(), require("tailwindcss-react-aria-components")],
+  plugins: [
+    nextui(),
+    require("tailwindcss-react-aria-components")({ prefix: "rac" }),
+  ],
 } satisfies Config;
