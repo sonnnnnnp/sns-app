@@ -35,8 +35,8 @@ export function SmallNavigation({ pathname }: { pathname: string }) {
           startContent={<SolarMagniferLinear />}
         />
         <ListboxItem
-          key="/groups"
-          href="/groups"
+          key="/communities"
+          href="/communities"
           title="グループ"
           startContent={<SolarUsersGroupTwoRoundedLinear />}
         />

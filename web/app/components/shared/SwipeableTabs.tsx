@@ -1,0 +1,201 @@
+import { cn } from "@nextui-org/react";
+import {
+  type AnimationPlaybackControls,
+  animate,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import React from "react";
+import {
+  Tab as AriaTab,
+  TabList as AriaTabList,
+  TabPanel as AriaTabPanel,
+  Tabs as AriaTabs,
+  Collection,
+  type Key,
+} from "react-aria-components";
+
+type Tab = {
+  key: string;
+  title: string;
+  panelContent: React.ReactNode;
+};
+
+type ClassNames = {
+  base?: string;
+  tabListWrapper?: string;
+  tabList?: string;
+  tab?: string;
+  title?: string;
+  cursor?: string;
+  panelWrapper?: string;
+  panel?: string;
+};
+
+export function SwipeableTabs({
+  tabs,
+  classNames,
+  cursorWidth,
+  defaultKey,
+}: {
+  tabs: Tab[];
+  classNames?: ClassNames;
+  cursorWidth?: number;
+  defaultKey?: string;
+}) {
+  const [selectedKey, setSelectedKey] = React.useState<Key>(
+    defaultKey ?? tabs[0].key,
+  );
+  const [tabElements, setTabElements] = React.useState<
+    NodeListOf<HTMLDivElement> | []
+  >([]);
+
+  const tabListRef = React.useRef<HTMLDivElement>(null);
+  const tabPanelsRef = React.useRef<HTMLDivElement>(null);
+  const animationRef = React.useRef<AnimationPlaybackControls | null>(null);
+
+  const indicatorWidth = cursorWidth ?? 50;
+
+  React.useEffect(() => {
+    if (tabElements.length === 0 && tabListRef.current !== null) {
+      const tabs = tabListRef.current.querySelectorAll(
+        "[role=tab]",
+      ) as NodeListOf<HTMLDivElement>;
+      setTabElements(tabs);
+    }
+  }, [tabElements]);
+
+  const { scrollXProgress } = useScroll({
+    container: tabPanelsRef,
+  });
+
+  const getIndex = React.useCallback(
+    (x: number) => Math.max(0, Math.floor((tabElements.length - 1) * x)),
+    [tabElements],
+  );
+
+  const transform = (x: number, property: "offsetLeft" | "offsetWidth") => {
+    if (!tabElements.length) return 0;
+
+    const index = getIndex(x);
+    const difference =
+      index < tabElements.length - 1
+        ? tabElements[index + 1][property] - tabElements[index][property]
+        : tabElements[index].offsetWidth;
+    const percent = (tabElements.length - 1) * x - index;
+    const value = tabElements[index][property] + difference * percent;
+
+    // iOS scrolls weird when translateX is 0 for some reason. 🤷‍♂️
+    return value || 0.1;
+  };
+
+  const x = useTransform(
+    scrollXProgress,
+    (x) =>
+      transform(x, "offsetLeft") +
+      transform(x, "offsetWidth") / 2 -
+      indicatorWidth / 2,
+  );
+
+  useMotionValueEvent(scrollXProgress, "change", (x) => {
+    if (!tabElements.length) return;
+
+    const index = getIndex(x);
+    if (tabs[index]?.key !== selectedKey) {
+      setSelectedKey(tabs[index]?.key);
+    }
+  });
+
+  const onSelectionChange = (selectedTab: Key) => {
+    setSelectedKey(selectedTab);
+
+    if (scrollXProgress.getVelocity() && !animationRef.current) {
+      return;
+    }
+
+    // biome-ignore lint/style/noNonNullAssertion: <explanation>
+    const tabPanel = tabPanelsRef.current!;
+    const index = tabs.findIndex((tab) => tab.key === selectedTab);
+    if (animationRef.current) {
+      animationRef.current.stop();
+    }
+
+    animationRef.current = animate(
+      tabPanel?.scrollLeft,
+      // biome-ignore lint/style/noNonNullAssertion: <explanation>
+      tabPanel?.scrollWidth! * (index / tabs.length),
+      {
+        type: "spring",
+        bounce: 0.2,
+        duration: 0.6,
+        onUpdate: (v) => {
+          tabPanel.scrollLeft = v;
+        },
+        onPlay: () => {
+          tabPanel.style.scrollSnapType = "none";
+        },
+        onComplete: () => {
+          tabPanel.style.scrollSnapType = "";
+          animationRef.current = null;
+        },
+      },
+    );
+  };
+
+  return (
+    <AriaTabs
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}
+      className={cn("w-full h-full", classNames?.base)}
+    >
+      <div className={cn("relative", classNames?.tabListWrapper)}>
+        <AriaTabList
+          ref={tabListRef}
+          items={tabs}
+          className={cn("flex h-14", classNames?.tabList)}
+        >
+          {(tab) => (
+            <AriaTab
+              className={cn(
+                "grid place-items-center w-full cursor-pointer",
+                classNames?.tab,
+              )}
+            >
+              <span className={cn(classNames?.title)}>{tab.title}</span>
+            </AriaTab>
+          )}
+        </AriaTabList>
+        <motion.span
+          style={{ x, width: indicatorWidth }}
+          className={cn(
+            "absolute bottom-0 h-0.5 z-10 bg-content1-foreground rounded-full",
+            classNames?.cursor,
+          )}
+        />
+      </div>
+      <div
+        ref={tabPanelsRef}
+        className={cn(
+          "flex w-full overflow-auto snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
+          classNames?.panelWrapper,
+        )}
+      >
+        <Collection items={tabs}>
+          {(tab) => (
+            <AriaTabPanel
+              shouldForceMount
+              className={cn(
+                "w-full snap-start flex-shrink-0",
+                classNames?.panel,
+              )}
+            >
+              {tab.panelContent}
+            </AriaTabPanel>
+          )}
+        </Collection>
+      </div>
+    </AriaTabs>
+  );
+}

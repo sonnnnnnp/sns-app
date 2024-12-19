@@ -22,8 +22,8 @@ export function MobileNavigation({ pathname }: { pathname: string }) {
       >
         <Tab key="/home" href="/home" title={<SolarHome2Linear />} />
         <Tab
-          key="/groups"
-          href="/groups"
+          key="/communities"
+          href="/communities"
           title={<SolarUsersGroupTwoRoundedLinear />}
         />
         <Tab key="/messages" href="/messages" title={<SolarLetterLinear />} />
